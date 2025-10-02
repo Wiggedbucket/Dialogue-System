@@ -22,6 +22,20 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        SetupNodes();
+    }
+
+    public void SetupNodes()
+    {
+        // Clear all choice buttons
+        foreach (Transform child in ChoiceButtonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        _nodeLookup.Clear();
+        _currentNode = null;
+
         foreach (var node in RuntimeGraph.AllNodes)
         {
             _nodeLookup[node.NodeID] = node;
@@ -31,7 +45,8 @@ public class DialogueManager : MonoBehaviour
         if (!string.IsNullOrEmpty(RuntimeGraph.EntryNodeID))
         {
             ShowNode(RuntimeGraph.EntryNodeID);
-        } else
+        }
+        else
         {
             EndDialogue();
         }
@@ -51,6 +66,12 @@ public class DialogueManager : MonoBehaviour
             {
                 EndDialogue();
             }
+        }
+
+        // Quick reset button, remove in production
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SetupNodes();
         }
     }
 
