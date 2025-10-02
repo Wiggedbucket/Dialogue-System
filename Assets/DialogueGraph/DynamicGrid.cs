@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.PlayerLoop;
 
 [RequireComponent(typeof(GridLayoutGroup))]
 public class DynamicGrid : MonoBehaviour
@@ -18,7 +19,12 @@ public class DynamicGrid : MonoBehaviour
         grid = GetComponent<GridLayoutGroup>();
     }
 
-    void Update()
+    private void Update()
+    {
+        UpdateGrid();
+    }
+
+    public void UpdateGrid()
     {
         float maxWidth = 0f;
         float maxHeight = 0f;
