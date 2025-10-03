@@ -31,7 +31,7 @@ public class DialogueBlockNode : BlockNode
         if (!editSettings)
             return;
 
-        context.AddInputPort<Image>("background image").Build();
+        context.AddInputPort<Sprite>("background image").Build();
         context.AddInputPort<bool>("smooth background transition").Build();
 
         context.AddInputPort<TMP_FontAsset>("font").Build();

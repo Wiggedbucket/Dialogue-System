@@ -10,8 +10,13 @@ public class DialogueManager : MonoBehaviour
 
     [Header("UI Components")]
     public GameObject DialoguePanel;
+    public Image BackgroundImage;
     public TextMeshProUGUI SpeakerNameText;
     public TextMeshProUGUI DialogueText;
+
+    [Header("Audio")]
+    public AudioSource MusicSource;
+    public AudioSource SfxSource;
 
     [Header("Choice Button UI")]
     public Button ChoiceButtonPrefab;

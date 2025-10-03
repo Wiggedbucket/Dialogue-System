@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,17 +9,28 @@ using UnityEngine.UI;
 [Serializable]
 public class CharacterBlockNode : BlockNode
 {
+    private const string EditMultipleName = "edit multiple";
     private const string ChangePositionName = "change position";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
+        context.AddOption<bool>(EditMultipleName);
         context.AddOption<bool>(ChangePositionName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var portTypeOption = GetNodeOptionByName(ChangePositionName);
+        var portTypeOption = GetNodeOptionByName(EditMultipleName);
+        portTypeOption.TryGetValue<bool>(out bool editMultiple);
+
+        portTypeOption = GetNodeOptionByName(ChangePositionName);
         portTypeOption.TryGetValue<bool>(out bool changePosition);
+
+        if (editMultiple)
+        {
+            context.AddInputPort<List<CharacterData>>("character states").Build();
+            return;
+        }
 
         context.AddInputPort<Image>("character image").Build();
         context.AddInputPort<string>("name").Build();

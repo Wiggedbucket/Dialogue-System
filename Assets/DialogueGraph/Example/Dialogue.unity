@@ -444,8 +444,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
   RuntimeGraph: {fileID: 3965311268370046156, guid: f53bca7336728a14cbd27266e1ab9da9, type: 3}
   DialoguePanel: {fileID: 709278984}
+  BackgroundImage: {fileID: 709278988}
   SpeakerNameText: {fileID: 148429373}
   DialogueText: {fileID: 372187036}
+  MusicSource: {fileID: 1762167087}
+  SfxSource: {fileID: 2090506163}
   ChoiceButtonPrefab: {fileID: 6731602406577615479, guid: e73e99c27231c874b9fea5d16d04c762, type: 3}
   ChoiceButtonContainer: {fileID: 712139475}
 --- !u!1 &519420028
