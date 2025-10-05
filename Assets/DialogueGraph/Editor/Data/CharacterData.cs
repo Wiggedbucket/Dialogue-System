@@ -7,6 +7,15 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
+[CustomPropertyDrawer(typeof(CharacterData))]
+public class CharacterDataDrawer : PropertyDrawer
+{
+    public override VisualElement CreatePropertyGUI(SerializedProperty property)
+    {
+        return GenericDataDrawer.Draw(property);
+    }
+}
+
 [Serializable]
 public class CharacterData
 {
@@ -15,13 +24,12 @@ public class CharacterData
     public CharacterEmotion characterEmotion;
 
     public bool isVisible;
-
     public float characterAppearanceDelay;
-    public bool smoothMove;
 
     public bool isTalking;
     public bool hideName; // Will be displayed as "", "???" or "..." if true
 
+    public bool smoothMove;
     public Vector2 characterPosition;
     public float characterRotation;
     public Vector2 characterScale;
