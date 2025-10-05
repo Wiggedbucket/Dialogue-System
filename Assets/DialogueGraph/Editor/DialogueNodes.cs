@@ -1,5 +1,8 @@
 using System;
 using Unity.GraphToolkit.Editor;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class StartNode : Node
@@ -61,5 +64,21 @@ public class ChoiceNode : Node
             .WithDisplayName("Port Count")
             .WithDefaultValue(2)
             .Delayed();
+    }
+}
+
+[Serializable]
+public class TestNode : Node
+{
+    [SerializeField] private CharacterData characterData;
+
+    protected override void OnDefineOptions(IOptionDefinitionContext context)
+    {
+        
+    }
+
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        
     }
 }

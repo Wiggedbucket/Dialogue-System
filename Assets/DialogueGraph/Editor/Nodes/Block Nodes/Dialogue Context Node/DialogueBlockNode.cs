@@ -25,14 +25,9 @@ public class DialogueBlockNode : BlockNode
         portTypeOption.TryGetValue<bool>(out bool editSettings);
 
         context.AddInputPort<string>("text").Build();
-        context.AddInputPort<AudioResource>("music audio").Build();
-        context.AddInputPort<AudioResource>("dialogue audio").Build();
 
         if (!editSettings)
             return;
-
-        context.AddInputPort<Sprite>("background image").Build();
-        context.AddInputPort<bool>("smooth background transition").Build();
 
         context.AddInputPort<TMP_FontAsset>("font").Build();
 
