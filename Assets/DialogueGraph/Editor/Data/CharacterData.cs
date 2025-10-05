@@ -1,12 +1,12 @@
 using System;
-using System.Numerics;
+using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
 [Serializable]
 public class CharacterData
 {
-    public Image characterSpriteFolderPath;
+    public Sprite characterSprite;
     public string name;
     public CharacterEmotion characterEmotion;
 

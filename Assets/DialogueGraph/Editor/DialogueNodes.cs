@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -70,15 +71,14 @@ public class ChoiceNode : Node
 [Serializable]
 public class TestNode : Node
 {
-    [SerializeField] private CharacterData characterData;
-
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
-        
+        context.AddOption<CharacterData>("characterData").Build();
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        
+        context.AddInputPort<CharacterData>("character data");
+        context.AddInputPort<List<CharacterData>>("character data list");
     }
 }
