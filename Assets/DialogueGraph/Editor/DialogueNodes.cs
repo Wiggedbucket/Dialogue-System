@@ -79,6 +79,7 @@ public class TestNode : Node
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         context.AddInputPort<CharacterData>("character data");
-        context.AddInputPort<List<CharacterData>>("character data list");
+        context.AddInputPort<List<CharacterData>>("character data list 1");
+        context.AddInputPort<List<string>>("string list 1");
     }
 }

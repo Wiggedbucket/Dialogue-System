@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class CharacterData
@@ -25,8 +29,22 @@ public class CharacterData
 
 public enum CharacterEmotion
 {
-    Normal,
+    Neutral,
     Angry,
     Happy,
     Sad,
+    Surprised,
+    Confused,
+    Excited,
+    Tired,
+    Scared,
+    Embarrassed,
+    Proud,
+    Bored,
+    Curious,
+    Determined,
+    Frustrated,
+    Relaxed,
+    Shocked,
+    Worried,
 }
