@@ -114,7 +114,7 @@ public class DialogueManager : MonoBehaviour
                 {
                     buttonText.SetText(choice.ChoiceText);
                 }
-
+                
                 if (button != null)
                 {
                     button.onClick.AddListener(() =>

@@ -9,9 +9,6 @@ public class FunctionBlockNode : BlockNode
 {
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        context.AddInputPort<string>("class name").Build();
-        context.AddInputPort<string>("function name").Build();
-
         context.AddInputPort<UnityEvent>("unity event").Build();
     }
 }

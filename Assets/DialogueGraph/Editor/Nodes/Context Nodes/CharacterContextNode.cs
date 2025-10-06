@@ -14,9 +14,14 @@ public class CharacterContextNode : ContextNode
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var portTypeOption = GetNodeOptionByName(ShowCharactersName);
-        portTypeOption.TryGetValue<bool>(out bool showCharacters);
+        var showCharacters = GetBoolOption(ShowCharactersName);
 
         context.AddOutputPort<List<CharacterData>>("out").Build();
+    }
+
+    private bool GetBoolOption(string name, bool defaultValue = false)
+    {
+        var opt = GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<bool>(out var value) ? value : defaultValue;
     }
 }

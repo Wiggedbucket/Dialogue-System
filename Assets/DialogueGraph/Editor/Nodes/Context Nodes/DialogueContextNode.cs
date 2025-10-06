@@ -2,60 +2,62 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.GraphToolkit.Editor;
-using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.UI;
 
 [Serializable]
 public class DialogueContextNode : ContextNode
 {
+    private const string NextDialogueTextName = "next dialogue text";
+    private const string DelayWithClickName = "delay with click";
+    private const string KeepPreviousTextName = "keep previous text";
     private const string EditSettingsName = "edit settings";
-    private const string QueueMusicName = "queue music";
-    private const string PlayMultipleSfxName = "play multiple sfx";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
+        context.AddOption<bool>(NextDialogueTextName)
+            .WithDefaultValue(true)
+            .Build();
+        context.AddOption<bool>(DelayWithClickName);
+        context.AddOption<bool>(KeepPreviousTextName);
         context.AddOption<bool>(EditSettingsName);
-        context.AddOption<bool>(QueueMusicName);
-        context.AddOption<bool>(PlayMultipleSfxName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var portTypeOption = GetNodeOptionByName(EditSettingsName);
-        portTypeOption.TryGetValue<bool>(out bool editSettings);
+        context.AddInputPort("in")
+            .WithConnectorUI(PortConnectorUI.Arrowhead)
+            .Build();
 
-        portTypeOption = GetNodeOptionByName(QueueMusicName);
-        portTypeOption.TryGetValue<bool>(out bool queueMusic);
+        var editSettings = GetBoolOption(EditSettingsName);
 
-        portTypeOption = GetNodeOptionByName(PlayMultipleSfxName);
-        portTypeOption.TryGetValue<bool>(out bool playMultipleSfx);
+        context.AddOutputPort("out")
+            .WithConnectorUI(PortConnectorUI.Arrowhead)
+            .Build();
 
-        context.AddInputPort("in").Build();
-
-        context.AddInputPort<List<CharacterData>>("initial character states").Build();
+        context.AddInputPort<DialogueData>("dialogue")
+            .Build();
 
         if (!editSettings)
             return;
 
-        context.AddInputPort<Sprite>("background image").Build();
-        context.AddInputPort<bool>("smooth background transition").Build();
-
-        if (queueMusic)
-            context.AddInputPort<List<AudioResource>>("music audio queue").Build();
-        else
-            context.AddInputPort<AudioResource>("music audio").Build();
-
-        if (playMultipleSfx)
-            context.AddInputPort<List<AudioResource>>("all dialogue audio").Build();
-        else
-            context.AddInputPort<AudioResource>("dialogue audio").Build();
+        context.AddInputPort<bool>("bold").Build();
+        context.AddInputPort<bool>("italic").Build();
+        context.AddInputPort<bool>("underline").Build();
 
         context.AddInputPort<TMP_FontAsset>("font").Build();
+        context.AddInputPort<TextAlignmentOptions>("text align").Build();
+        context.AddInputPort<bool>("wrap text")
+            .WithDefaultValue(true)
+            .Build();
 
         context.AddInputPort<float>("print speed")
             .WithDefaultValue(1f)
             .Build();
         context.AddInputPort<float>("delay text").Build();
+    }
+
+    private bool GetBoolOption(string name, bool defaultValue = false)
+    {
+        var opt = GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<bool>(out var value) ? value : defaultValue;
     }
 }

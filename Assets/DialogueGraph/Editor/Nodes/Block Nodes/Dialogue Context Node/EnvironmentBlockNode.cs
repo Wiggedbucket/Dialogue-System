@@ -9,24 +9,20 @@ using UnityEngine.Audio;
 [Serializable]
 public class EnvironmentBlockNode : BlockNode
 {
-    private const string DelayWithClickName = "delay with click";
     private const string QueueMusicName = "queue music";
     private const string PlayMultipleSfxName = "play multiple sfx";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
-        context.AddOption<bool>(DelayWithClickName);
         context.AddOption<bool>(QueueMusicName);
         context.AddOption<bool>(PlayMultipleSfxName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var portTypeOption = GetNodeOptionByName(QueueMusicName);
-        portTypeOption.TryGetValue<bool>(out bool queueMusic);
+        var queueMusic = GetBoolOption(QueueMusicName);
 
-        portTypeOption = GetNodeOptionByName(PlayMultipleSfxName);
-        portTypeOption.TryGetValue<bool>(out bool playMultipleSfx);
+        var playMultipleSfx = GetBoolOption(PlayMultipleSfxName);
 
         if (queueMusic)
             context.AddInputPort<List<AudioResource>>("music audio queue").Build();
@@ -40,5 +36,11 @@ public class EnvironmentBlockNode : BlockNode
 
         context.AddInputPort<Sprite>("background image").Build();
         context.AddInputPort<bool>("smooth background transition").Build();
+    }
+
+    private bool GetBoolOption(string name, bool defaultValue = false)
+    {
+        var opt = GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<bool>(out var value) ? value : defaultValue;
     }
 }

@@ -20,11 +20,9 @@ public class CharacterBlockNode : BlockNode
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var portTypeOption = GetNodeOptionByName(EditMultipleName);
-        portTypeOption.TryGetValue<bool>(out bool editMultiple);
+        var editMultiple = GetBoolOption(EditMultipleName);
 
-        portTypeOption = GetNodeOptionByName(ChangePositionName);
-        portTypeOption.TryGetValue<bool>(out bool changePosition);
+        var changePosition = GetBoolOption(ChangePositionName);
 
         if (editMultiple)
         {
@@ -49,5 +47,11 @@ public class CharacterBlockNode : BlockNode
         context.AddInputPort<Vector2>("position").Build();
         context.AddInputPort<float>("rotation").Build();
         context.AddInputPort<Vector2>("scale").Build();
+    }
+
+    private bool GetBoolOption(string name, bool defaultValue = false)
+    {
+        var opt = GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<bool>(out var value) ? value : defaultValue;
     }
 }

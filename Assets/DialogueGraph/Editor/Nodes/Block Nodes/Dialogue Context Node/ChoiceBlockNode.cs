@@ -16,8 +16,6 @@ public class ChoiceBlockNode : BlockNode
             .Delayed();
 
         context.AddOption<bool>("show characters");
-        context.AddOption<bool>("keep text visible")
-            .WithDefaultValue(true);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
@@ -29,7 +27,9 @@ public class ChoiceBlockNode : BlockNode
         for (int i = 0; i < portCount; i++)
         {
             context.AddInputPort<string>($"Choice Text {i}").Build();
-            context.AddOutputPort($"Choice {i}").Build();
+            context.AddOutputPort($"Choice {i}")
+            .WithConnectorUI(PortConnectorUI.Arrowhead)
+            .Build();
         }
     }
 }
