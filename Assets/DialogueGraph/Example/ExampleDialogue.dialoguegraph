@@ -64,7 +64,7 @@ MonoBehaviour:
           x: 228
           y: 172.79999
           width: 2662.4
-          height: 1164.8
+          height: 1116.8
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 9972043837098634287
@@ -482,12 +482,8 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - class name
-          - function name
           - unity event
           m_ValueList:
-          - rid: 5077103939345449101
-          - rid: 5077103939345449102
           - rid: 5077103939345449103
         m_InputPortInfos:
           expandedPortsById:
@@ -506,14 +502,6 @@ MonoBehaviour:
           rid: 5077103939345449074
         m_Node:
           rid: 5077103939345449104
-    - rid: 5077103939345449101
-      type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 
-    - rid: 5077103939345449102
-      type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 
     - rid: 5077103939345449103
       type: {class: 'Constant`1[[UnityEngine.Events.UnityEvent, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
