@@ -2,15 +2,6 @@ using System;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-[CustomPropertyDrawer(typeof(ValueComparer))]
-public class FloatCondtionDrawer : PropertyDrawer
-{
-    public override VisualElement CreatePropertyGUI(SerializedProperty property)
-    {
-        return GenericDataDrawer.Draw(property);
-    }
-}
-
 [Serializable]
 public class ValueComparer
 {

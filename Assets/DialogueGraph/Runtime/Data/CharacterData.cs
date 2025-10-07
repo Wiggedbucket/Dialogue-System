@@ -29,6 +29,7 @@ public class CharacterData
     public bool isTalking;
     public bool hideName; // Will be displayed as "", "???" or "..." if true
 
+    public bool changePosition;
     public bool smoothMove;
     public Vector2 characterPosition;
     public float characterRotation;
