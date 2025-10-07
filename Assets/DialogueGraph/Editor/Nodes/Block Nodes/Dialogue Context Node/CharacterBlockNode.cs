@@ -9,46 +9,46 @@ using UnityEngine.UI;
 [Serializable]
 public class CharacterBlockNode : BlockNode
 {
-    public const string ChangePositionName = "change position";
+    public const string ChangePositionPortName = "change position";
 
-    public const string CharacterSpriteName = "character sprite";
-    public const string CharacterNameName = "character name";
-    public const string EmotionName = "emotion";
-    public const string VisibleName = "visible";
-    public const string AppearanceDelayName = "appearance delay";
-    public const string IsTalkingName = "is talking";
-    public const string HideNameName = "hide name";
-    public const string SmoothMovementName = "smooth movement";
-    public const string PositionName = "position";
-    public const string RotationName = "rotation";
-    public const string ScaleName = "scale";
+    public const string CharacterSpritePortName = "character sprite";
+    public const string CharacterNamePortName = "character name";
+    public const string EmotionPortName = "emotion";
+    public const string VisiblePortName = "visible";
+    public const string AppearanceDelayPortName = "appearance delay";
+    public const string IsTalkingPortName = "is talking";
+    public const string HideNamePortName = "hide name";
+    public const string SmoothMovementPortName = "smooth movement";
+    public const string PositionPortName = "position";
+    public const string RotationPortName = "rotation";
+    public const string ScalePortName = "scale";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
-        context.AddOption<bool>(ChangePositionName);
+        context.AddOption<bool>(ChangePositionPortName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        var changePosition = GetBoolOption(ChangePositionName);
+        var changePosition = GetBoolOption(ChangePositionPortName);
 
-        context.AddInputPort<Sprite>(CharacterSpriteName).Build();
-        context.AddInputPort<string>(CharacterNameName).Build();
-        context.AddInputPort<CharacterEmotion>(EmotionName).Build();
+        context.AddInputPort<Sprite>(CharacterSpritePortName).Build();
+        context.AddInputPort<string>(CharacterNamePortName).Build();
+        context.AddInputPort<CharacterEmotion>(EmotionPortName).Build();
 
-        context.AddInputPort<bool>(VisibleName).Build();
+        context.AddInputPort<bool>(VisiblePortName).Build();
 
-        context.AddInputPort<float>(AppearanceDelayName).Build();
-        context.AddInputPort<bool>(IsTalkingName).Build();
-        context.AddInputPort<bool>(HideNameName).Build();
+        context.AddInputPort<float>(AppearanceDelayPortName).Build();
+        context.AddInputPort<bool>(IsTalkingPortName).Build();
+        context.AddInputPort<bool>(HideNamePortName).Build();
 
         if (!changePosition)
             return;
 
-        context.AddInputPort<bool>(SmoothMovementName).Build();
-        context.AddInputPort<Vector2>(PositionName).Build();
-        context.AddInputPort<float>(RotationName).Build();
-        context.AddInputPort<Vector2>(ScaleName).Build();
+        context.AddInputPort<bool>(SmoothMovementPortName).Build();
+        context.AddInputPort<Vector2>(PositionPortName).Build();
+        context.AddInputPort<float>(RotationPortName).Build();
+        context.AddInputPort<Vector2>(ScalePortName).Build();
     }
 
     private bool GetBoolOption(string name, bool defaultValue = false)

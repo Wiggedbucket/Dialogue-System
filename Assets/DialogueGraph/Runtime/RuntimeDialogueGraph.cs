@@ -47,7 +47,6 @@ public class RuntimeDialogueNode : RuntimeNode
 
     public List<CharacterData> characters = new();
     public List<RuntimeChoice> choices = new();
-    public List<RuntimeFunctionCall> functions = new();
 }
 
 [Serializable]
@@ -76,13 +75,35 @@ public class DialogueSettings
     public List<AudioResource> musicQueue;
     public List<AudioResource> audioList;
     public Sprite backgroundImage;
-    public bool smoothTransition;
+    public BackgroundTransition backgroundTransition;
+}
+
+[Serializable]
+public enum BackgroundTransition
+{
+    None,
+    FadeOutAndIn,
+    SlideLeft,
+    SlideRight,
+    SlideUp,
+    SlideDown,
+    FadeRight,
+    FadeLeft,
+    FadeUp,
+    FadeDown,
+}
+
+[Serializable]
+public class RuntimeSplitterOutput
+{
+    public string nextNodeID;
+    public List<ValueComparer> comparisons = new();
 }
 
 [Serializable]
 public class RuntimeSplitterNode : RuntimeNode
 {
-    public List<ValueComparer> comparisons = new();
+    public List<RuntimeSplitterOutput> outputs = new();
     public string defaultOutputNodeID;
 }
 
@@ -92,12 +113,6 @@ public class RuntimeChoice
     public string choiceText;
     public List<ValueComparer> comparisons = new();
     public string nextNodeID;
-}
-
-[Serializable]
-public class RuntimeFunctionCall
-{
-    public string unityEventName;
 }
 
 public class RuntimeBlackboard

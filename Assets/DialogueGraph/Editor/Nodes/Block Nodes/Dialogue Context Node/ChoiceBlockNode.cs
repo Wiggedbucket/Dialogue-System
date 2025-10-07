@@ -6,30 +6,16 @@ using Unity.GraphToolkit.Editor;
 [Serializable]
 public class ChoiceBlockNode : BlockNode
 {
-    const string portCountName = "port count";
-
-    protected override void OnDefineOptions(IOptionDefinitionContext context)
-    {
-        // Adds the options to the node when the user is finished with writing the number (Due to .Delayed())
-        context.AddOption<int>(portCountName)
-            .WithDisplayName("port count")
-            .WithDefaultValue(2)
-            .Delayed();
-    }
+    public const string ChoiceTextPortName = "choice text";
+    public const string ConditionsChoicePortName = "conditions choice";
+    public const string ChoicePortName = "choice";
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        // Adds all the option input and output ports
-        var option = GetNodeOptionByName(portCountName);
-        option.TryGetValue<int>(out int portCount);
-
-        for (int i = 0; i < portCount; i++)
-        {
-            context.AddInputPort<string>($"choice text {i}").Build();
-            context.AddInputPort<List<ValueComparer>>($"conditions choice {i}").Build();
-            context.AddOutputPort($"choice {i}")
+        context.AddInputPort<string>(ChoiceTextPortName).Build();
+        context.AddInputPort<List<ValueComparer>>(ConditionsChoicePortName).Build();
+        context.AddOutputPort(ChoicePortName)
             .WithConnectorUI(PortConnectorUI.Arrowhead)
             .Build();
-        }
     }
 }

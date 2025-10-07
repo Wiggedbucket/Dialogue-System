@@ -84,10 +84,9 @@ public class DialogueGraphImporter : ScriptedImporter
                 runtimeNode.nodeID = nodeIDMap[node];
 
                 // Determine next node if there’s an “out” port
-                IPort outPort = node.GetOutputPortByName("out");
-                if (outPort?.firstConnectedPort != null)
+                IPort outPort = node.GetOutputPorts().FirstOrDefault(p => p.name == "out");
+                if (outPort != null && outPort.firstConnectedPort != null)
                     runtimeNode.nextNodeID = nodeIDMap[outPort.firstConnectedPort.GetNode()];
-
                 runtimeGraph.nodes.Add(runtimeNode);
             }
         }
@@ -104,120 +103,153 @@ public class DialogueGraphImporter : ScriptedImporter
         RuntimeDialogueNode runtimeDialogueNode = new();
         
         // Dialogue data
-        runtimeDialogueNode.dialogueText = GetPortValueSafe<DialogueData>(node, DialogueContextNode.DialogueName).text;
+        runtimeDialogueNode.dialogueText = GetPortValueSafe<DialogueData>(node, DialogueContextNode.DialoguePortName).text;
 
         // Settings
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
-            nextDialogueText = GetNodeOptionValue(node, DialogueContextNode.NextDialogueTextName, true),
-            delayWithClick = GetNodeOptionValue(node, DialogueContextNode.DelayWithClickName, false),
-            keepPreviousText = GetNodeOptionValue(node, DialogueContextNode.KeepPreviousTextName, false),
-            editSettings = GetNodeOptionValue(node, DialogueContextNode.EditSettingsName, false),
-            editTextSettings = GetNodeOptionValue(node, DialogueContextNode.EditTextSettingsName, false),
-            editEnvironmentSettings = GetNodeOptionValue(node, DialogueContextNode.EditEnvironmentSettingsName, false),
+            nextDialogueText = GetNodeOptionValue(node, DialogueContextNode.NextDialogueTextPortName, true),
+            delayWithClick = GetNodeOptionValue(node, DialogueContextNode.DelayWithClickPortName, false),
+            keepPreviousText = GetNodeOptionValue(node, DialogueContextNode.KeepPreviousTextPortName, false),
+            editSettings = GetNodeOptionValue(node, DialogueContextNode.EditSettingsPortName, false),
+            editTextSettings = GetNodeOptionValue(node, DialogueContextNode.EditTextSettingsPortName, false),
+            editEnvironmentSettings = GetNodeOptionValue(node, DialogueContextNode.EditEnvironmentSettingsPortName, false),
 
-            printSpeed = GetPortValueSafe<float>(node, DialogueContextNode.PrintSpeedName),
-            delayText = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextName),
-            broadcastString = GetPortValueSafe<string>(node, DialogueContextNode.BroadcastStringName),
+            printSpeed = GetPortValueSafe<float>(node, DialogueContextNode.PrintSpeedPortName),
+            delayText = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextPortName),
+            broadcastString = GetPortValueSafe<string>(node, DialogueContextNode.BroadcastStringPortName),
 
-            bold = GetPortValueSafe<bool>(node, DialogueContextNode.BoldName),
-            italic = GetPortValueSafe<bool>(node, DialogueContextNode.ItalicName),
-            underline = GetPortValueSafe<bool>(node, DialogueContextNode.UnderlineName),
-            font = GetPortValueSafe<TMP_FontAsset>(node, DialogueContextNode.FontName),
-            textAlign = GetPortValueSafe<TextAlignmentOptions>(node, DialogueContextNode.TextAlignName),
-            wrapText = GetPortValueSafe<bool>(node, DialogueContextNode.WrapTextName),
+            bold = GetPortValueSafe<bool>(node, DialogueContextNode.BoldPortName),
+            italic = GetPortValueSafe<bool>(node, DialogueContextNode.ItalicPortName),
+            underline = GetPortValueSafe<bool>(node, DialogueContextNode.UnderlinePortName),
+            font = GetPortValueSafe<TMP_FontAsset>(node, DialogueContextNode.FontPortName),
+            textAlign = GetPortValueSafe<TextAlignmentOptions>(node, DialogueContextNode.TextAlignPortName),
+            wrapText = GetPortValueSafe<bool>(node, DialogueContextNode.WrapTextPortName),
             
-            musicQueue = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.MusicAudioQueueName),
-            audioList = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioName),
-            backgroundImage = GetPortValueSafe<Sprite>(node, DialogueContextNode.BackgroundImageName),
-            smoothTransition = GetPortValueSafe<bool>(node, DialogueContextNode.SmoothBackgroundTransitionName),
+            musicQueue = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.MusicAudioQueuePortName),
+            audioList = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioPortName),
+            backgroundImage = GetPortValueSafe<Sprite>(node, DialogueContextNode.BackgroundImagePortName),
+            backgroundTransition = GetPortValueSafe<BackgroundTransition>(node, DialogueContextNode.BackgroundTransitionPortName),
         };
 
         // Character block nodes data
         List<CharacterData> characters = new();
-        foreach (BlockNode blockNode in node.blockNodes)
+        foreach (BlockNode blockNode in node.blockNodes.OfType<CharacterBlockNode>())
         {
-            if (blockNode is not CharacterBlockNode)
-                continue;
-
             characters.Add(new CharacterData
             {
-                changePosition = GetNodeOptionValue(blockNode, CharacterBlockNode.ChangePositionName, false),
+                changePosition = GetNodeOptionValue(blockNode, CharacterBlockNode.ChangePositionPortName, false),
 
-                characterSprite = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpriteName),
-                name = GetPortValueSafe<string>(blockNode, CharacterBlockNode.CharacterNameName),
-                characterEmotion = GetPortValueSafe<CharacterEmotion>(blockNode, CharacterBlockNode.EmotionName),
-                isVisible = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.VisibleName),
-                characterAppearanceDelay = GetPortValueSafe<float>(blockNode, CharacterBlockNode.AppearanceDelayName),
-                isTalking = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.IsTalkingName),
-                hideName = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNameName),
+                characterSprite = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpritePortName),
+                name = GetPortValueSafe<string>(blockNode, CharacterBlockNode.CharacterNamePortName),
+                characterEmotion = GetPortValueSafe<CharacterEmotion>(blockNode, CharacterBlockNode.EmotionPortName),
+                isVisible = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.VisiblePortName),
+                characterAppearanceDelay = GetPortValueSafe<float>(blockNode, CharacterBlockNode.AppearanceDelayPortName),
+                isTalking = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.IsTalkingPortName),
+                hideName = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNamePortName),
 
-                smoothMove = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.SmoothMovementName),
-                characterPosition = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionName),
-                characterRotation = GetPortValueSafe<float>(blockNode, CharacterBlockNode.RotationName),
-                characterScale = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.ScaleName),
+                smoothMove = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.SmoothMovementPortName),
+                characterPosition = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName),
+                characterRotation = GetPortValueSafe<float>(blockNode, CharacterBlockNode.RotationPortName),
+                characterScale = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.ScalePortName),
             });
         }
         runtimeDialogueNode.characters = characters;
 
-        // First choice block node data
-        // TODO: Split the choices up into their own block nodes instead of all in one because it would be way easier that way since it's with context nodes
+        // Choice block nodes data
         List<RuntimeChoice> choices = new();
-        List<DialogueContextNode> contextNodes = new();
-        ChoiceBlockNode choiceBlockNode = node.blockNodes
-            .OfType<ChoiceBlockNode>()
-            .First();
-
-        if (choiceBlockNode != null)
+        foreach (BlockNode blockNode in node.blockNodes.OfType<ChoiceBlockNode>())
         {
-            // Gets all output ports for the choices
-            IEnumerable<IPort> choiceOutputPorts = choiceBlockNode.GetOutputPorts().Where(p => p.name.StartsWith("choice "));
-            foreach (IPort outputPort in choiceOutputPorts)
+            IPort conditionPort = blockNode.GetInputPortByName(ChoiceBlockNode.ConditionsChoicePortName).firstConnectedPort;
+            IPort outputPort = blockNode.GetOutputPortByName(ChoiceBlockNode.ChoicePortName);
+
+            List<ValueComparer> comparisons = conditionPort != null && conditionPort.GetNode() is ConditionContextNode conditionNode
+                ? ProcessConditionContextNode(conditionNode, idMap)
+                : new List<ValueComparer>();
+
+            choices.Add(new RuntimeChoice
             {
-                // Gets choice index and gets the text and conditions ports with it
-                string index = outputPort.name.Substring("choice ".Length);
-                IPort textPort = choiceBlockNode.GetInputPortByName($"choice text {index}");
-                IPort conditionsPort = choiceBlockNode.GetInputPortByName($"conditions choice {index}");
-
-                // Adds the choices to the list
-                RuntimeChoice choiceData = new RuntimeChoice
-                {
-                    choiceText = GetPortValueSafe<string>(choiceBlockNode, $"choice text {index}"),
-                    // Get the conditions from the conditions context node
-                    nextNodeID = outputPort.firstConnectedPort != null ? idMap[outputPort.firstConnectedPort.GetNode()] : null,
-                };
-                choices.Add(choiceData);
-            }
-
-            runtimeDialogueNode.choices = choices;
+                choiceText = GetPortValueSafe<string>(blockNode, ChoiceBlockNode.ChoiceTextPortName),
+                comparisons = comparisons,
+                nextNodeID = outputPort.firstConnectedPort != null ? idMap[outputPort.firstConnectedPort.GetNode()] : null,
+            });
         }
+        runtimeDialogueNode.choices = choices;
 
         return runtimeDialogueNode;
     }
 
+    private List<ValueComparer> ProcessConditionContextNode(ConditionContextNode node, Dictionary<INode, string> idMap)
+    {
+        List<ValueComparer> comparisons = new();
+        foreach (BlockNode blockNode in node.blockNodes.OfType<CompareBlockNode>())
+        {
+            ValueComparer comparer = new ValueComparer
+            {
+                variable = GetPortValueSafe<string>(blockNode, CompareBlockNode.VariablePortName),
+                comparison = GetPortValueSafe<ComparisonType>(blockNode, CompareBlockNode.ComparisonTypePortName),
+                value = GetPortValueSafe<object>(blockNode, CompareBlockNode.ValuePortName),
+            };
+            comparisons.Add(comparer);
+        }
+        return comparisons;
+    }
+
     private RuntimeSplitterNode ProcessSplitterContextNode(SplitterContextNode node, Dictionary<INode, string> idMap)
     {
-        var runtime = new RuntimeSplitterNode();
+        RuntimeSplitterNode runtimeSplitterNode = new();
 
-        //// Default output
-        //var defaultOut = node.GetOutputPortByName("out")?.firstConnectedPort;
-        //runtime.defaultOutputNodeID = defaultOut != null ? idMap[defaultOut.GetNode()] : null;
+        // Temporary storage for CompareBlockNodes that appear before an output
+        List<ValueComparer> currentComparisons = new();
 
-        //// Comparisons (if present)
-        //var compPorts = node.GetOutputPorts().Where(p => p.name.StartsWith("if "));
-        //foreach (var port in compPorts)
-        //{
-        //    var comp = new ValueComparer
-        //    {
-        //        variableName = GetPortValueSafe<string>(node, "variable"),
-        //        comparisonType = GetPortValueSafe<ComparisonType>(node, "comparison type"),
-        //        compareValue = GetPortValueSafe<object>(node, "value"),
-        //        outputNodeID = port.firstConnectedPort != null ? idMap[port.firstConnectedPort.GetNode()] : null
-        //    };
-        //    runtime.comparisons.Add(comp);
-        //}
+        foreach (BlockNode blockNode in node.blockNodes)
+        {
+            switch (blockNode)
+            {
+                // Collect comparisons
+                case CompareBlockNode compareNode:
+                    currentComparisons.Add(new ValueComparer
+                    {
+                        variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
+                        comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
+                        value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
+                    });
+                    break;
 
-        return runtime;
+                // When we hit an output block, we create a new branch
+                case SplitterOutputBlockNode outputBlock:
+                    {
+                        IPort outPort = outputBlock.GetOutputPorts().FirstOrDefault(p => p.name == "out");
+                        string nextNodeID = outPort?.firstConnectedPort != null
+                            ? idMap[outPort.firstConnectedPort.GetNode()]
+                            : null;
+
+                        // Store the collected comparisons for this branch
+                        runtimeSplitterNode.outputs.Add(new RuntimeSplitterOutput
+                        {
+                            nextNodeID = nextNodeID,
+                            comparisons = new List<ValueComparer>(currentComparisons)
+                        });
+
+                        // Reset comparisons for the next branch
+                        currentComparisons.Clear();
+                        break;
+                    }
+
+                // Handle the default output
+                case SplitterDefaultOutputBlockNode defaultBlock:
+                    {
+                        IPort outPort = defaultBlock.GetOutputPorts().FirstOrDefault(p => p.name == "out");
+                        if (outPort?.firstConnectedPort != null)
+                            runtimeSplitterNode.defaultOutputNodeID = idMap[outPort.firstConnectedPort.GetNode()];
+
+                        currentComparisons.Clear();
+                        break;
+                    }
+            }
+        }
+
+        return runtimeSplitterNode;
     }
 
     #endregion
