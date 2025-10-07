@@ -1,7 +1,7 @@
 using System;
 using Unity.GraphToolkit.Editor;
 
-[UseWithContext(typeof(SplitterContextNode), typeof(ConditionContextNode))]
+[UseWithContext(typeof(SplitterContextNode), typeof(DialogueContextNode))]
 [Serializable]
 public class CompareBlockNode : BlockNode
 {

@@ -71,9 +71,6 @@ public class DialogueGraphImporter : ScriptedImporter
                 case SplitterContextNode splitterContextNode:
                     runtimeNode = ProcessSplitterContextNode(splitterContextNode, nodeIDMap);
                     break;
-                case ConditionContextNode:
-                    // Get's processed in the dialogue context node
-                    break;
                 default:
                     Debug.LogWarning($"Unrecognized node type: {node}");
                     break;
@@ -157,66 +154,64 @@ public class DialogueGraphImporter : ScriptedImporter
         runtimeDialogueNode.characters = characters;
 
         // Choice block nodes data
-        List<RuntimeChoice> choices = new();
-        foreach (BlockNode blockNode in node.blockNodes.OfType<ChoiceBlockNode>())
+        RuntimeChoice currentChoice = null;
+        foreach (BlockNode blockNode in node.blockNodes)
         {
-            IPort conditionPort = blockNode.GetInputPortByName(ChoiceBlockNode.ConditionsChoicePortName).firstConnectedPort;
-            IPort outputPort = blockNode.GetOutputPortByName(ChoiceBlockNode.ChoicePortName);
-
-            List<ValueComparer> comparisons = conditionPort != null && conditionPort.GetNode() is ConditionContextNode conditionNode
-                ? ProcessConditionContextNode(conditionNode, idMap)
-                : new List<ValueComparer>();
-
-            choices.Add(new RuntimeChoice
+            switch (blockNode)
             {
-                choiceText = GetPortValueSafe<string>(blockNode, ChoiceBlockNode.ChoiceTextPortName),
-                comparisons = comparisons,
-                nextNodeID = outputPort.firstConnectedPort != null ? idMap[outputPort.firstConnectedPort.GetNode()] : null,
-            });
+                // When we hit a choice block, create a new branch to attach future comparisons to
+                case ChoiceBlockNode choiceBlock:
+                    {
+                        IPort outPort = choiceBlock.GetOutputPorts().FirstOrDefault(p => p.name == "out");
+                        string nextNodeID = outPort?.firstConnectedPort != null
+                            ? idMap[outPort.firstConnectedPort.GetNode()]
+                            : null;
+
+                        currentChoice = new RuntimeChoice
+                        {
+                            nextNodeID = nextNodeID,
+                            comparisons = new List<ValueComparer>(),
+                            choiceText = GetPortValueSafe<string>(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
+                        };
+
+                        runtimeDialogueNode.choices.Add(currentChoice);
+                        break;
+                    }
+
+                // Comparisons after the most recent choice block
+                case CompareBlockNode compareNode:
+                    {
+                        if (currentChoice == null)
+                        {
+                            Debug.LogWarning($"CompareBlockNode found before any choice block in a DialogueContextNode. It will be ignored.");
+                            continue;
+                        }
+
+                        currentChoice.comparisons.Add(new ValueComparer
+                        {
+                            variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
+                            comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
+                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
+                        });
+
+                        break;
+                    }
+            }
         }
-        runtimeDialogueNode.choices = choices;
 
         return runtimeDialogueNode;
-    }
-
-    private List<ValueComparer> ProcessConditionContextNode(ConditionContextNode node, Dictionary<INode, string> idMap)
-    {
-        List<ValueComparer> comparisons = new();
-        foreach (BlockNode blockNode in node.blockNodes.OfType<CompareBlockNode>())
-        {
-            ValueComparer comparer = new ValueComparer
-            {
-                variable = GetPortValueSafe<string>(blockNode, CompareBlockNode.VariablePortName),
-                comparison = GetPortValueSafe<ComparisonType>(blockNode, CompareBlockNode.ComparisonTypePortName),
-                value = GetPortValueSafe<object>(blockNode, CompareBlockNode.ValuePortName),
-            };
-            comparisons.Add(comparer);
-        }
-        return comparisons;
     }
 
     private RuntimeSplitterNode ProcessSplitterContextNode(SplitterContextNode node, Dictionary<INode, string> idMap)
     {
         RuntimeSplitterNode runtimeSplitterNode = new();
 
-        // Temporary storage for CompareBlockNodes that appear before an output
-        List<ValueComparer> currentComparisons = new();
-
+        RuntimeSplitterOutput currentOutput = null;
         foreach (BlockNode blockNode in node.blockNodes)
         {
             switch (blockNode)
             {
-                // Collect comparisons
-                case CompareBlockNode compareNode:
-                    currentComparisons.Add(new ValueComparer
-                    {
-                        variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
-                        comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
-                        value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
-                    });
-                    break;
-
-                // When we hit an output block, we create a new branch
+                // When we hit an output block, create a new branch to attach future comparisons to
                 case SplitterOutputBlockNode outputBlock:
                     {
                         IPort outPort = outputBlock.GetOutputPorts().FirstOrDefault(p => p.name == "out");
@@ -224,26 +219,44 @@ public class DialogueGraphImporter : ScriptedImporter
                             ? idMap[outPort.firstConnectedPort.GetNode()]
                             : null;
 
-                        // Store the collected comparisons for this branch
-                        runtimeSplitterNode.outputs.Add(new RuntimeSplitterOutput
+                        currentOutput = new RuntimeSplitterOutput
                         {
                             nextNodeID = nextNodeID,
-                            comparisons = new List<ValueComparer>(currentComparisons)
-                        });
+                            comparisons = new List<ValueComparer>()
+                        };
 
-                        // Reset comparisons for the next branch
-                        currentComparisons.Clear();
+                        runtimeSplitterNode.outputs.Add(currentOutput);
                         break;
                     }
 
-                // Handle the default output
+                // When we hit the default block, track it separately
                 case SplitterDefaultOutputBlockNode defaultBlock:
                     {
                         IPort outPort = defaultBlock.GetOutputPorts().FirstOrDefault(p => p.name == "out");
-                        if (outPort?.firstConnectedPort != null)
-                            runtimeSplitterNode.defaultOutputNodeID = idMap[outPort.firstConnectedPort.GetNode()];
+                        string nextNodeID = outPort?.firstConnectedPort != null
+                            ? idMap[outPort.firstConnectedPort.GetNode()]
+                            : null;
 
-                        currentComparisons.Clear();
+                        runtimeSplitterNode.defaultOutputNodeID = nextNodeID;
+                        break;
+                    }
+
+                // Comparisons after the most recent output block
+                case CompareBlockNode compareNode:
+                    {
+                        if (currentOutput == null)
+                        {
+                            Debug.LogWarning($"CompareBlockNode found before any output block in a SplitterContextNode. It will be ignored.");
+                            continue;
+                        }
+
+                        currentOutput.comparisons.Add(new ValueComparer
+                        {
+                            variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
+                            comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
+                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
+                        });
+
                         break;
                     }
             }
