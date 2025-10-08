@@ -50,6 +50,15 @@ public class RuntimeDialogueNode : RuntimeNode
 }
 
 [Serializable]
+public class RuntimeChoice
+{
+    public string choiceText;
+    public bool showIfConditionNotMet;
+    public List<ValueComparer> comparisons = new();
+    public string nextNodeID;
+}
+
+[Serializable]
 public class DialogueSettings
 {
     // Node options
@@ -107,15 +116,6 @@ public class RuntimeSplitterNode : RuntimeNode
     public string defaultOutputNodeID;
 }
 
-[Serializable]
-public class RuntimeChoice
-{
-    public string choiceText;
-    public bool showIfConditionNotMet;
-    public List<ValueComparer> comparisons = new();
-    public string nextNodeID;
-}
-
 public class RuntimeBlackboard
 {
     private readonly Dictionary<string, RuntimeVariable> variables = new();
@@ -165,6 +165,64 @@ public class RuntimeVariable
 
     public T GetValue<T>() => value is T t ? t : default;
     public void SetValue(object newValue) => value = newValue;
+}
+
+[Serializable]
+public class ValueComparer
+{
+    public VariableType variableType;
+    public ComparisonType comparisonType;
+    public object variable;
+    public object value;
+
+    public bool Evaluate()
+    {
+        if (variable == null || value == null)
+            return false;
+
+        switch (variableType)
+        {
+            case VariableType.Bool:
+                return (bool)variable == (bool)value;
+
+            case VariableType.String:
+                return (string)variable == (string)value;
+
+            case VariableType.Float:
+                return Compare((float)variable, (float)value);
+
+            case VariableType.Int:
+                return Compare((int)variable, (int)value);
+
+            default:
+                return false;
+        }
+    }
+
+    private bool Compare<T>(T a, T b) where T : IComparable
+    {
+        int cmp = a.CompareTo(b);
+        return comparisonType switch
+        {
+            ComparisonType.Equal => cmp == 0,
+            ComparisonType.NotEqual => cmp != 0,
+            ComparisonType.Greater => cmp > 0,
+            ComparisonType.Less => cmp < 0,
+            ComparisonType.GreaterOrEqual => cmp >= 0,
+            ComparisonType.LessOrEqual => cmp <= 0,
+            _ => false
+        };
+    }
+}
+
+public enum ComparisonType
+{
+    Equal,
+    NotEqual,
+    Greater,
+    Less,
+    GreaterOrEqual,
+    LessOrEqual,
 }
 
 public enum VariableType

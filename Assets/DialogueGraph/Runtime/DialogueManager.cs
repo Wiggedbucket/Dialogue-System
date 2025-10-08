@@ -121,12 +121,12 @@ public class DialogueManager : MonoBehaviour
                 foreach (ValueComparer comparison in choice.comparisons)
                 {
                     valid = comparison.Evaluate();
-                    Debug.Log(valid);
+                    Debug.Log(valid + " " + comparison.variableType + " | " + comparison.variable + " " + comparison.comparisonType + " " + comparison.value);
                 }
 
                 if (!valid)
                 {
-                    button.enabled = false;
+                    button.interactable = false;
                     button.gameObject.SetActive(choice.showIfConditionNotMet);
                 }
             }

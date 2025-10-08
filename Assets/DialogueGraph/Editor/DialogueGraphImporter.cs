@@ -72,7 +72,7 @@ public class DialogueGraphImporter : ScriptedImporter
                     runtimeNode = ProcessSplitterContextNode(splitterContextNode, nodeIDMap);
                     break;
                 default:
-                    Debug.LogWarning($"Unrecognized node type: {node}");
+                    // Do nothing if the node type isn't recognized
                     break;
             }
 
@@ -105,12 +105,12 @@ public class DialogueGraphImporter : ScriptedImporter
         // Settings
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
-            nextDialogueText = GetNodeOptionValue(node, DialogueContextNode.NextDialogueTextPortName, true),
-            delayWithClick = GetNodeOptionValue(node, DialogueContextNode.DelayWithClickPortName, false),
-            keepPreviousText = GetNodeOptionValue(node, DialogueContextNode.KeepPreviousTextPortName, false),
-            editSettings = GetNodeOptionValue(node, DialogueContextNode.EditSettingsPortName, false),
-            editTextSettings = GetNodeOptionValue(node, DialogueContextNode.EditTextSettingsPortName, false),
-            editEnvironmentSettings = GetNodeOptionValue(node, DialogueContextNode.EditEnvironmentSettingsPortName, false),
+            nextDialogueText = GetBoolOption(node, DialogueContextNode.NextDialogueTextPortName, true),
+            delayWithClick = GetBoolOption(node, DialogueContextNode.DelayWithClickPortName, false),
+            keepPreviousText = GetBoolOption(node, DialogueContextNode.KeepPreviousTextPortName, false),
+            editSettings = GetBoolOption(node, DialogueContextNode.EditSettingsPortName, false),
+            editTextSettings = GetBoolOption(node, DialogueContextNode.EditTextSettingsPortName, false),
+            editEnvironmentSettings = GetBoolOption(node, DialogueContextNode.EditEnvironmentSettingsPortName, false),
 
             printSpeed = GetPortValueSafe<float>(node, DialogueContextNode.PrintSpeedPortName),
             delayText = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextPortName),
@@ -135,7 +135,7 @@ public class DialogueGraphImporter : ScriptedImporter
         {
             characters.Add(new CharacterData
             {
-                changePosition = GetNodeOptionValue(blockNode, CharacterBlockNode.ChangePositionPortName, false),
+                changePosition = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName, false),
 
                 characterSprite = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpritePortName),
                 name = GetPortValueSafe<string>(blockNode, CharacterBlockNode.CharacterNamePortName),
@@ -190,8 +190,9 @@ public class DialogueGraphImporter : ScriptedImporter
 
                         currentChoice.comparisons.Add(new ValueComparer
                         {
-                            variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
-                            comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
+                            variableType = GetVariableTypeOption(compareNode, CompareBlockNode.SelectVariableTypePortName),
+                            variable = GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName),
+                            comparisonType = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
                             value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
                         });
 
@@ -251,13 +252,15 @@ public class DialogueGraphImporter : ScriptedImporter
                             continue;
                         }
 
+                        Debug.Log(GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName));
+
                         currentOutput.comparisons.Add(new ValueComparer
                         {
-                            variable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
-                            comparison = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
+                            variableType = GetVariableTypeOption(compareNode, CompareBlockNode.SelectVariableTypePortName),
+                            variable = GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName),
+                            comparisonType = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
                             value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
                         });
-
                         break;
                     }
             }
@@ -270,42 +273,24 @@ public class DialogueGraphImporter : ScriptedImporter
 
     #region Helper Functions
 
+    private VariableType GetVariableTypeOption(Node node, string name, VariableType defaultValue = VariableType.Float)
+    {
+        var opt = node.GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<VariableType>(out var value) ? value : defaultValue;
+    }
+
+    private bool GetBoolOption(Node node, string name, bool defaultValue = false)
+    {
+        var opt = node.GetNodeOptionByName(name);
+        return opt != null && opt.TryGetValue<bool>(out var value) ? value : defaultValue;
+    }
+
     private T GetPortValueSafe<T>(INode node, string portName)
     {
         var port = node.GetInputPorts().FirstOrDefault(p => p.name == portName);
         if (port != null && port.TryGetValue(out T value))
             return value;
         return default;
-    }
-
-    private T GetNodeOptionValue<T>(INode node, string optionName, T defaultValue = default)
-    {
-        if (node == null)
-            return defaultValue;
-
-        var method = node.GetType().GetMethod("GetNodeOptionByName", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (method == null)
-            return defaultValue;
-
-        var opt = method.Invoke(node, new object[] { optionName });
-        if (opt == null)
-            return defaultValue;
-
-        var tryGetValue = opt.GetType().GetMethod("TryGetValue", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (tryGetValue == null)
-            return defaultValue;
-
-        try
-        {
-            var generic = tryGetValue.IsGenericMethodDefinition ? tryGetValue.MakeGenericMethod(typeof(T)) : tryGetValue;
-            object[] args = new object[] { default(T) };
-            bool success = (bool)generic.Invoke(opt, args);
-            return success ? (T)args[0] : defaultValue;
-        }
-        catch
-        {
-            return defaultValue;
-        }
     }
 
     private VariableType ConvertType(Type type)
