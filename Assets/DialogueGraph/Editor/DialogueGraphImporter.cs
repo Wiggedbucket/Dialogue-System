@@ -172,6 +172,7 @@ public class DialogueGraphImporter : ScriptedImporter
                             nextNodeID = nextNodeID,
                             comparisons = new List<ValueComparer>(),
                             choiceText = GetPortValueSafe<string>(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
+                            showIfConditionNotMet = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
                         };
 
                         runtimeDialogueNode.choices.Add(currentChoice);

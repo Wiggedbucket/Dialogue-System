@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 [Serializable]
@@ -11,6 +12,20 @@ public class ValueComparer
 
     public bool Evaluate()
     {
+        // Handle nulls first
+        if (variable == null || value == null)
+        {
+            Debug.Log("Both values null");
+            // If both are null, treat as equal
+            if (comparison == ComparisonType.Equal)
+                return variable == value;
+            if (comparison == ComparisonType.NotEqual)
+                return variable != value;
+
+            // Can't compare >, <, etc. with nulls
+            return false;
+        }
+
         if (variable is IComparable v && value is IComparable val)
         {
             int cmp = v.CompareTo(val);
@@ -26,7 +41,7 @@ public class ValueComparer
         }
         else
         {
-            // Fallback for bool or unsupported types
+            // Fallback for non-IComparable types like bool
             if (comparison == ComparisonType.Equal) return variable.Equals(value);
             if (comparison == ComparisonType.NotEqual) return !variable.Equals(value);
         }

@@ -345,7 +345,7 @@ MonoBehaviour:
       type: {class: 'Constant`1[[DialogueData, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value:
-          text: 
+          text: Hello world!
     - rid: 5077103961774489921
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -755,6 +755,14 @@ MonoBehaviour:
     - rid: 5077103961774489968
       type: {class: CharacterBlockNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
+    - rid: 5077103980571263044
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 5077103980571263045
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
     - rid: 7566503844709138502
       type: {class: UserBlockNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: Unity.GraphToolkit.Editor}
       data:
@@ -774,8 +782,10 @@ MonoBehaviour:
         m_InputConstantsById:
           m_KeyList:
           - choice text
+          - show if condition isn't met
           m_ValueList:
           - rid: 7566503844709138503
+          - rid: 5077103980571263044
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -819,8 +829,10 @@ MonoBehaviour:
         m_InputConstantsById:
           m_KeyList:
           - choice text
+          - show if condition isn't met
           m_ValueList:
           - rid: 7566503844709138508
+          - rid: 5077103980571263045
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []

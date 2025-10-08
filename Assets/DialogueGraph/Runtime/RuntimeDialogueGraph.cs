@@ -111,6 +111,7 @@ public class RuntimeSplitterNode : RuntimeNode
 public class RuntimeChoice
 {
     public string choiceText;
+    public bool showIfConditionNotMet;
     public List<ValueComparer> comparisons = new();
     public string nextNodeID;
 }
