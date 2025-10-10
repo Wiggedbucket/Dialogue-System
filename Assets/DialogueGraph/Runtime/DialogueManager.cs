@@ -121,7 +121,7 @@ public class DialogueManager : MonoBehaviour
                 foreach (ValueComparer comparison in choice.comparisons)
                 {
                     valid = comparison.Evaluate();
-                    Debug.Log(valid + " " + comparison.variableType + " | " + comparison.variable + " " + comparison.comparisonType + " " + comparison.value);
+                    Debug.Log(valid + " | " + comparison.variable + " " + comparison.comparisonType + " " + comparison.value);
                 }
 
                 if (!valid)

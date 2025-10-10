@@ -157,6 +157,7 @@ public class DialogueGraphImporter : ScriptedImporter
         RuntimeChoice currentChoice = null;
         foreach (BlockNode blockNode in node.blockNodes)
         {
+            Debug.Log("Processing Node");
             switch (blockNode)
             {
                 // When we hit a choice block, create a new branch to attach future comparisons to
@@ -174,11 +175,10 @@ public class DialogueGraphImporter : ScriptedImporter
                             choiceText = GetPortValueSafe<string>(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
                             showIfConditionNotMet = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
                         };
-
                         runtimeDialogueNode.choices.Add(currentChoice);
                         break;
                     }
-
+                
                 // Comparisons after the most recent choice block
                 case CompareBlockNode compareNode:
                     {
@@ -193,9 +193,8 @@ public class DialogueGraphImporter : ScriptedImporter
                             variableType = GetVariableTypeOption(compareNode, CompareBlockNode.SelectVariableTypePortName),
                             variable = GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName),
                             comparisonType = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
-                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
+                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName),
                         });
-
                         break;
                     }
             }
@@ -252,15 +251,15 @@ public class DialogueGraphImporter : ScriptedImporter
                             continue;
                         }
 
-                        Debug.Log(GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName));
-
                         currentOutput.comparisons.Add(new ValueComparer
                         {
                             variableType = GetVariableTypeOption(compareNode, CompareBlockNode.SelectVariableTypePortName),
                             variable = GetPortValueSafe<object>(compareNode, CompareBlockNode.VariablePortName),
                             comparisonType = GetPortValueSafe<ComparisonType>(compareNode, CompareBlockNode.ComparisonTypePortName),
-                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName)
+                            value = GetPortValueSafe<object>(compareNode, CompareBlockNode.ValuePortName),
                         });
+
+                        runtimeSplitterNode.outputs.Add(currentOutput);
                         break;
                     }
             }
