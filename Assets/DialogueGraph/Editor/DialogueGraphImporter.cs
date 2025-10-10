@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.GraphToolkit.Editor;
 using UnityEditor.AssetImporters;
@@ -30,7 +31,7 @@ public class DialogueGraphImporter : ScriptedImporter
         foreach (INode node in editorGraph.GetNodes())
             nodeIDMap[node] = Guid.NewGuid().ToString();
 
-        // --- Entry Node ---
+        // Get entry node
         INode startNode = editorGraph.GetNodes().FirstOrDefault(n => n.GetType().Name == "StartNode");
         if (startNode != null)
         {
@@ -39,23 +40,13 @@ public class DialogueGraphImporter : ScriptedImporter
                 runtimeGraph.entryNodeID = nodeIDMap[nextPort.GetNode()];
         }
 
-        // --- Blackboard Variables ---
-        foreach (var variable in editorGraph.GetVariables())
+        // Blackboard values
+        foreach (IVariable variable in editorGraph.GetVariables())
         {
-            object val = null;
-            variable.TryGetDefaultValue(out val);
-
-            RuntimeVariable runtimeVar = new RuntimeVariable
-            {
-                name = variable.name,
-                type = ConvertType(variable.dataType),
-                value = val
-            };
-
-            runtimeGraph.blackboardVariables.Add(runtimeVar);
+            runtimeGraph.blackboardVariables.Add(CreateBlackBoardVariable(variable));
         }
 
-        // --- Nodes ---
+        // Process nodes
         foreach (INode node in editorGraph.GetNodes())
         {
             if (node is StartNode or EndNode)
@@ -88,9 +79,52 @@ public class DialogueGraphImporter : ScriptedImporter
             }
         }
 
-        // --- Save asset ---
+        // Save the asset
         ctx.AddObjectToAsset("RuntimeDialogueGraph", runtimeGraph);
         ctx.SetMainObject(runtimeGraph);
+    }
+
+    public BlackBoardVariableBase CreateBlackBoardVariable(IVariable variable)
+    {
+        if (variable == null)
+        {
+            Debug.LogError("Variable is null!");
+            return null;
+        }
+
+        if (variable.dataType == null)
+        {
+            Debug.LogError($"Variable '{variable.name}' has no data type!");
+            return null;
+        }
+
+        // Create a runtime instance of BlackBoardVariable<T>
+        var genericType = typeof(BlackBoardVariable<>).MakeGenericType(variable.dataType);
+        var genericObject = Activator.CreateInstance(genericType);
+        if (genericObject == null)
+        {
+            Debug.LogError($"Failed to create BlackBoardVariable for type {variable.dataType}");
+            return null;
+        }
+
+        var bbVar = genericObject as BlackBoardVariableBase;
+        bbVar.name = variable.name;
+
+        // Try to copy default value if available
+        if (variable.TryGetDefaultValue(out object val) && val != null)
+        {
+            var valueField = genericType.GetField("Value");
+            if (valueField != null)
+            {
+                valueField.SetValue(bbVar, val);
+            }
+            else
+            {
+                Debug.LogWarning($"No Value field found for variable {variable.name}");
+            }
+        }
+
+        return bbVar;
     }
 
     #region Node Processors
@@ -314,15 +348,6 @@ public class DialogueGraphImporter : ScriptedImporter
         if (port != null && port.TryGetValue(out T value))
             return value;
         return default;
-    }
-
-    private VariableType ConvertType(Type type)
-    {
-        if (type == typeof(float)) return VariableType.Float;
-        if (type == typeof(int)) return VariableType.Int;
-        if (type == typeof(bool)) return VariableType.Bool;
-        if (type == typeof(string)) return VariableType.String;
-        return VariableType.String;
     }
 
     #endregion

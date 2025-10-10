@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
-using static UnityEngine.Rendering.DebugUI;
 
 [CreateAssetMenu(menuName = "Dialogue/Runtime Dialogue Graph")]
 [Serializable]
@@ -12,7 +11,8 @@ public class RuntimeDialogueGraph : ScriptableObject
     public string entryNodeID;
     [SerializeReference]
     public List<RuntimeNode> nodes = new();
-    public List<RuntimeVariable> blackboardVariables = new();
+    [SerializeReference]
+    public List<BlackBoardVariableBase> blackboardVariables = new();
 
     // Quick lookup
     private Dictionary<string, RuntimeNode> nodeLookup;
@@ -33,6 +33,7 @@ public class RuntimeDialogueGraph : ScriptableObject
     }
 }
 
+#region Runtime Nodes
 [Serializable]
 public abstract class RuntimeNode
 {
@@ -48,15 +49,6 @@ public class RuntimeDialogueNode : RuntimeNode
 
     public List<CharacterData> characters = new();
     public List<RuntimeChoice> choices = new();
-}
-
-[Serializable]
-public class RuntimeChoice
-{
-    public string choiceText;
-    public bool showIfConditionNotMet;
-    public List<ValueComparer> comparisons = new();
-    public string nextNodeID;
 }
 
 [Serializable]
@@ -89,18 +81,12 @@ public class DialogueSettings
 }
 
 [Serializable]
-public enum BackgroundTransition
+public class RuntimeChoice
 {
-    None,
-    FadeOutAndIn,
-    SlideLeft,
-    SlideRight,
-    SlideUp,
-    SlideDown,
-    FadeRight,
-    FadeLeft,
-    FadeUp,
-    FadeDown,
+    public string choiceText;
+    public bool showIfConditionNotMet;
+    public List<ValueComparer> comparisons = new();
+    public string nextNodeID;
 }
 
 [Serializable]
@@ -115,80 +101,6 @@ public class RuntimeSplitterNode : RuntimeNode
 {
     public List<RuntimeSplitterOutput> outputs = new();
     public string defaultOutputNodeID;
-}
-
-public class RuntimeBlackboard
-{
-    private readonly Dictionary<string, RuntimeVariable> variables = new();
-
-    public RuntimeBlackboard(List<RuntimeVariable> variableList)
-    {
-        foreach (var v in variableList)
-            variables[v.name] = v;
-    }
-
-    public T Get<T>(string name)
-    {
-        return variables.TryGetValue(name, out var v) ? v.GetValue<T>() : default;
-    }
-
-    public void Set(string name, object newValue)
-    {
-        if (variables.TryGetValue(name, out var v))
-            v.SetValue(newValue);
-    }
-
-    public bool Compare(ValueComparer comparer)
-    {
-        // Try to find variable by name in blackboard
-        if (variables.TryGetValue(comparer.variableName, out var runtimeVar))
-        {
-            // Override the comparer’s variable fields with the runtime values
-            switch (runtimeVar.type)
-            {
-                case VariableType.Bool:
-                    comparer.boolVariable = (bool)runtimeVar.value;
-                    break;
-                case VariableType.String:
-                    comparer.stringVariable = (string)runtimeVar.value;
-                    break;
-                case VariableType.Float:
-                    comparer.floatVariable = Convert.ToSingle(runtimeVar.value);
-                    break;
-                case VariableType.Int:
-                    comparer.intVariable = Convert.ToInt32(runtimeVar.value);
-                    break;
-            }
-        }
-        else
-        {
-            // Variable not found in blackboard — log or silently fallback
-            Debug.LogWarning($"Variable '{comparer.variableName}' not found in RuntimeBlackboard. Using comparer’s static value.");
-        }
-
-        // Perform the actual evaluation
-        return comparer.Evaluate();
-    }
-
-    /*
-     * 
-     *  To use in runtime:
-     *      var runtimeBlackboard = new RuntimeBlackboard(runtimeGraph.blackboardVariables);
-     *      runtimeBlackboard.Set("hasKey", true);
-     *      bool hasKey = runtimeBlackboard.Get<bool>("hasKey");
-     * 
-     */
-}
-
-[Serializable]
-public class RuntimeVariable
-{
-    public string name;
-    public VariableType type;
-    public object value;
-
-    public T GetValue<T>() => value is T t ? t : default;
-    public void SetValue(object newValue) => value = newValue;
 }
 
 [Serializable]
@@ -247,7 +159,25 @@ public class ValueComparer
         };
     }
 }
+#endregion
 
+#region Enums
+[Serializable]
+public enum BackgroundTransition
+{
+    None,
+    FadeOutAndIn,
+    SlideLeft,
+    SlideRight,
+    SlideUp,
+    SlideDown,
+    FadeRight,
+    FadeLeft,
+    FadeUp,
+    FadeDown,
+}
+
+[Serializable]
 public enum ComparisonType
 {
     Equal,
@@ -258,6 +188,7 @@ public enum ComparisonType
     LessOrEqual,
 }
 
+[Serializable]
 public enum VariableType
 {
     Float,
@@ -265,3 +196,4 @@ public enum VariableType
     Bool,
     String,
 }
+#endregion

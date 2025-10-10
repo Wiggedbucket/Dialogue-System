@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -7,6 +9,7 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
     public RuntimeDialogueGraph runtimeGraph;
+    public DialogueBlackboard dialogueBlackboard;
 
     [Header("UI Components")]
     public GameObject dialoguePanel;
@@ -20,6 +23,37 @@ public class DialogueManager : MonoBehaviour
     public Transform choiceButtonContainer;
 
     private RuntimeNode currentNode;
+
+    private void Start()
+    {
+        CreateRuntimeBlackboard(runtimeGraph);
+    }
+
+    public DialogueBlackboard CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
+    {
+        GameObject go = new GameObject("DialogueBlackboard");
+        DialogueBlackboard bb = go.AddComponent<DialogueBlackboard>();
+        dialogueBlackboard = bb;
+        bb.variables = new List<BlackBoardVariableBase>();
+
+        foreach (BlackBoardVariableBase v in graph.blackboardVariables)
+        {
+            // Copy the variable
+            var type = v.GetType();
+            var clone = Activator.CreateInstance(type) as BlackBoardVariableBase;
+            
+            clone.name = v.name;
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(BlackBoardVariable<>))
+            {
+                var valueField = type.GetField("Value");
+                valueField.SetValue(clone, valueField.GetValue(v));
+            }
+
+            bb.variables.Add(clone);
+        }
+
+        return bb;
+    }
 
     private void Update()
     {
