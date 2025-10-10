@@ -120,8 +120,8 @@ public class DialogueManager : MonoBehaviour
                 bool valid = true;
                 foreach (ValueComparer comparison in choice.comparisons)
                 {
-                    valid = comparison.Evaluate();
-                    Debug.Log(valid + " | " + comparison.variable + " " + comparison.comparisonType + " " + comparison.value);
+                    if (!comparison.Evaluate())
+                        valid = false;
                 }
 
                 if (!valid)
@@ -135,7 +135,24 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupSplitterNode(RuntimeSplitterNode node)
     {
+        foreach (RuntimeSplitterOutput output in node.outputs)
+        {
+            bool valid = true;
+            foreach (ValueComparer comparison in output.comparisons)
+            {
+                if (!comparison.Evaluate())
+                    valid = false;
+            }
 
+            if (valid)
+            {
+                ShowNode(output.nextNodeID);
+                return;
+            }
+        }
+
+        if (node.defaultOutputNodeID != null)
+            ShowNode(node.defaultOutputNodeID);
     }
 
     private void EndDialogue()

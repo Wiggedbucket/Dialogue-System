@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using static UnityEngine.Rendering.DebugUI;
 
 [CreateAssetMenu(menuName = "Dialogue/Runtime Dialogue Graph")]
 [Serializable]
@@ -139,10 +140,33 @@ public class RuntimeBlackboard
 
     public bool Compare(ValueComparer comparer)
     {
-        if (!variables.TryGetValue(comparer.variable.ToString(), out var v))
-            return false;
+        // Try to find variable by name in blackboard
+        if (variables.TryGetValue(comparer.variableName, out var runtimeVar))
+        {
+            // Override the comparer’s variable fields with the runtime values
+            switch (runtimeVar.type)
+            {
+                case VariableType.Bool:
+                    comparer.boolVariable = (bool)runtimeVar.value;
+                    break;
+                case VariableType.String:
+                    comparer.stringVariable = (string)runtimeVar.value;
+                    break;
+                case VariableType.Float:
+                    comparer.floatVariable = Convert.ToSingle(runtimeVar.value);
+                    break;
+                case VariableType.Int:
+                    comparer.intVariable = Convert.ToInt32(runtimeVar.value);
+                    break;
+            }
+        }
+        else
+        {
+            // Variable not found in blackboard — log or silently fallback
+            Debug.LogWarning($"Variable '{comparer.variableName}' not found in RuntimeBlackboard. Using comparer’s static value.");
+        }
 
-        comparer.variable = v.value;
+        // Perform the actual evaluation
         return comparer.Evaluate();
     }
 
@@ -170,29 +194,38 @@ public class RuntimeVariable
 [Serializable]
 public class ValueComparer
 {
+    public string variableName;
     public VariableType variableType;
     public ComparisonType comparisonType;
-    public object variable;
-    public object value;
+    public bool equals;
+
+    public float floatVariable;
+    public float floatValue;
+
+    public int intVariable;
+    public int intValue;
+
+    public bool boolVariable;
+    public bool boolValue;
+
+    public string stringVariable;
+    public string stringValue;
 
     public bool Evaluate()
     {
-        if (variable == null || value == null)
-            return false;
-
         switch (variableType)
         {
             case VariableType.Bool:
-                return (bool)variable == (bool)value;
+                return equals ? boolVariable == boolValue : boolVariable != boolValue;
 
             case VariableType.String:
-                return (string)variable == (string)value;
+                return equals ? stringVariable == stringValue : stringVariable != stringValue;
 
             case VariableType.Float:
-                return Compare((float)variable, (float)value);
+                return Compare(floatVariable, floatValue);
 
             case VariableType.Int:
-                return Compare((int)variable, (int)value);
+                return Compare(intVariable, intValue);
 
             default:
                 return false;

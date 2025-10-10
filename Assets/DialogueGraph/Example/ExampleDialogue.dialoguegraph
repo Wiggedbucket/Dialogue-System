@@ -1314,6 +1314,10 @@ MonoBehaviour:
           m_PortDirection: 1
           m_PortOrientation: 0
           m_Title: in
+    - rid: 5077104026029654342
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
     - rid: 7566503844709138512
       type: {class: UserContextNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: Unity.GraphToolkit.Editor}
       data:
@@ -1472,10 +1476,12 @@ MonoBehaviour:
           - variable
           - value
           - __option_select variable type
+          - equals
           m_ValueList:
           - rid: 5077103984356622457
           - rid: 5077103984356622458
           - rid: 5077103984356622444
+          - rid: 5077104026029654342
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []

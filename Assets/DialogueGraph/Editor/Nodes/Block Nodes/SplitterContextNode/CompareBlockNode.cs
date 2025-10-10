@@ -9,6 +9,7 @@ public class CompareBlockNode : BlockNode
 
     public const string VariablePortName = "variable";
     public const string ValuePortName = "value";
+    public const string EqualsPortName = "equals";
     public const string ComparisonTypePortName = "comparison type";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
@@ -24,10 +25,12 @@ public class CompareBlockNode : BlockNode
         {
             case VariableType.Bool:
                 context.AddInputPort<bool>(VariablePortName).Build();
+                context.AddInputPort<bool>(EqualsPortName).Build();
                 context.AddInputPort<bool>(ValuePortName).Build();
                 break;
             case VariableType.String:
                 context.AddInputPort<string>(VariablePortName).Build();
+                context.AddInputPort<bool>(EqualsPortName).Build();
                 context.AddInputPort<string>(ValuePortName).Build();
                 break;
             case VariableType.Float:
