@@ -29,11 +29,10 @@ public class DialogueManager : MonoBehaviour
         CreateRuntimeBlackboard(runtimeGraph);
     }
 
-    public DialogueBlackboard CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
+    public void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
     {
-        GameObject go = new GameObject("DialogueBlackboard");
+        GameObject go = new("DialogueBlackboard");
         DialogueBlackboard bb = go.AddComponent<DialogueBlackboard>();
-        dialogueBlackboard = bb;
         bb.variables = new List<BlackBoardVariableBase>();
 
         foreach (BlackBoardVariableBase v in graph.blackboardVariables)
@@ -52,7 +51,8 @@ public class DialogueManager : MonoBehaviour
             bb.variables.Add(clone);
         }
 
-        return bb;
+        bb.SetupVariableMap();
+        dialogueBlackboard = bb;
     }
 
     private void Update()
@@ -137,7 +137,7 @@ public class DialogueManager : MonoBehaviour
                 Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
                 TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
 
-                buttonText.SetText(choice.choiceText);
+                buttonText.SetText(choice.choiceText.value);
 
                 button.onClick.AddListener(() =>
                 {
@@ -154,14 +154,14 @@ public class DialogueManager : MonoBehaviour
                 bool valid = true;
                 foreach (ValueComparer comparison in choice.comparisons)
                 {
-                    if (!comparison.Evaluate())
+                    if (!comparison.Evaluate(dialogueBlackboard))
                         valid = false;
                 }
 
                 if (!valid)
                 {
                     button.interactable = false;
-                    button.gameObject.SetActive(choice.showIfConditionNotMet);
+                    button.gameObject.SetActive(choice.showIfConditionNotMet.GetValue(dialogueBlackboard));
                 }
             }
         }
@@ -174,7 +174,7 @@ public class DialogueManager : MonoBehaviour
             bool valid = true;
             foreach (ValueComparer comparison in output.comparisons)
             {
-                if (!comparison.Evaluate())
+                if (!comparison.Evaluate(dialogueBlackboard))
                     valid = false;
             }
 

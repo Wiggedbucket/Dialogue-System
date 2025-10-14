@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.GraphToolkit.Editor;
 using UnityEditor.AssetImporters;
@@ -140,27 +138,96 @@ public class DialogueGraphImporter : ScriptedImporter
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
             nextDialogueText = GetBoolOption(node, DialogueContextNode.NextDialogueTextPortName, true),
+            awaitContinueEvent = GetBoolOption(node, DialogueContextNode.AwaitContinueEventPortName, false),
             delayWithClick = GetBoolOption(node, DialogueContextNode.DelayWithClickPortName, false),
             keepPreviousText = GetBoolOption(node, DialogueContextNode.KeepPreviousTextPortName, false),
-            editSettings = GetBoolOption(node, DialogueContextNode.EditSettingsPortName, false),
-            editTextSettings = GetBoolOption(node, DialogueContextNode.EditTextSettingsPortName, false),
-            editEnvironmentSettings = GetBoolOption(node, DialogueContextNode.EditEnvironmentSettingsPortName, false),
 
-            printSpeed = GetPortValueSafe<float>(node, DialogueContextNode.PrintSpeedPortName),
-            delayText = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextPortName),
-            broadcastString = GetPortValueSafe<string>(node, DialogueContextNode.BroadcastStringPortName),
+            printSpeed = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.PrintSpeedPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangePrintSpeedPortName),
+                value = GetPortValueSafe<float>(node, DialogueContextNode.PrintSpeedPortName),
+            },
+            delayText = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DelayTextPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ActivateTextDelayPortName),
+                value = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextPortName),
+            },
+            broadcastString = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BroadcastStringPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ActivateBroadcastStringPortName),
+                value = GetPortValueSafe<string>(node, DialogueContextNode.BroadcastStringPortName),
+            },
 
-            bold = GetPortValueSafe<bool>(node, DialogueContextNode.BoldPortName),
-            italic = GetPortValueSafe<bool>(node, DialogueContextNode.ItalicPortName),
-            underline = GetPortValueSafe<bool>(node, DialogueContextNode.UnderlinePortName),
-            font = GetPortValueSafe<TMP_FontAsset>(node, DialogueContextNode.FontPortName),
-            textAlign = GetPortValueSafe<TextAlignmentOptions>(node, DialogueContextNode.TextAlignPortName),
-            wrapText = GetPortValueSafe<bool>(node, DialogueContextNode.WrapTextPortName),
-            
-            musicQueue = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.MusicAudioQueuePortName),
-            audioList = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioPortName),
-            backgroundImage = GetPortValueSafe<Sprite>(node, DialogueContextNode.BackgroundImagePortName),
-            backgroundTransition = GetPortValueSafe<BackgroundTransition>(node, DialogueContextNode.BackgroundTransitionPortName),
+            bold = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BoldPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeBoldPortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.BoldPortName),
+            },
+            italic = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.ItalicPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeItalicPortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.ItalicPortName),
+            },
+            underline = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.UnderlinePortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeUnderlinePortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.UnderlinePortName),
+            },
+            color = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.ColorPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeTextColorPortName),
+                value = GetPortValueSafe<Color>(node, DialogueContextNode.ColorPortName),
+            },
+            font = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.FontPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeFontPortName),
+                value = GetPortValueSafe<TMP_FontAsset>(node, DialogueContextNode.FontPortName),
+            },
+            textAlign = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.TextAlignPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeTextAlignPortName),
+                value = GetPortValueSafe<TextAlignmentOptions>(node, DialogueContextNode.TextAlignPortName),
+            },
+            wrapText = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.WrapTextPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeWrapTextPortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.WrapTextPortName),
+            },
+
+            musicQueue = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.MusicAudioQueuePortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeMusicAudioQueuePortName),
+                value = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.MusicAudioQueuePortName),
+            },
+            audioList = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.PlayAudioPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetPlayAudioPortName),
+                value = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioPortName),
+            },
+            backgroundImage = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BackgroundImagePortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeBackgroundImagePortName),
+                value = GetPortValueSafe<Sprite>(node, DialogueContextNode.BackgroundImagePortName),
+            },
+            backgroundTransition = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BackgroundTransitionPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeBackgroundTransitionPortName),
+                value = GetPortValueSafe<BackgroundTransition>(node, DialogueContextNode.BackgroundTransitionPortName),
+            },
         };
 
         // Character block nodes data
@@ -169,20 +236,74 @@ public class DialogueGraphImporter : ScriptedImporter
         {
             characters.Add(new CharacterData
             {
-                changePosition = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName, false),
+                name = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.CharacterNamePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<string>(blockNode, CharacterBlockNode.CharacterNamePortName),
+                },
 
-                characterSprite = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpritePortName),
-                name = GetPortValueSafe<string>(blockNode, CharacterBlockNode.CharacterNamePortName),
-                characterEmotion = GetPortValueSafe<CharacterEmotion>(blockNode, CharacterBlockNode.EmotionPortName),
-                isVisible = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.VisiblePortName),
-                characterAppearanceDelay = GetPortValueSafe<float>(blockNode, CharacterBlockNode.AppearanceDelayPortName),
-                isTalking = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.IsTalkingPortName),
-                hideName = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNamePortName),
+                characterSprite = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.CharacterSpritePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeSpritePortName),
+                    value = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpritePortName),
+                },
+                characterEmotion = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.EmotionPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeEmotionPortName),
+                    value = GetPortValueSafe<CharacterEmotion>(blockNode, CharacterBlockNode.EmotionPortName),
+                },
+                isVisible = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.VisiblePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeVisibilityPortName),
+                    value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.VisiblePortName),
+                },
+                characterAppearanceDelay = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.AppearanceDelayPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeAppearanceDelayPortName),
+                    value = GetPortValueSafe<float>(blockNode, CharacterBlockNode.AppearanceDelayPortName),
+                },
+                isTalking = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.IsTalkingPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeIsTalkingPortName),
+                    value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.IsTalkingPortName),
+                },
+                hideName = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.HideNamePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeHideNamePortName),
+                    value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNamePortName),
+                },
 
-                smoothMove = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.SmoothMovementPortName),
-                characterPosition = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName),
-                characterRotation = GetPortValueSafe<float>(blockNode, CharacterBlockNode.RotationPortName),
-                characterScale = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.ScalePortName),
+                smoothMove = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.SmoothMovementPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeSmoothMovementPortName),
+                    value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.SmoothMovementPortName),
+                },
+                characterPosition = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PositionPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName),
+                },
+                characterRotation = new() 
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.RotationPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeRotationPortName),
+                    value = GetPortValueSafe<float>(blockNode, CharacterBlockNode.RotationPortName),
+                },
+                characterScale = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.ScalePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeScalePortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.ScalePortName),
+                }
             });
         }
         runtimeDialogueNode.characters = characters;
@@ -205,8 +326,19 @@ public class DialogueGraphImporter : ScriptedImporter
                         {
                             nextNodeID = nextNodeID,
                             comparisons = new List<ValueComparer>(),
-                            choiceText = GetPortValueSafe<string>(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
-                            showIfConditionNotMet = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
+
+                            choiceText = new()
+                            {
+                                blackboardVariableName = TryGetVariableName(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
+                                usePortValue = true,
+                                value = GetPortValueSafe<string>(choiceBlock, ChoiceBlockNode.ChoiceTextPortName),
+                            },
+                            showIfConditionNotMet = new()
+                            {
+                                blackboardVariableName = TryGetVariableName(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
+                                usePortValue = true,
+                                value = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
+                            },
                         };
                         runtimeDialogueNode.choices.Add(currentChoice);
                         break;
@@ -302,28 +434,78 @@ public class DialogueGraphImporter : ScriptedImporter
         ValueComparer comparer = new()
         {
             variableType = type,
-            comparisonType = comparisonType,
-            equals = equals,
+            comparisonType = new()
+            {
+                blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.ComparisonTypePortName),
+                usePortValue = true,
+                value = comparisonType,
+            },
+            equals = new()
+            {
+                blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.EqualsPortName),
+                usePortValue = true,
+                value = equals,
+            },
         };
 
         // Fill in the typed variable and value fields based on the chosen type
         switch (type)
         {
             case VariableType.Bool:
-                comparer.boolVariable = GetPortValueSafe<bool>(compareNode, CompareBlockNode.VariablePortName);
-                comparer.boolValue = GetPortValueSafe<bool>(compareNode, CompareBlockNode.ValuePortName);
+                comparer.boolVariable = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.VariablePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<bool>(compareNode, CompareBlockNode.VariablePortName),
+                };
+                comparer.boolValue = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.ValuePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<bool>(compareNode, CompareBlockNode.ValuePortName),
+                };
                 break;
             case VariableType.String:
-                comparer.stringVariable = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName);
-                comparer.stringValue = GetPortValueSafe<string>(compareNode, CompareBlockNode.ValuePortName);
+                comparer.stringVariable = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.VariablePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<string>(compareNode, CompareBlockNode.VariablePortName),
+                };
+                comparer.stringValue = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.ValuePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<string>(compareNode, CompareBlockNode.ValuePortName),
+                };
                 break;
             case VariableType.Float:
-                comparer.floatVariable = GetPortValueSafe<float>(compareNode, CompareBlockNode.VariablePortName);
-                comparer.floatValue = GetPortValueSafe<float>(compareNode, CompareBlockNode.ValuePortName);
+                comparer.floatVariable = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.VariablePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<float>(compareNode, CompareBlockNode.VariablePortName),
+                };
+                comparer.floatValue = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.ValuePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<float>(compareNode, CompareBlockNode.ValuePortName),
+                };
                 break;
             case VariableType.Int:
-                comparer.intVariable = GetPortValueSafe<int>(compareNode, CompareBlockNode.VariablePortName);
-                comparer.intValue = GetPortValueSafe<int>(compareNode, CompareBlockNode.ValuePortName);
+                comparer.intVariable = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.VariablePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<int>(compareNode, CompareBlockNode.VariablePortName),
+                };
+                comparer.intValue = new()
+                {
+                    blackboardVariableName = TryGetVariableName(compareNode, CompareBlockNode.ValuePortName),
+                    usePortValue = true,
+                    value = GetPortValueSafe<int>(compareNode, CompareBlockNode.ValuePortName),
+                };
                 break;
         }
 
@@ -348,6 +530,22 @@ public class DialogueGraphImporter : ScriptedImporter
         if (port != null && port.TryGetValue(out T value))
             return value;
         return default;
+    }
+
+    private string TryGetVariableName(INode node, string portName)
+    {
+        var port = node.GetInputPorts().FirstOrDefault(p => p.name == portName);
+
+        if (port == null || port.firstConnectedPort == null)
+            return null;
+
+        // Return the variable name if connected to a variable node
+        INode connectedNode = port.firstConnectedPort.GetNode();
+        if (connectedNode is IVariableNode variableNode)
+            return variableNode.variable.name;
+
+        // Otherwise, return null
+        return null;
     }
 
     #endregion

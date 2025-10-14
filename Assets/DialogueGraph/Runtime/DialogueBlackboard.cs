@@ -9,14 +9,14 @@ public class DialogueBlackboard : MonoBehaviour
 
     private Dictionary<string, BlackBoardVariableBase> variableMap;
 
-    private void Awake()
+    public void SetupVariableMap()
     {
         variableMap = new Dictionary<string, BlackBoardVariableBase>();
         foreach (var v in variables)
             variableMap[v.name] = v;
     }
 
-    public bool TryGetBlackBoardValue<T>(string name, out T value)
+    public bool TryGetValue<T>(string name, out T value)
     {
         if (variableMap.TryGetValue(name, out var bbBase) && bbBase is BlackBoardVariable<T> bbVar)
         {
@@ -28,7 +28,7 @@ public class DialogueBlackboard : MonoBehaviour
         return false;
     }
 
-    public void SetBlackBoardValue<T>(string name, T value)
+    public void SetValue<T>(string name, T value)
     {
         if (variableMap.TryGetValue(name, out var bbBase) && bbBase is BlackBoardVariable<T> bbVar)
         {

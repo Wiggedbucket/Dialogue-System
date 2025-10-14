@@ -9,11 +9,24 @@ using UnityEngine.Audio;
 public class DialogueContextNode : ContextNode
 {
     public const string NextDialogueTextPortName = "next dialogue text";
+    public const string AwaitContinueEventPortName = "await continue event";
     public const string DelayWithClickPortName = "delay with click";
     public const string KeepPreviousTextPortName = "keep previous text";
-    public const string EditSettingsPortName = "edit settings";
-    public const string EditTextSettingsPortName = "edit text settings";
-    public const string EditEnvironmentSettingsPortName = "edit environment settings";
+
+    public const string ChangePrintSpeedPortName = "change print speed";
+    public const string ActivateTextDelayPortName = "activate text delay";
+    public const string ActivateBroadcastStringPortName = "activate broadcast string";
+    public const string ChangeBoldPortName = "change bold";
+    public const string ChangeItalicPortName = "change italic";
+    public const string ChangeUnderlinePortName = "change underline";
+    public const string ChangeTextColorPortName = "change text color";
+    public const string ChangeFontPortName = "change font";
+    public const string ChangeTextAlignPortName = "change text align";
+    public const string ChangeWrapTextPortName = "change wrap text";
+    public const string ChangeMusicAudioQueuePortName = "change music audio queue";
+    public const string SetPlayAudioPortName = "set play audio";
+    public const string ChangeBackgroundImagePortName = "change background image";
+    public const string ChangeBackgroundTransitionPortName = "change background transition";
 
     public const string DialoguePortName = "dialogue";
 
@@ -24,6 +37,7 @@ public class DialogueContextNode : ContextNode
     public const string BoldPortName = "bold";
     public const string ItalicPortName = "italic";
     public const string UnderlinePortName = "underline";
+    public const string ColorPortName = "color";
     public const string FontPortName = "font";
     public const string TextAlignPortName = "text align";
     public const string WrapTextPortName = "wrap text";
@@ -38,11 +52,26 @@ public class DialogueContextNode : ContextNode
         context.AddOption<bool>(NextDialogueTextPortName)
             .WithDefaultValue(true)
             .Build();
-        context.AddOption<bool>(DelayWithClickPortName);
+        context.AddOption<bool>(AwaitContinueEventPortName);
+        context.AddOption<bool>(DelayWithClickPortName)
+            .WithDefaultValue(true)
+            .Build();
         context.AddOption<bool>(KeepPreviousTextPortName);
-        context.AddOption<bool>(EditSettingsPortName);
-        context.AddOption<bool>(EditTextSettingsPortName);
-        context.AddOption<bool>(EditEnvironmentSettingsPortName);
+
+        context.AddOption<bool>(ChangePrintSpeedPortName);
+        context.AddOption<bool>(ActivateTextDelayPortName);
+        context.AddOption<bool>(ActivateBroadcastStringPortName);
+        context.AddOption<bool>(ChangeBoldPortName);
+        context.AddOption<bool>(ChangeItalicPortName);
+        context.AddOption<bool>(ChangeUnderlinePortName);
+        context.AddOption<bool>(ChangeTextColorPortName);
+        context.AddOption<bool>(ChangeFontPortName);
+        context.AddOption<bool>(ChangeTextAlignPortName);
+        context.AddOption<bool>(ChangeWrapTextPortName);
+        context.AddOption<bool>(ChangeMusicAudioQueuePortName);
+        context.AddOption<bool>(SetPlayAudioPortName);
+        context.AddOption<bool>(ChangeBackgroundImagePortName);
+        context.AddOption<bool>(ChangeBackgroundTransitionPortName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
@@ -51,11 +80,20 @@ public class DialogueContextNode : ContextNode
             .WithConnectorUI(PortConnectorUI.Arrowhead)
             .Build();
 
-        var editSettings = GetBoolOption(EditSettingsPortName);
-
-        var editTextSettings = GetBoolOption(EditTextSettingsPortName);
-
-        var editEnvironmentSettings = GetBoolOption(EditEnvironmentSettingsPortName);
+        var changePrintSpeed = GetBoolOption(ChangePrintSpeedPortName);
+        var activateTextDelay = GetBoolOption(ActivateTextDelayPortName);
+        var activateBroadcastString = GetBoolOption(ActivateBroadcastStringPortName);
+        var changeBold = GetBoolOption(ChangeBoldPortName);
+        var changeItalic = GetBoolOption(ChangeItalicPortName);
+        var changeUnderline = GetBoolOption(ChangeUnderlinePortName);
+        var changeTextColor = GetBoolOption(ChangeTextColorPortName);
+        var changeFont = GetBoolOption(ChangeFontPortName);
+        var changeTextAlign = GetBoolOption(ChangeTextAlignPortName);
+        var changeWrapText = GetBoolOption(ChangeWrapTextPortName);
+        var changeMusicAudioQueue = GetBoolOption(ChangeMusicAudioQueuePortName);
+        var setPlayAudio = GetBoolOption(SetPlayAudioPortName);
+        var changeBackgroundImage = GetBoolOption(ChangeBackgroundImagePortName);
+        var changeBackgroundTransition = GetBoolOption(ChangeBackgroundTransitionPortName);
 
         context.AddOutputPort("out")
             .WithConnectorUI(PortConnectorUI.Arrowhead)
@@ -63,37 +101,46 @@ public class DialogueContextNode : ContextNode
 
         context.AddInputPort<DialogueData>(DialoguePortName).Build();
 
-        context.AddInputPort<string>(BroadcastStringPortName).Build();
+        if (activateBroadcastString)
+            context.AddInputPort<string>(BroadcastStringPortName).Build();
 
-        if (editSettings)
-        {
+        if (changePrintSpeed)
             context.AddInputPort<float>(PrintSpeedPortName)
             .WithDefaultValue(1f)
             .Build();
+        if (activateTextDelay)
             context.AddInputPort<float>(DelayTextPortName).Build();
-        }
 
-        if (editTextSettings)
-        {
+        if (changeBold)
             context.AddInputPort<bool>(BoldPortName).Build();
+        if (changeItalic)
             context.AddInputPort<bool>(ItalicPortName).Build();
+        if (changeUnderline)
             context.AddInputPort<bool>(UnderlinePortName).Build();
 
+        if (changeTextColor)
+            context.AddInputPort<Color>(ColorPortName)
+                .WithDefaultValue(Color.black)
+                .Build();
+
+        if (changeFont)
             context.AddInputPort<TMP_FontAsset>(FontPortName).Build();
+        if (changeTextAlign)
             context.AddInputPort<TextAlignmentOptions>(TextAlignPortName).Build();
+        if (changeWrapText)
             context.AddInputPort<bool>(WrapTextPortName)
                 .WithDefaultValue(true)
                 .Build();
-        }
 
-        if (editEnvironmentSettings)
-        {
+        if (changeMusicAudioQueue)
             context.AddInputPort<List<AudioResource>>(MusicAudioQueuePortName).Build();
+        if (setPlayAudio)
             context.AddInputPort<List<AudioResource>>(PlayAudioPortName).Build();
 
+        if (changeBackgroundImage)
             context.AddInputPort<Sprite>(BackgroundImagePortName).Build();
+        if (changeBackgroundTransition)
             context.AddInputPort<BackgroundTransition>(BackgroundTransitionPortName).Build();
-        }
     }
 
     private bool GetBoolOption(string name, bool defaultValue = false)

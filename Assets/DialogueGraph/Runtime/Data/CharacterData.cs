@@ -19,21 +19,21 @@ public class CharacterDataDrawer : PropertyDrawer
 [Serializable]
 public class CharacterData
 {
-    public Sprite characterSprite;
-    public string name;
-    public CharacterEmotion characterEmotion;
+    public PortValue<string> name = new();
 
-    public bool isVisible;
-    public float characterAppearanceDelay;
+    public PortValue<Sprite> characterSprite = new();
+    public PortValue<CharacterEmotion> characterEmotion = new();
 
-    public bool isTalking;
-    public bool hideName; // Will be displayed as "", "???" or "..." if true
+    public PortValue<bool> isVisible = new();
+    public PortValue<float> characterAppearanceDelay = new();
 
-    public bool changePosition;
-    public bool smoothMove;
-    public Vector2 characterPosition;
-    public float characterRotation;
-    public Vector2 characterScale;
+    public PortValue<bool> isTalking = new();
+    public PortValue<bool> hideName = new(); // Will be displayed as "", "???" or "..." if true
+
+    public PortValue<bool> smoothMove = new();
+    public PortValue<Vector2> characterPosition = new();
+    public PortValue<float> characterRotation = new();
+    public PortValue<Vector2> characterScale = new();
 }
 
 public enum CharacterEmotion
