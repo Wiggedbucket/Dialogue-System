@@ -96,6 +96,11 @@ public class DialogueSettings
 
     public PortValue<List<AudioResource>> musicQueue = new();
     public PortValue<List<AudioResource>> audioList = new();
+
+    public PortValue<Color> dialogueBoxColor = new();
+    public PortValue<Sprite> dialogueBoxImage = new();
+    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new();
+
     public PortValue<Sprite> backgroundImage = new();
     public PortValue<BackgroundTransition> backgroundTransition = new();
 }
@@ -194,6 +199,19 @@ public enum BackgroundTransition
     FadeLeft,
     FadeUp,
     FadeDown,
+}
+
+[Serializable]
+public enum DialogueBoxTransition
+{
+    None,
+    FadeIn,
+    SlideUp,
+    SlideDown,
+    SlideLeft,
+    SlideRight,
+    ExpandHorizontal,
+    ExpandVertical,
 }
 
 [Serializable]

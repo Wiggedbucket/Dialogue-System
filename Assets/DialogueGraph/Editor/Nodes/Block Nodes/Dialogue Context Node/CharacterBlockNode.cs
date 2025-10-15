@@ -10,7 +10,6 @@ using UnityEngine.UI;
 public class CharacterBlockNode : BlockNode
 {
     public const string ChangeSpritePortName = "change sprite";
-    public const string ChangeEmotionPortName = "change emotion";
     public const string ChangeVisibilityPortName = "change visibility";
     public const string ChangeAppearanceDelayPortName = "change appearance delay";
     public const string ChangeIsTalkingPortName = "change is talking";
@@ -22,7 +21,6 @@ public class CharacterBlockNode : BlockNode
 
     public const string CharacterSpritePortName = "character sprite";
     public const string CharacterNamePortName = "character name";
-    public const string EmotionPortName = "emotion";
     public const string VisiblePortName = "visible";
     public const string AppearanceDelayPortName = "appearance delay";
     public const string IsTalkingPortName = "is talking";
@@ -35,7 +33,6 @@ public class CharacterBlockNode : BlockNode
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
         context.AddOption<bool>(ChangeSpritePortName);
-        context.AddOption<bool>(ChangeEmotionPortName);
         context.AddOption<bool>(ChangeVisibilityPortName);
         context.AddOption<bool>(ChangeAppearanceDelayPortName);
         context.AddOption<bool>(ChangeIsTalkingPortName);
@@ -49,7 +46,6 @@ public class CharacterBlockNode : BlockNode
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         var changeSprite = GetBoolOption(ChangeSpritePortName);
-        var changeEmotion = GetBoolOption(ChangeEmotionPortName);
         var changeVisibility = GetBoolOption(ChangeVisibilityPortName);
         var changeAppearanceDelay = GetBoolOption(ChangeAppearanceDelayPortName);
         var changeIsTalking = GetBoolOption(ChangeIsTalkingPortName);
@@ -63,8 +59,6 @@ public class CharacterBlockNode : BlockNode
 
         if (changeSprite)
             context.AddInputPort<Sprite>(CharacterSpritePortName).Build();
-        if (changeEmotion)
-            context.AddInputPort<CharacterEmotion>(EmotionPortName).Build();
 
         if (changeVisibility)
             context.AddInputPort<bool>(VisiblePortName).Build();

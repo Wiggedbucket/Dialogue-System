@@ -22,7 +22,6 @@ public class CharacterData
     public PortValue<string> name = new();
 
     public PortValue<Sprite> characterSprite = new();
-    public PortValue<CharacterEmotion> characterEmotion = new();
 
     public PortValue<bool> isVisible = new();
     public PortValue<float> characterAppearanceDelay = new();
@@ -34,26 +33,4 @@ public class CharacterData
     public PortValue<Vector2> characterPosition = new();
     public PortValue<float> characterRotation = new();
     public PortValue<Vector2> characterScale = new();
-}
-
-public enum CharacterEmotion
-{
-    Neutral,
-    Angry,
-    Happy,
-    Sad,
-    Surprised,
-    Confused,
-    Excited,
-    Tired,
-    Scared,
-    Embarrassed,
-    Proud,
-    Bored,
-    Curious,
-    Determined,
-    Frustrated,
-    Relaxed,
-    Shocked,
-    Worried,
 }

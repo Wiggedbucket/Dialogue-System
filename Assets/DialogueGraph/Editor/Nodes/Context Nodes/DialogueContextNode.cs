@@ -25,6 +25,9 @@ public class DialogueContextNode : ContextNode
     public const string ChangeWrapTextPortName = "change wrap text";
     public const string ChangeMusicAudioQueuePortName = "change music audio queue";
     public const string SetPlayAudioPortName = "set play audio";
+    public const string SetDialogueBoxColorPortName = "set dialogue box color";
+    public const string SetDialogueBoxImagePortName = "set dialogue box image";
+    public const string SetDialogueBoxTransitionPortName = "set dialogue box transition";
     public const string ChangeBackgroundImagePortName = "change background image";
     public const string ChangeBackgroundTransitionPortName = "change background transition";
 
@@ -44,6 +47,9 @@ public class DialogueContextNode : ContextNode
 
     public const string MusicAudioQueuePortName = "music audio queue";
     public const string PlayAudioPortName = "play audio";
+    public const string DialogueBoxColorPortName = "dialogue box color";
+    public const string DialogueBoxImagePortName = "dialogue box image";
+    public const string DialogueBoxTransitionPortName = "dialogue box transition";
     public const string BackgroundImagePortName = "background image";
     public const string BackgroundTransitionPortName = "smooth background transition";
 
@@ -70,6 +76,9 @@ public class DialogueContextNode : ContextNode
         context.AddOption<bool>(ChangeWrapTextPortName);
         context.AddOption<bool>(ChangeMusicAudioQueuePortName);
         context.AddOption<bool>(SetPlayAudioPortName);
+        context.AddOption<bool>(SetDialogueBoxColorPortName);
+        context.AddOption<bool>(SetDialogueBoxImagePortName);
+        context.AddOption<bool>(SetDialogueBoxTransitionPortName);
         context.AddOption<bool>(ChangeBackgroundImagePortName);
         context.AddOption<bool>(ChangeBackgroundTransitionPortName);
     }
@@ -92,6 +101,9 @@ public class DialogueContextNode : ContextNode
         var changeWrapText = GetBoolOption(ChangeWrapTextPortName);
         var changeMusicAudioQueue = GetBoolOption(ChangeMusicAudioQueuePortName);
         var setPlayAudio = GetBoolOption(SetPlayAudioPortName);
+        var setDialogueBoxColor = GetBoolOption(SetDialogueBoxColorPortName);
+        var setDialogueBoxImage = GetBoolOption(SetDialogueBoxImagePortName);
+        var setDialogueBoxTransition = GetBoolOption(SetDialogueBoxTransitionPortName);
         var changeBackgroundImage = GetBoolOption(ChangeBackgroundImagePortName);
         var changeBackgroundTransition = GetBoolOption(ChangeBackgroundTransitionPortName);
 
@@ -136,6 +148,13 @@ public class DialogueContextNode : ContextNode
             context.AddInputPort<List<AudioResource>>(MusicAudioQueuePortName).Build();
         if (setPlayAudio)
             context.AddInputPort<List<AudioResource>>(PlayAudioPortName).Build();
+
+        if (setDialogueBoxColor)
+            context.AddInputPort<Color>(DialogueBoxColorPortName).Build();
+        if (setDialogueBoxImage)
+            context.AddInputPort<Sprite>(DialogueBoxImagePortName).Build();
+        if (setDialogueBoxTransition)
+            context.AddInputPort<DialogueBoxTransition>(DialogueBoxTransitionPortName).Build();
 
         if (changeBackgroundImage)
             context.AddInputPort<Sprite>(BackgroundImagePortName).Build();

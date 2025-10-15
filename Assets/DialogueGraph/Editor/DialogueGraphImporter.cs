@@ -216,6 +216,26 @@ public class DialogueGraphImporter : ScriptedImporter
                 usePortValue = GetBoolOption(node, DialogueContextNode.SetPlayAudioPortName),
                 value = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioPortName),
             },
+
+            dialogueBoxColor = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DialogueBoxColorPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetDialogueBoxColorPortName),
+                value = GetPortValueSafe<Color>(node, DialogueContextNode.DialogueBoxColorPortName),
+            },
+            dialogueBoxImage = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DialogueBoxImagePortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetDialogueBoxImagePortName),
+                value = GetPortValueSafe<Sprite>(node, DialogueContextNode.DialogueBoxImagePortName),
+            },
+            dialogueBoxTransition = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DialogueBoxTransitionPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetDialogueBoxTransitionPortName),
+                value = GetPortValueSafe<DialogueBoxTransition>(node, DialogueContextNode.DialogueBoxTransitionPortName),
+            },
+
             backgroundImage = new()
             {
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BackgroundImagePortName),
@@ -248,12 +268,6 @@ public class DialogueGraphImporter : ScriptedImporter
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.CharacterSpritePortName),
                     usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeSpritePortName),
                     value = GetPortValueSafe<Sprite>(blockNode, CharacterBlockNode.CharacterSpritePortName),
-                },
-                characterEmotion = new()
-                {
-                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.EmotionPortName),
-                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeEmotionPortName),
-                    value = GetPortValueSafe<CharacterEmotion>(blockNode, CharacterBlockNode.EmotionPortName),
                 },
                 isVisible = new()
                 {
@@ -335,9 +349,9 @@ public class DialogueGraphImporter : ScriptedImporter
                             },
                             showIfConditionNotMet = new()
                             {
-                                blackboardVariableName = TryGetVariableName(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
+                                blackboardVariableName = TryGetVariableName(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetPortName),
                                 usePortValue = true,
-                                value = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetName),
+                                value = GetPortValueSafe<bool>(choiceBlock, ChoiceBlockNode.ShowIfConditionNotMetPortName),
                             },
                         };
                         runtimeDialogueNode.choices.Add(currentChoice);
