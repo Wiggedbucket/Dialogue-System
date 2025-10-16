@@ -55,12 +55,26 @@ public class RuntimeDialogueNode : RuntimeNode
 [Serializable]
 public class PortValue<T>
 {
+    // If true, use the value, otherwise, skip over this variable
+    public bool usePortValue = false;
+
     // If not empty, get the value from the blackboard
     public string blackboardVariableName = null;
-
-    // If empty and the user wants to use this variable, use this value
-    public bool usePortValue = false;
+    // The value set in the node, used if blackboardVariableName is null or empty
     public T value = default;
+
+    public bool GetValue(DialogueBlackboard blackboard, out T portValue)
+    {
+        if (!string.IsNullOrEmpty(blackboardVariableName) && blackboard.TryGetValue<T>(blackboardVariableName, out var bbValue))
+        {
+            portValue = bbValue;
+        } else
+        {
+            portValue = value;
+        }
+
+        return usePortValue;
+    }
 
     public T GetValue(DialogueBlackboard blackboard)
     {
@@ -68,6 +82,7 @@ public class PortValue<T>
         {
             return bbValue;
         }
+
         return value;
     }
 }
@@ -100,6 +115,8 @@ public class DialogueSettings
     public PortValue<Color> dialogueBoxColor = new();
     public PortValue<Sprite> dialogueBoxImage = new();
     public PortValue<DialogueBoxTransition> dialogueBoxTransition = new();
+    public PortValue<Color> namePlateColor = new();
+    public PortValue<Sprite> namePlateImage = new();
 
     public PortValue<Sprite> backgroundImage = new();
     public PortValue<BackgroundTransition> backgroundTransition = new();
@@ -149,13 +166,19 @@ public class ValueComparer
 
     public bool Evaluate(DialogueBlackboard blackBoard)
     {
+        bool eq = equals.GetValue(blackBoard);
+
         switch (variableType)
         {
             case VariableType.Bool:
-                return equals.GetValue(blackBoard) ? boolVariable.GetValue(blackBoard) == boolValue.GetValue(blackBoard) : boolVariable.GetValue(blackBoard) != boolValue.GetValue(blackBoard);
+                return eq
+                    ? boolVariable.GetValue(blackBoard) == boolValue.GetValue(blackBoard)
+                    : boolVariable.GetValue(blackBoard) != boolValue.GetValue(blackBoard);
 
             case VariableType.String:
-                return equals.GetValue(blackBoard) ? stringVariable.GetValue(blackBoard) == stringValue.GetValue(blackBoard) : stringVariable.GetValue(blackBoard) != stringValue.GetValue(blackBoard);
+                return eq
+                    ? stringVariable.GetValue(blackBoard) == stringValue.GetValue(blackBoard)
+                    : stringVariable.GetValue(blackBoard) != stringValue.GetValue(blackBoard);
 
             case VariableType.Float:
                 return Compare(blackBoard, floatVariable.GetValue(blackBoard), floatValue.GetValue(blackBoard));

@@ -28,6 +28,8 @@ public class DialogueContextNode : ContextNode
     public const string SetDialogueBoxColorPortName = "set dialogue box color";
     public const string SetDialogueBoxImagePortName = "set dialogue box image";
     public const string SetDialogueBoxTransitionPortName = "set dialogue box transition";
+    public const string SetNamePlateColorPortName = "set name plate color";
+    public const string SetNamePlateImagePortName = "set name plate image";
     public const string ChangeBackgroundImagePortName = "change background image";
     public const string ChangeBackgroundTransitionPortName = "change background transition";
 
@@ -47,9 +49,13 @@ public class DialogueContextNode : ContextNode
 
     public const string MusicAudioQueuePortName = "music audio queue";
     public const string PlayAudioPortName = "play audio";
+
     public const string DialogueBoxColorPortName = "dialogue box color";
     public const string DialogueBoxImagePortName = "dialogue box image";
+    public const string NamePlateColorPortName = "name plate color";
+    public const string NamePlateImagePortName = "name plate image";
     public const string DialogueBoxTransitionPortName = "dialogue box transition";
+
     public const string BackgroundImagePortName = "background image";
     public const string BackgroundTransitionPortName = "smooth background transition";
 
@@ -66,6 +72,7 @@ public class DialogueContextNode : ContextNode
 
         context.AddOption<bool>(ChangePrintSpeedPortName);
         context.AddOption<bool>(ActivateTextDelayPortName);
+
         context.AddOption<bool>(ActivateBroadcastStringPortName);
         context.AddOption<bool>(ChangeBoldPortName);
         context.AddOption<bool>(ChangeItalicPortName);
@@ -74,11 +81,16 @@ public class DialogueContextNode : ContextNode
         context.AddOption<bool>(ChangeFontPortName);
         context.AddOption<bool>(ChangeTextAlignPortName);
         context.AddOption<bool>(ChangeWrapTextPortName);
+
         context.AddOption<bool>(ChangeMusicAudioQueuePortName);
         context.AddOption<bool>(SetPlayAudioPortName);
+
         context.AddOption<bool>(SetDialogueBoxColorPortName);
         context.AddOption<bool>(SetDialogueBoxImagePortName);
         context.AddOption<bool>(SetDialogueBoxTransitionPortName);
+        context.AddOption<bool>(SetNamePlateColorPortName);
+        context.AddOption<bool>(SetNamePlateImagePortName);
+
         context.AddOption<bool>(ChangeBackgroundImagePortName);
         context.AddOption<bool>(ChangeBackgroundTransitionPortName);
     }
@@ -104,6 +116,8 @@ public class DialogueContextNode : ContextNode
         var setDialogueBoxColor = GetBoolOption(SetDialogueBoxColorPortName);
         var setDialogueBoxImage = GetBoolOption(SetDialogueBoxImagePortName);
         var setDialogueBoxTransition = GetBoolOption(SetDialogueBoxTransitionPortName);
+        var setNamePlateColor = GetBoolOption(SetNamePlateColorPortName);
+        var setNamePlateImage = GetBoolOption(SetNamePlateImagePortName);
         var changeBackgroundImage = GetBoolOption(ChangeBackgroundImagePortName);
         var changeBackgroundTransition = GetBoolOption(ChangeBackgroundTransitionPortName);
 
@@ -155,6 +169,10 @@ public class DialogueContextNode : ContextNode
             context.AddInputPort<Sprite>(DialogueBoxImagePortName).Build();
         if (setDialogueBoxTransition)
             context.AddInputPort<DialogueBoxTransition>(DialogueBoxTransitionPortName).Build();
+        if (setNamePlateColor)
+            context.AddInputPort<Color>(NamePlateColorPortName).Build();
+        if (setNamePlateImage)
+            context.AddInputPort<Sprite>(NamePlateImagePortName).Build();
 
         if (changeBackgroundImage)
             context.AddInputPort<Sprite>(BackgroundImagePortName).Build();

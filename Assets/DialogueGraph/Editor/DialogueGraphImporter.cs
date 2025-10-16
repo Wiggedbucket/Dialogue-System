@@ -235,6 +235,18 @@ public class DialogueGraphImporter : ScriptedImporter
                 usePortValue = GetBoolOption(node, DialogueContextNode.SetDialogueBoxTransitionPortName),
                 value = GetPortValueSafe<DialogueBoxTransition>(node, DialogueContextNode.DialogueBoxTransitionPortName),
             },
+            namePlateColor = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.NamePlateColorPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetNamePlateColorPortName),
+                value = GetPortValueSafe<Color>(node, DialogueContextNode.NamePlateColorPortName),
+            },
+            namePlateImage = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.NamePlateImagePortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.SetNamePlateImagePortName),
+                value = GetPortValueSafe<Sprite>(node, DialogueContextNode.NamePlateImagePortName),
+            },
 
             backgroundImage = new()
             {

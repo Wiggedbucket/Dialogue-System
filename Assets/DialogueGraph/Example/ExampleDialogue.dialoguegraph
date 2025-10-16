@@ -73,7 +73,7 @@ MonoBehaviour:
           x: 415.2
           y: -136
           width: 3498.4001
-          height: 2361.6
+          height: 2465.6
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 15327009964795376785
@@ -448,6 +448,10 @@ MonoBehaviour:
           - dialogue box color
           - dialogue box image
           - dialogue box transition
+          - __option_set name plate color
+          - __option_set name plate image
+          - name plate color
+          - name plate image
           m_ValueList:
           - rid: 5077103961774489914
           - rid: 5077103961774489915
@@ -488,6 +492,10 @@ MonoBehaviour:
           - rid: 7566504029945856083
           - rid: 7566504029945856084
           - rid: 7566504029945856085
+          - rid: 7566504047145386052
+          - rid: 7566504047145386053
+          - rid: 7566504047145386062
+          - rid: 7566504047145386063
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -911,6 +919,8 @@ MonoBehaviour:
           - __option_set dialogue box color
           - __option_set dialogue box image
           - __option_set dialogue box transition
+          - __option_set name plate color
+          - __option_set name plate image
           m_ValueList:
           - rid: 5077104026029654085
           - rid: 5077104026029654086
@@ -934,6 +944,8 @@ MonoBehaviour:
           - rid: 7566504029945856071
           - rid: 7566504029945856072
           - rid: 7566504029945856073
+          - rid: 7566504047145386054
+          - rid: 7566504047145386055
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1014,7 +1026,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: ad15f19baad0c2a0ea6d26754e7ee198
         m_Version: 2
-        m_Position: {x: 1894.9266, y: 624.4957}
+        m_Position: {x: 1889.2982, y: 689.2248}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -1044,6 +1056,8 @@ MonoBehaviour:
           - __option_set dialogue box color
           - __option_set dialogue box image
           - __option_set dialogue box transition
+          - __option_set name plate color
+          - __option_set name plate image
           m_ValueList:
           - rid: 5077104026029654097
           - rid: 5077104026029654098
@@ -1067,6 +1081,8 @@ MonoBehaviour:
           - rid: 7566504029945856074
           - rid: 7566504029945856075
           - rid: 7566504029945856076
+          - rid: 7566504047145386056
+          - rid: 7566504047145386057
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1147,7 +1163,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 40982a6b4d2765d4a11e6a4b66de247e
         m_Version: 2
-        m_Position: {x: 1895.5073, y: 1382.1001}
+        m_Position: {x: 1886.9905, y: 1500.1201}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -1177,6 +1193,8 @@ MonoBehaviour:
           - __option_set dialogue box color
           - __option_set dialogue box image
           - __option_set dialogue box transition
+          - __option_set name plate color
+          - __option_set name plate image
           m_ValueList:
           - rid: 5077104026029654109
           - rid: 5077104026029654110
@@ -1200,6 +1218,8 @@ MonoBehaviour:
           - rid: 7566504029945856077
           - rid: 7566504029945856078
           - rid: 7566504029945856079
+          - rid: 7566504047145386058
+          - rid: 7566504047145386059
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1333,6 +1353,8 @@ MonoBehaviour:
           - __option_set dialogue box color
           - __option_set dialogue box image
           - __option_set dialogue box transition
+          - __option_set name plate color
+          - __option_set name plate image
           m_ValueList:
           - rid: 5077104026029654352
           - rid: 5077104026029654353
@@ -1356,6 +1378,8 @@ MonoBehaviour:
           - rid: 7566504029945856080
           - rid: 7566504029945856081
           - rid: 7566504029945856082
+          - rid: 7566504047145386060
+          - rid: 7566504047145386061
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -2184,7 +2208,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 442331d118093aecb0a9bf3da95f18e2
         m_Version: 2
-        m_Position: {x: 1339.9844, y: 661.4104}
+        m_Position: {x: 1341.3756, y: 600.8886}
         m_Title: CoolVariable
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3169,7 +3193,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 5b44702f7b2e5181dfc1a8def2cd1b42
         m_Version: 2
-        m_Position: {x: 1343.3285, y: 987.0344}
+        m_Position: {x: 1381.0485, y: 988.8745}
         m_Title: variable
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3403,3 +3427,51 @@ MonoBehaviour:
         m_EnumType:
           m_Identification: DialogueBoxTransition, Assembly-CSharp, Version=0.0.0.0,
             Culture=neutral, PublicKeyToken=null
+    - rid: 7566504047145386052
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 1
+    - rid: 7566504047145386053
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 1
+    - rid: 7566504047145386054
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386055
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386056
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386057
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386058
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386059
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386060
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386061
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504047145386062
+      type: {class: 'Constant`1[[UnityEngine.Color, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {r: 0, g: 0, b: 0, a: 0}
+    - rid: 7566504047145386063
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 0}
