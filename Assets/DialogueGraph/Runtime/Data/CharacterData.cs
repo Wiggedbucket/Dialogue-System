@@ -27,7 +27,7 @@ public class CharacterData
     public PortValue<float> characterAppearanceDelay = new();
 
     public PortValue<bool> isTalking = new();
-    public PortValue<bool> hideName = new(); // Will be displayed as "", "???" or "..." if true
+    public PortValue<bool> hideName = new();
 
     public PortValue<bool> smoothMove = new();
     public PortValue<Vector2> characterPosition = new();

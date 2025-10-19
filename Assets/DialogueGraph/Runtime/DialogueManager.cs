@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,18 +12,28 @@ public class DialogueManager : MonoBehaviour
     public RuntimeDialogueGraph runtimeGraph;
     public DialogueBlackboard dialogueBlackboard;
 
+    public bool dialogueRunning = false;
+
     [Header("UI Components")]
     public GameObject dialoguePanel;
     public Image primaryImage;
     public Image secondaryImage;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
+    public TextMeshProUGUI dialogueTextShadow;
 
     [Header("Choice Button UI")]
     public Button choiceButtonPrefab;
     public Transform choiceButtonContainer;
 
     private RuntimeNode currentNode;
+
+    [Header("Settings")]
+    public bool onHold = false;
+    public bool allowEscape = false;
+    public bool autoAdvance = false;
+    public bool enableSkipping = false;
+    public bool textShadowOnMultipleCharactersTalking = false;
 
     private void Start()
     {
@@ -60,8 +71,15 @@ public class DialogueManager : MonoBehaviour
         // Start the dialogue, resets previous dialogue
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SetupNodes();
+            StartDialogue();
         }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            ResumeDialogue();
+        }
+
+        if (onHold)
+            return;
 
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
@@ -70,7 +88,7 @@ public class DialogueManager : MonoBehaviour
                 // If next node is present, show it, if not, end dialogue
                 if (!string.IsNullOrEmpty(currentNode.nextNodeID))
                 {
-                    ShowNode(currentNode.nextNodeID);
+                    HandleNode(currentNode.nextNodeID);
                 }
                 else
                 {
@@ -80,20 +98,44 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void SetupNodes()
+    private void StartDialogue()
     {
+        dialogueRunning = true;
+        allowEscape = runtimeGraph.allowEscape;
+        textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
+
         // If first node is present, show it, if not, end dialogue
         if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
         {
-            ShowNode(runtimeGraph.entryNodeID);
+            HandleNode(runtimeGraph.entryNodeID);
         }
         else
         {
             EndDialogue();
         }
     }
-    
-    private void ShowNode(string id)
+
+    private void ResumeDialogue()
+    {
+        onHold = false;
+        if (currentNode != null)
+            HandleNode(currentNode.nextNodeID);
+    }
+
+    private void EndDialogue()
+    {
+        dialoguePanel.SetActive(false);
+        dialogueRunning = false;
+        currentNode = null;
+
+        // Clear all choice buttons
+        foreach (Transform child in choiceButtonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void HandleNode(string id)
     {
         RuntimeNode runtimeNode = runtimeGraph.GetNode(id);
 
@@ -114,6 +156,10 @@ public class DialogueManager : MonoBehaviour
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
                 break;
+            case RuntimeInteruptNode node:
+                dialoguePanel.SetActive(false);
+                onHold = true;
+                return;
         }
 
         dialoguePanel.SetActive(true);
@@ -121,7 +167,34 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
     {
-        dialogueText.text = node.dialogueText;
+        // Handle character data
+        List<string> speakerNames = new();
+        foreach (CharacterData character in node.characters)
+        {
+            if (character.isTalking.GetValue(dialogueBlackboard))
+            {
+                speakerNames.Add(character.hideName.GetValue(dialogueBlackboard) ? "???" : character.name.GetValue(dialogueBlackboard));
+            }
+        }
+
+        // Setup speaker names text
+        for (int i = 0; i < speakerNames.Count; i++)
+        {
+            if (i == 0)
+            {
+                speakerNameText.text = speakerNames[i];
+            }
+            else if (i == speakerNames.Count - 1)
+            {
+                speakerNameText.text += " and " + speakerNames[i];
+            }
+            else
+            {
+                speakerNameText.text += ", " + speakerNames[i];
+            }
+        }
+
+        SetDialogueText(node.dialogueText, speakerNames.Count > 1);
 
         // Clear all choice buttons
         foreach (Transform child in choiceButtonContainer)
@@ -143,7 +216,7 @@ public class DialogueManager : MonoBehaviour
                 {
                     if (!string.IsNullOrEmpty(choice.nextNodeID))
                     {
-                        ShowNode(choice.nextNodeID);
+                        HandleNode(choice.nextNodeID);
                     }
                     else
                     {
@@ -167,6 +240,16 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void SetDialogueText(string text, bool multiCharacters)
+    {
+        dialogueText.text = text;
+
+        if (multiCharacters && textShadowOnMultipleCharactersTalking)
+        {
+            dialogueTextShadow.text = text;
+        }
+    }
+
     private void SetupSplitterNode(RuntimeSplitterNode node)
     {
         foreach (RuntimeSplitterOutput output in node.outputs)
@@ -180,24 +263,12 @@ public class DialogueManager : MonoBehaviour
 
             if (valid)
             {
-                ShowNode(output.nextNodeID);
+                HandleNode(output.nextNodeID);
                 return;
             }
         }
 
         if (node.defaultOutputNodeID != null)
-            ShowNode(node.defaultOutputNodeID);
-    }
-
-    private void EndDialogue()
-    {
-        dialoguePanel.SetActive(false);
-        currentNode = null;
-
-        // Clear all choice buttons
-        foreach (Transform child in choiceButtonContainer)
-        {
-            Destroy(child.gameObject);
-        }
+            HandleNode(node.defaultOutputNodeID);
     }
 }

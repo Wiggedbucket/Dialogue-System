@@ -36,6 +36,9 @@ public class DialogueGraphImporter : ScriptedImporter
             IPort nextPort = startNode.GetOutputPorts().FirstOrDefault()?.firstConnectedPort;
             if (nextPort != null)
                 runtimeGraph.entryNodeID = nodeIDMap[nextPort.GetNode()];
+
+            runtimeGraph.allowEscape = GetBoolOption((Node)startNode, StartNode.AllowEscapeOptionName);
+            runtimeGraph.textShadowOnMultipleCharactersTalking = GetBoolOption((Node)startNode, StartNode.TextShadowOnMultipleCharactersTalkingOptionName);
         }
 
         // Blackboard values
@@ -59,6 +62,9 @@ public class DialogueGraphImporter : ScriptedImporter
                     break;
                 case SplitterContextNode splitterContextNode:
                     runtimeNode = ProcessSplitterContextNode(splitterContextNode, nodeIDMap);
+                    break;
+                case InteruptNode interuptNode:
+                    runtimeNode = new RuntimeInteruptNode();
                     break;
                 default:
                     // Do nothing if the node type isn't recognized
@@ -296,13 +302,13 @@ public class DialogueGraphImporter : ScriptedImporter
                 isTalking = new()
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.IsTalkingPortName),
-                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeIsTalkingPortName),
+                    usePortValue = true,
                     value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.IsTalkingPortName),
                 },
                 hideName = new()
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.HideNamePortName),
-                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeHideNamePortName),
+                    usePortValue = true,
                     value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNamePortName),
                 },
 

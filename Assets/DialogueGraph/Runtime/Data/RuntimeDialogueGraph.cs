@@ -11,6 +11,11 @@ using UnityEngine.Audio;
 public class RuntimeDialogueGraph : ScriptableObject
 {
     public string entryNodeID;
+
+    // Settings
+    public bool allowEscape = false; // If true, allows exiting the dialogue at any time (e.g., pressing escape)
+    public bool textShadowOnMultipleCharactersTalking = false;
+
     [SerializeReference]
     public List<RuntimeNode> nodes = new();
     [SerializeReference]
@@ -205,6 +210,12 @@ public class ValueComparer
             _ => false
         };
     }
+}
+
+[Serializable]
+public class RuntimeInteruptNode : RuntimeNode
+{
+    
 }
 #endregion
 
