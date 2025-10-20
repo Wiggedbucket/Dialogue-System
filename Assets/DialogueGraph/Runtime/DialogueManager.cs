@@ -15,8 +15,7 @@ public class DialogueManager : MonoBehaviour
     public DialogueBlackboard dialogueBlackboard;
 
     private RuntimeNode currentNode;
-    public bool delayWithClick = true;
-
+    
     public bool dialogueRunning = false;
 
     [Header("UI Components")]
@@ -46,6 +45,8 @@ public class DialogueManager : MonoBehaviour
     [Header("Dialogue Variables")]
     private Coroutine typingCoroutine;
     private string currentFullText = "";
+    public bool delayWithClick = true;
+    private Coroutine delayCoroutine;
 
     [Header("Sound Variables")]
     public List<AudioClip> musicQueue = new();
@@ -114,10 +115,13 @@ public class DialogueManager : MonoBehaviour
                     typingCoroutine = null;
                 }
 
-                if (!string.IsNullOrEmpty(currentNode.nextNodeID))
-                    HandleNode(currentNode.nextNodeID);
-                else
-                    EndDialogue();
+                if (delayCoroutine == null)
+                {
+                    if (!string.IsNullOrEmpty(currentNode.nextNodeID))
+                        HandleNode(currentNode.nextNodeID);
+                    else
+                        EndDialogue();
+                }
             }
 
             HandleMusicQueue();
@@ -131,6 +135,10 @@ public class DialogueManager : MonoBehaviour
         textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
         loop = true;
         shuffle = false;
+        if (delayCoroutine != null)
+            StopCoroutine(delayCoroutine);
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
 
         // If first node is present, show it, if not, end dialogue
         if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
@@ -188,7 +196,7 @@ public class DialogueManager : MonoBehaviour
         switch (currentNode)
         {
             case RuntimeDialogueNode node:
-                StartCoroutine(WaitOnDelay(node));
+                delayCoroutine = StartCoroutine(WaitOnDelay(node));
                 break;
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
@@ -217,6 +225,8 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
     {
+        delayCoroutine = null;
+
         // Handle character data
         List<string> speakerNames = new();
         foreach (CharacterData character in node.characters)
