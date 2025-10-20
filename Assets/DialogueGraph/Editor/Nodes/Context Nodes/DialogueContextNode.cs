@@ -8,7 +8,6 @@ using UnityEngine.Audio;
 [Serializable]
 public class DialogueContextNode : ContextNode
 {
-    public const string NextDialogueTextPortName = "next dialogue text";
     public const string AwaitContinueEventPortName = "await continue event";
     public const string DelayWithClickPortName = "delay with click";
     public const string KeepPreviousTextPortName = "keep previous text";
@@ -48,6 +47,8 @@ public class DialogueContextNode : ContextNode
     public const string WrapTextPortName = "wrap text";
 
     public const string MusicAudioQueuePortName = "music audio queue";
+    public const string LoopMusicPortName = "loop music";
+    public const string ShuffleMusicPortName = "shuffle music";
     public const string PlayAudioPortName = "play audio";
 
     public const string DialogueBoxColorPortName = "dialogue box color";
@@ -61,9 +62,6 @@ public class DialogueContextNode : ContextNode
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
-        context.AddOption<bool>(NextDialogueTextPortName)
-            .WithDefaultValue(true)
-            .Build();
         context.AddOption<bool>(AwaitContinueEventPortName);
         context.AddOption<bool>(DelayWithClickPortName)
             .WithDefaultValue(true)
@@ -132,7 +130,7 @@ public class DialogueContextNode : ContextNode
 
         if (changePrintSpeed)
             context.AddInputPort<float>(PrintSpeedPortName)
-            .WithDefaultValue(1f)
+            .WithDefaultValue(0.02f)
             .Build();
         if (activateTextDelay)
             context.AddInputPort<float>(DelayTextPortName).Build();
@@ -159,9 +157,13 @@ public class DialogueContextNode : ContextNode
                 .Build();
 
         if (changeMusicAudioQueue)
-            context.AddInputPort<List<AudioResource>>(MusicAudioQueuePortName).Build();
+        {
+            context.AddInputPort<List<AudioClip>>(MusicAudioQueuePortName).Build();
+            context.AddInputPort<bool>(LoopMusicPortName).WithDefaultValue(true).Build();
+            context.AddInputPort<bool>(ShuffleMusicPortName).Build();
+        }
         if (setPlayAudio)
-            context.AddInputPort<List<AudioResource>>(PlayAudioPortName).Build();
+            context.AddInputPort<List<AudioClip>>(PlayAudioPortName).Build();
 
         if (setDialogueBoxColor)
             context.AddInputPort<Color>(DialogueBoxColorPortName).Build();

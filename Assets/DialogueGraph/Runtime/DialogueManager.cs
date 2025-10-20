@@ -1,16 +1,21 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     public RuntimeDialogueGraph runtimeGraph;
     public DialogueBlackboard dialogueBlackboard;
+
+    private RuntimeNode currentNode;
+    public bool delayWithClick = true;
 
     public bool dialogueRunning = false;
 
@@ -26,7 +31,8 @@ public class DialogueManager : MonoBehaviour
     public Button choiceButtonPrefab;
     public Transform choiceButtonContainer;
 
-    private RuntimeNode currentNode;
+    [Header("Audio Sources")]
+    public AudioSource musicSource;
 
     [Header("Settings")]
     public bool onHold = false;
@@ -34,6 +40,21 @@ public class DialogueManager : MonoBehaviour
     public bool autoAdvance = false;
     public bool enableSkipping = false;
     public bool textShadowOnMultipleCharactersTalking = false;
+
+    public float printSpeed = 0.02f;
+
+    [Header("Dialogue Variables")]
+    private Coroutine typingCoroutine;
+    private string currentFullText = "";
+
+    [Header("Sound Variables")]
+    public List<AudioClip> musicQueue = new();
+    public int currentTrackIndex = -1;
+    public bool loop = true;
+    public bool shuffle = false;
+
+    public List<AudioSource> activeSources = new();
+    private List<Coroutine> soundCoroutines = new();
 
     private void Start()
     {
@@ -80,21 +101,26 @@ public class DialogueManager : MonoBehaviour
 
         if (onHold)
             return;
-
+        
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
             if (Mouse.current.leftButton.wasPressedThisFrame && node.choices.Count == 0)
             {
-                // If next node is present, show it, if not, end dialogue
+                if (typingCoroutine != null)
+                {
+                    // Instantly finish typing
+                    StopCoroutine(typingCoroutine);
+                    dialogueText.text = currentFullText;
+                    typingCoroutine = null;
+                }
+
                 if (!string.IsNullOrEmpty(currentNode.nextNodeID))
-                {
                     HandleNode(currentNode.nextNodeID);
-                }
                 else
-                {
                     EndDialogue();
-                }
             }
+
+            HandleMusicQueue();
         }
     }
 
@@ -103,6 +129,8 @@ public class DialogueManager : MonoBehaviour
         dialogueRunning = true;
         allowEscape = runtimeGraph.allowEscape;
         textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
+        loop = true;
+        shuffle = false;
 
         // If first node is present, show it, if not, end dialogue
         if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
@@ -115,17 +143,26 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void InteruptDialogue()
+    {
+        dialoguePanel.SetActive(false);
+        musicSource.Pause();
+        onHold = true;
+    }
+
     private void ResumeDialogue()
     {
         onHold = false;
         if (currentNode != null)
             HandleNode(currentNode.nextNodeID);
+        musicSource.UnPause();
     }
 
     private void EndDialogue()
     {
         dialoguePanel.SetActive(false);
         dialogueRunning = false;
+        musicSource.Stop();
         currentNode = null;
 
         // Clear all choice buttons
@@ -151,18 +188,31 @@ public class DialogueManager : MonoBehaviour
         switch (currentNode)
         {
             case RuntimeDialogueNode node:
-                SetupDialogueNode(node);
+                StartCoroutine(WaitOnDelay(node));
                 break;
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
                 break;
             case RuntimeInteruptNode node:
-                dialoguePanel.SetActive(false);
-                onHold = true;
+                InteruptDialogue();
                 return;
         }
 
         dialoguePanel.SetActive(true);
+    }
+
+    private IEnumerator WaitOnDelay(RuntimeDialogueNode node)
+    {
+        delayWithClick = node.dialogueSettings.delayWithClick;
+        while (delayWithClick)
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                delayWithClick = false;
+            }
+            yield return null;
+        }
+        SetupDialogueNode(node);
     }
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
@@ -194,8 +244,90 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        SetDialogueText(node.dialogueText, speakerNames.Count > 1);
+        dialogueTextShadow.gameObject.SetActive(speakerNames.Count > 1);
 
+        HandleDialogueText(node);
+
+        CreateChoices(node);
+
+        ChangeMusicQueue(node);
+
+        PlayAllSounds(node);
+    }
+
+    #region Dialogue
+    private void HandleDialogueText(RuntimeDialogueNode node)
+    {
+        // Stop previous typing if any
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
+
+        // Gather dialogue settings
+        bool keepPrevious = node.dialogueSettings.keepPreviousText;
+        float _printSpeed = printSpeed;
+        if (node.dialogueSettings.printSpeed.GetValue(dialogueBlackboard, out float speedValue))
+        {
+            printSpeed = speedValue;
+            _printSpeed = speedValue;
+        }
+
+        // Build styled text
+        string styledText = BuildStyledText(node);
+
+        // Start typing
+        typingCoroutine = StartCoroutine(TypeText(styledText, _printSpeed, keepPrevious));
+    }
+
+    private string BuildStyledText(RuntimeDialogueNode node)
+    {
+        DialogueSettings s = node.dialogueSettings;
+
+        string text = node.dialogueText;
+
+        // Apply TMP Rich Text based on dialogue settings
+        if (s.bold.GetValue(dialogueBlackboard))
+            text = $"<b>{text}</b>";
+        if (s.italic.GetValue(dialogueBlackboard))
+            text = $"<i>{text}</i>";
+        if (s.underline.GetValue(dialogueBlackboard))
+            text = $"<u>{text}</u>";
+        if (s.color.GetValue(dialogueBlackboard, out Color color))
+            text = $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{text}</color>";
+        if (s.font.GetValue(dialogueBlackboard, out TMP_FontAsset font))
+            text = $"<font=\"{font.name}\">{text}</font>";
+
+        return text;
+    }
+
+    private IEnumerator TypeText(string newText, float speed, bool keepPrevious)
+    {
+        if (!keepPrevious)
+        {
+            currentFullText = "";
+            dialogueText.text = "";
+        }
+
+        int startIndex = currentFullText.Length;
+        currentFullText += newText;
+
+        // Type only the new part
+        for (int i = startIndex; i < currentFullText.Length; i++)
+        {
+            dialogueText.text = currentFullText.Substring(0, i + 1);
+            yield return new WaitForSeconds(speed);
+        }
+
+        typingCoroutine = null;
+
+        // Automatically go to the next node
+        if (!string.IsNullOrEmpty(currentNode.nextNodeID))
+            HandleNode(currentNode.nextNodeID);
+        else
+            EndDialogue();
+    }
+
+    private void CreateChoices(RuntimeDialogueNode node)
+    {
         // Clear all choice buttons
         foreach (Transform child in choiceButtonContainer)
         {
@@ -239,16 +371,123 @@ public class DialogueManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    private void SetDialogueText(string text, bool multiCharacters)
+    #region Music
+    private void HandleMusicQueue()
     {
-        dialogueText.text = text;
+        if (musicSource.isPlaying || musicQueue.Count == 0)
+            return;
 
-        if (multiCharacters && textShadowOnMultipleCharactersTalking)
+        if (loop)
+            if (currentTrackIndex >= musicQueue.Count)
+                currentTrackIndex = 0;
+
+        PlayNextTrack();
+    }
+
+    private void ChangeMusicQueue(RuntimeDialogueNode node)
+    {
+        if (node.dialogueSettings.musicQueue.GetValue(dialogueBlackboard, out List<AudioClip> newQueue))
         {
-            dialogueTextShadow.text = text;
+            musicSource.Stop();
+            musicQueue.Clear();
+            musicQueue.AddRange(newQueue);
+
+            loop = node.dialogueSettings.loop.GetValue(dialogueBlackboard);
+            shuffle = node.dialogueSettings.shuffle.GetValue(dialogueBlackboard);
+
+            if (shuffle)
+                Shuffle(musicQueue);
+
+            currentTrackIndex = -1;
+            PlayNextTrack();
         }
     }
+
+    public void Shuffle<T>(IList<T> ts)
+    {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i)
+        {
+            var r = UnityEngine.Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
+        }
+    }
+
+    private void PlayNextTrack()
+    {
+        currentTrackIndex++;
+
+        if (currentTrackIndex >= musicQueue.Count)
+        {
+            // End of queue
+            Debug.Log("Music queue finished.");
+            currentTrackIndex = -1;
+            return;
+        }
+
+        AudioClip nextTrack = musicQueue[currentTrackIndex];
+        if (nextTrack == null || nextTrack == null)
+        {
+            Debug.LogWarning("Missing AudioResource or AudioClip at index " + currentTrackIndex);
+            PlayNextTrack(); // skip invalid entries
+            return;
+        }
+
+        musicSource.clip = nextTrack;
+        musicSource.Play();
+        Debug.Log("Now playing: " + nextTrack.name);
+    }
+    #endregion
+
+    #region Sounds
+    private void PlayAllSounds(RuntimeDialogueNode node)
+    {
+        StopAllSounds();
+
+        if (node.dialogueSettings.audioList.GetValue(dialogueBlackboard, out List<AudioClip> audioList))
+        {
+            foreach (AudioClip clip in audioList)
+            {
+                if (clip == null)
+                    continue;
+
+                AudioSource src = gameObject.AddComponent<AudioSource>();
+                src.clip = clip;
+                //src.volume = volume;
+                src.Play();
+                activeSources.Add(src);
+
+                soundCoroutines.Add(StartCoroutine(DestroyAfterPlaying(src)));
+            }
+        }
+    }
+
+    private IEnumerator DestroyAfterPlaying(AudioSource src)
+    {
+        yield return new WaitForSeconds(src.clip.length);
+        activeSources.Remove(src);
+        Destroy(src);
+    }
+
+    public void StopAllSounds()
+    {
+        foreach (AudioSource src in activeSources)
+        {
+            if (src != null)
+                Destroy(src);
+        }
+        foreach (Coroutine coroutine in soundCoroutines)
+        {
+            StopCoroutine(coroutine);
+        }
+        activeSources.Clear();
+    }
+    #endregion
 
     private void SetupSplitterNode(RuntimeSplitterNode node)
     {

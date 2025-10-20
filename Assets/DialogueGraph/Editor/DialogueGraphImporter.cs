@@ -143,7 +143,6 @@ public class DialogueGraphImporter : ScriptedImporter
         // Settings
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
-            nextDialogueText = GetBoolOption(node, DialogueContextNode.NextDialogueTextPortName, true),
             awaitContinueEvent = GetBoolOption(node, DialogueContextNode.AwaitContinueEventPortName, false),
             delayWithClick = GetBoolOption(node, DialogueContextNode.DelayWithClickPortName, false),
             keepPreviousText = GetBoolOption(node, DialogueContextNode.KeepPreviousTextPortName, false),
@@ -214,13 +213,25 @@ public class DialogueGraphImporter : ScriptedImporter
             {
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.MusicAudioQueuePortName),
                 usePortValue = GetBoolOption(node, DialogueContextNode.ChangeMusicAudioQueuePortName),
-                value = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.MusicAudioQueuePortName),
+                value = GetPortValueSafe<List<AudioClip>>(node, DialogueContextNode.MusicAudioQueuePortName),
+            },
+            loop = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.LoopMusicPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeMusicAudioQueuePortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.LoopMusicPortName),
+            },
+            shuffle = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.ShuffleMusicPortName),
+                usePortValue = GetBoolOption(node, DialogueContextNode.ChangeMusicAudioQueuePortName),
+                value = GetPortValueSafe<bool>(node, DialogueContextNode.ShuffleMusicPortName),
             },
             audioList = new()
             {
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.PlayAudioPortName),
                 usePortValue = GetBoolOption(node, DialogueContextNode.SetPlayAudioPortName),
-                value = GetPortValueSafe<List<AudioResource>>(node, DialogueContextNode.PlayAudioPortName),
+                value = GetPortValueSafe<List<AudioClip>>(node, DialogueContextNode.PlayAudioPortName),
             },
 
             dialogueBoxColor = new()

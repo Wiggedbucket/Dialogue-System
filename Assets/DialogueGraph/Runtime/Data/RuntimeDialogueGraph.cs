@@ -96,7 +96,6 @@ public class PortValue<T>
 public class DialogueSettings
 {
     // Node options
-    public bool nextDialogueText = true;
     public bool awaitContinueEvent = false;
     public bool delayWithClick = false;
     public bool keepPreviousText = false;
@@ -114,8 +113,10 @@ public class DialogueSettings
     public PortValue<TextAlignmentOptions> textAlign = new();
     public PortValue<bool> wrapText = new();
 
-    public PortValue<List<AudioResource>> musicQueue = new();
-    public PortValue<List<AudioResource>> audioList = new();
+    public PortValue<List<AudioClip>> musicQueue = new();
+    public PortValue<bool> loop = new();
+    public PortValue<bool> shuffle = new();
+    public PortValue<List<AudioClip>> audioList = new();
 
     public PortValue<Color> dialogueBoxColor = new();
     public PortValue<Sprite> dialogueBoxImage = new();
