@@ -18,6 +18,8 @@ public class DialogueManager : MonoBehaviour
     
     public bool dialogueRunning = false;
 
+    public static event Action<string> OnStringBroadcast;
+
     [Header("UI Components")]
     public GameObject dialoguePanel;
     public Image primaryImage;
@@ -255,6 +257,12 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
     {
+        // Send string via action
+        if (node.dialogueSettings.broadcastString.GetValue(dialogueBlackboard, out string text))
+        {
+            OnStringBroadcast?.Invoke(text);
+        }
+
         // Handle character data
         List<string> speakerNames = new();
         foreach (CharacterData character in node.characters)
