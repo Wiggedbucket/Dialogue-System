@@ -56,12 +56,15 @@ public class DialogueManager : MonoBehaviour
 
     public float printSpeed = 0.02f;
 
+    [Header("Character Variables")]
+    public List<GameObject> characters = new List<GameObject>();
+
     [Header("Dialogue Variables")]
+    public bool delayNextWithClick = false;
+    private string currentFullText = "";
+    private bool isTyping = false;
     private Coroutine typingCoroutine;
     private Coroutine delayNodeCoroutine;
-    private string currentFullText = "";
-    public bool delayNextWithClick = false;
-    private bool isTyping = false;
     private TextAlignmentOptions defaultAlignment;
     private TextWrappingModes defaultWrapping;
 
@@ -136,11 +139,11 @@ public class DialogueManager : MonoBehaviour
         
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
-            if (!isTyping && !delayNextWithClick && delayNodeCoroutine == null)
+            if (!isTyping && !delayNextWithClick && delayNodeCoroutine == null && node.choices.Count == 0)
             {
                 GoToNextNode();
             }
-            else if (Mouse.current.leftButton.wasPressedThisFrame)
+            else if (Mouse.current.leftButton.wasPressedThisFrame && node.choices.Count == 0)
             {
                 // If still typing, skip text printing
                 if (allowFastAdvance && isTyping && typingCoroutine != null)
