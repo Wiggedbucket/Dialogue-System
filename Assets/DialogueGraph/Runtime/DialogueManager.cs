@@ -51,6 +51,7 @@ public class DialogueManager : MonoBehaviour
     private string currentFullText = "";
     public bool delayNextWithClick = false;
     private bool isTyping = false;
+    private TextAlignmentOptions defaultAlignment;
 
     [Header("Sound Variables")]
     public List<AudioClip> musicQueue = new();
@@ -64,6 +65,8 @@ public class DialogueManager : MonoBehaviour
     private void Start()
     {
         CreateRuntimeBlackboard(runtimeGraph);
+
+        defaultAlignment = dialogueText.alignment;
     }
 
     public void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
@@ -317,6 +320,17 @@ public class DialogueManager : MonoBehaviour
         {
             printSpeed = speedValue;
             _printSpeed = speedValue;
+        }
+        if (node.dialogueSettings.textAlign.GetValue(dialogueBlackboard, out TextAlignmentOptions options))
+        {
+            dialogueText.alignment = options;
+        } else
+        {
+            dialogueText.alignment = defaultAlignment;
+        }
+        if (node.dialogueSettings.wrapText.GetValue(dialogueBlackboard, out TextWrappingModes wrap))
+        {
+            dialogueText.textWrappingMode = wrap;
         }
 
         // Build styled text

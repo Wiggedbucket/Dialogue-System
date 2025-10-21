@@ -146,10 +146,12 @@ public class DialogueContextNode : ContextNode
         if (changeFont)
             context.AddInputPort<TMP_FontAsset>(FontPortName).Build();
         if (changeTextAlign)
-            context.AddInputPort<TextAlignmentOptions>(TextAlignPortName).Build();
+            context.AddInputPort<TextAlignmentOptions>(TextAlignPortName)
+                .WithDefaultValue(TextAlignmentOptions.TopLeft)
+                .Build();
         if (changeWrapText)
-            context.AddInputPort<bool>(WrapTextPortName)
-                .WithDefaultValue(true)
+            context.AddInputPort<TextWrappingModes>(WrapTextPortName)
+                .WithDefaultValue(TextWrappingModes.Normal)
                 .Build();
 
         if (changeMusicAudioQueue)

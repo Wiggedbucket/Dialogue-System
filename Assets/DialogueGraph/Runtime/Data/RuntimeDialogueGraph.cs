@@ -112,21 +112,21 @@ public class DialogueSettings
     public PortValue<Color> color = new();
     public PortValue<TMP_FontAsset> font = new();
     public PortValue<TextAlignmentOptions> textAlign = new();
-    public PortValue<bool> wrapText = new();
+    public PortValue<TextWrappingModes> wrapText = new();
 
     public PortValue<List<AudioClip>> musicQueue = new();
     public PortValue<bool> loop = new();
     public PortValue<bool> shuffle = new();
     public PortValue<List<AudioClip>> audioList = new();
 
-    public PortValue<Color> dialogueBoxColor = new();
-    public PortValue<Sprite> dialogueBoxImage = new();
-    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new();
-    public PortValue<Color> namePlateColor = new();
-    public PortValue<Sprite> namePlateImage = new();
+    public PortValue<Color> dialogueBoxColor = new(); // TODO
+    public PortValue<Sprite> dialogueBoxImage = new(); // TODO
+    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new(); // TODO
+    public PortValue<Color> namePlateColor = new(); // TODO
+    public PortValue<Sprite> namePlateImage = new(); // TODO
 
-    public PortValue<Sprite> backgroundImage = new();
-    public PortValue<BackgroundTransition> backgroundTransition = new();
+    public PortValue<Sprite> backgroundImage = new(); // TODO
+    public PortValue<BackgroundTransition> backgroundTransition = new(); // TODO
 }
 
 [Serializable]

@@ -58,7 +58,7 @@ MonoBehaviour:
           x: 640.8
           y: 327.2
           width: 3034.4
-          height: 1196
+          height: 1199.2002
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 1127398649581984152
@@ -1425,6 +1425,7 @@ MonoBehaviour:
           - dialogue
           - __option_delay next with click
           - delay text
+          - text align
           m_ValueList:
           - rid: 5077104256546242765
           - rid: 5077104256546242766
@@ -1449,6 +1450,7 @@ MonoBehaviour:
           - rid: 5077104256546242786
           - rid: 5077104275225051319
           - rid: 5077104275225051323
+          - rid: 5077104279487250504
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1509,7 +1511,7 @@ MonoBehaviour:
     - rid: 5077104256546242775
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104256546242776
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1759,6 +1761,17 @@ MonoBehaviour:
       type: {class: 'Constant`1[[System.Single, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value: 0
+    - rid: 5077104279487250504
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: TMPro.TextAlignmentOptions, Unity.TextMeshPro, Version=0.0.0.0,
+              Culture=neutral, PublicKeyToken=null
+          m_Value: 258
+        m_EnumType:
+          m_Identification: TMPro.TextAlignmentOptions, Unity.TextMeshPro, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
     - rid: 7566504000449675545
       type: {class: VariableDeclarationModel, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:

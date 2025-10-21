@@ -207,7 +207,7 @@ public class DialogueGraphImporter : ScriptedImporter
             {
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.WrapTextPortName),
                 usePortValue = GetBoolOption(node, DialogueContextNode.ChangeWrapTextPortName),
-                value = GetPortValueSafe<bool>(node, DialogueContextNode.WrapTextPortName),
+                value = GetPortValueSafe<TextWrappingModes>(node, DialogueContextNode.WrapTextPortName),
             },
 
             musicQueue = new()
