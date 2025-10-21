@@ -9,7 +9,7 @@ using UnityEngine.Audio;
 public class DialogueContextNode : ContextNode
 {
     public const string AwaitContinueEventPortName = "await continue event";
-    public const string DelayWithClickPortName = "delay with click";
+    public const string DelayNextWithClickPortName = "delay next with click";
     public const string KeepPreviousTextPortName = "keep previous text";
 
     public const string ChangePrintSpeedPortName = "change print speed";
@@ -63,7 +63,7 @@ public class DialogueContextNode : ContextNode
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
         context.AddOption<bool>(AwaitContinueEventPortName);
-        context.AddOption<bool>(DelayWithClickPortName)
+        context.AddOption<bool>(DelayNextWithClickPortName)
             .WithDefaultValue(true)
             .Build();
         context.AddOption<bool>(KeepPreviousTextPortName);

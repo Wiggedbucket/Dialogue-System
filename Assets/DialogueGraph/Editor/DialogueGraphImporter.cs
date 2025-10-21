@@ -38,6 +38,7 @@ public class DialogueGraphImporter : ScriptedImporter
                 runtimeGraph.entryNodeID = nodeIDMap[nextPort.GetNode()];
 
             runtimeGraph.allowEscape = GetBoolOption((Node)startNode, StartNode.AllowEscapeOptionName);
+            runtimeGraph.allowFastAdvance = GetBoolOption((Node)startNode, StartNode.AllowFastAdvanceOptionName);
             runtimeGraph.textShadowOnMultipleCharactersTalking = GetBoolOption((Node)startNode, StartNode.TextShadowOnMultipleCharactersTalkingOptionName);
         }
 
@@ -144,7 +145,7 @@ public class DialogueGraphImporter : ScriptedImporter
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
             awaitContinueEvent = GetBoolOption(node, DialogueContextNode.AwaitContinueEventPortName, false),
-            delayWithClick = GetBoolOption(node, DialogueContextNode.DelayWithClickPortName, false),
+            delayNextWithClick = GetBoolOption(node, DialogueContextNode.DelayNextWithClickPortName, false),
             keepPreviousText = GetBoolOption(node, DialogueContextNode.KeepPreviousTextPortName, false),
 
             printSpeed = new()

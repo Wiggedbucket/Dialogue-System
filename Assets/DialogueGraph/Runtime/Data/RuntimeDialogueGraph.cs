@@ -14,6 +14,7 @@ public class RuntimeDialogueGraph : ScriptableObject
 
     // Settings
     public bool allowEscape = false; // If true, allows exiting the dialogue at any time (e.g., pressing escape)
+    public bool allowFastAdvance = true; // If true, allows advancing through text printing with left click
     public bool textShadowOnMultipleCharactersTalking = false;
 
     [SerializeReference]
@@ -97,7 +98,7 @@ public class DialogueSettings
 {
     // Node options
     public bool awaitContinueEvent = false;
-    public bool delayWithClick = false;
+    public bool delayNextWithClick = false;
     public bool keepPreviousText = false;
 
     // Variables

@@ -36,6 +36,7 @@ public class DialogueManager : MonoBehaviour
     [Header("Settings")]
     public bool onHold = false;
     public bool allowEscape = false;
+    public bool allowFastAdvance = true;
     public bool autoAdvance = false;
     public bool enableSkipping = false;
     public bool textShadowOnMultipleCharactersTalking = false;
@@ -45,8 +46,8 @@ public class DialogueManager : MonoBehaviour
     [Header("Dialogue Variables")]
     private Coroutine typingCoroutine;
     private string currentFullText = "";
-    public bool delayWithClick = true;
-    private Coroutine delayCoroutine;
+    public bool delayNextWithClick = false;
+    private bool isTyping = false;
 
     [Header("Sound Variables")]
     public List<AudioClip> musicQueue = new();
@@ -105,22 +106,24 @@ public class DialogueManager : MonoBehaviour
         
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
-            if (Mouse.current.leftButton.wasPressedThisFrame && node.choices.Count == 0)
+            if (!isTyping && !delayNextWithClick)
             {
-                if (typingCoroutine != null)
+                GoToNextNode();
+            }
+            else if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                // If still typing, skip text printing
+                if (allowFastAdvance && isTyping && typingCoroutine != null)
                 {
-                    // Instantly finish typing
                     StopCoroutine(typingCoroutine);
                     dialogueText.text = currentFullText;
+                    isTyping = false;
                     typingCoroutine = null;
+                    return;
                 }
-
-                if (delayCoroutine == null)
+                else if (delayNextWithClick && !isTyping)
                 {
-                    if (!string.IsNullOrEmpty(currentNode.nextNodeID))
-                        HandleNode(currentNode.nextNodeID);
-                    else
-                        EndDialogue();
+                    GoToNextNode();
                 }
             }
 
@@ -128,15 +131,15 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    #region Control
     private void StartDialogue()
     {
         dialogueRunning = true;
         allowEscape = runtimeGraph.allowEscape;
+        allowFastAdvance = runtimeGraph.allowFastAdvance;
         textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
         loop = true;
         shuffle = false;
-        if (delayCoroutine != null)
-            StopCoroutine(delayCoroutine);
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
@@ -179,6 +182,7 @@ public class DialogueManager : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+    #endregion
 
     private void HandleNode(string id)
     {
@@ -196,7 +200,7 @@ public class DialogueManager : MonoBehaviour
         switch (currentNode)
         {
             case RuntimeDialogueNode node:
-                delayCoroutine = StartCoroutine(WaitOnDelay(node));
+                SetupDialogueNode(node);
                 break;
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
@@ -209,24 +213,16 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
     }
 
-    private IEnumerator WaitOnDelay(RuntimeDialogueNode node)
+    private void GoToNextNode()
     {
-        delayWithClick = node.dialogueSettings.delayWithClick;
-        while (delayWithClick)
-        {
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                delayWithClick = false;
-            }
-            yield return null;
-        }
-        SetupDialogueNode(node);
+        if (!string.IsNullOrEmpty(currentNode.nextNodeID))
+            HandleNode(currentNode.nextNodeID);
+        else
+            EndDialogue();
     }
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
     {
-        delayCoroutine = null;
-
         // Handle character data
         List<string> speakerNames = new();
         foreach (CharacterData character in node.characters)
@@ -268,6 +264,8 @@ public class DialogueManager : MonoBehaviour
     #region Dialogue
     private void HandleDialogueText(RuntimeDialogueNode node)
     {
+        delayNextWithClick = node.dialogueSettings.delayNextWithClick;
+
         // Stop previous typing if any
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
@@ -311,6 +309,8 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator TypeText(string newText, float speed, bool keepPrevious)
     {
+        isTyping = true;
+
         if (!keepPrevious)
         {
             currentFullText = "";
@@ -327,13 +327,18 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(speed);
         }
 
+        isTyping = false;
         typingCoroutine = null;
 
-        // Automatically go to the next node
-        if (!string.IsNullOrEmpty(currentNode.nextNodeID))
-            HandleNode(currentNode.nextNodeID);
-        else
-            EndDialogue();
+        RuntimeDialogueNode node = currentNode as RuntimeDialogueNode;
+        if (node == null)
+            yield break;
+
+        if (node.choices.Count > 0)
+            yield break;
+
+        if (!delayNextWithClick)
+            GoToNextNode();
     }
 
     private void CreateChoices(RuntimeDialogueNode node)
