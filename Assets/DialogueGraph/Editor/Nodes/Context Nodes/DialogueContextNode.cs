@@ -13,7 +13,6 @@ public class DialogueContextNode : ContextNode
     public const string KeepPreviousTextPortName = "keep previous text";
 
     public const string ChangePrintSpeedPortName = "change print speed";
-    public const string ActivateTextDelayPortName = "activate text delay";
     public const string ActivateBroadcastStringPortName = "activate broadcast string";
     public const string ChangeBoldPortName = "change bold";
     public const string ChangeItalicPortName = "change italic";
@@ -69,7 +68,6 @@ public class DialogueContextNode : ContextNode
         context.AddOption<bool>(KeepPreviousTextPortName);
 
         context.AddOption<bool>(ChangePrintSpeedPortName);
-        context.AddOption<bool>(ActivateTextDelayPortName);
 
         context.AddOption<bool>(ActivateBroadcastStringPortName);
         context.AddOption<bool>(ChangeBoldPortName);
@@ -100,7 +98,6 @@ public class DialogueContextNode : ContextNode
             .Build();
 
         var changePrintSpeed = GetBoolOption(ChangePrintSpeedPortName);
-        var activateTextDelay = GetBoolOption(ActivateTextDelayPortName);
         var activateBroadcastString = GetBoolOption(ActivateBroadcastStringPortName);
         var changeBold = GetBoolOption(ChangeBoldPortName);
         var changeItalic = GetBoolOption(ChangeItalicPortName);
@@ -132,8 +129,7 @@ public class DialogueContextNode : ContextNode
             context.AddInputPort<float>(PrintSpeedPortName)
             .WithDefaultValue(0.02f)
             .Build();
-        if (activateTextDelay)
-            context.AddInputPort<float>(DelayTextPortName).Build();
+        context.AddInputPort<float>(DelayTextPortName).Build();
 
         if (changeBold)
             context.AddInputPort<bool>(BoldPortName).Build();

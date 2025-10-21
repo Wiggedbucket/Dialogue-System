@@ -157,7 +157,7 @@ public class DialogueGraphImporter : ScriptedImporter
             delayText = new()
             {
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DelayTextPortName),
-                usePortValue = GetBoolOption(node, DialogueContextNode.ActivateTextDelayPortName),
+                usePortValue = true,
                 value = GetPortValueSafe<float>(node, DialogueContextNode.DelayTextPortName),
             },
             broadcastString = new()

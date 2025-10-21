@@ -45,6 +45,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Dialogue Variables")]
     private Coroutine typingCoroutine;
+    private Coroutine delayNodeCoroutine;
     private string currentFullText = "";
     public bool delayNextWithClick = false;
     private bool isTyping = false;
@@ -106,7 +107,7 @@ public class DialogueManager : MonoBehaviour
         
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
-            if (!isTyping && !delayNextWithClick)
+            if (!isTyping && !delayNextWithClick && delayNodeCoroutine == null)
             {
                 GoToNextNode();
             }
@@ -120,6 +121,12 @@ public class DialogueManager : MonoBehaviour
                     isTyping = false;
                     typingCoroutine = null;
                     return;
+                }
+                else if (allowFastAdvance && !isTyping && delayNodeCoroutine != null)
+                {
+                    StopCoroutine(delayNodeCoroutine);
+                    delayNodeCoroutine = null;
+                    SetupDialogueNode(node);
                 }
                 else if (delayNextWithClick && !isTyping)
                 {
@@ -159,6 +166,10 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         musicSource.Pause();
         onHold = true;
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
+        if (delayNodeCoroutine != null)
+            StopCoroutine(delayNodeCoroutine);
     }
 
     private void ResumeDialogue()
@@ -173,8 +184,13 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
         dialogueRunning = false;
+        StopAllSounds();
         musicSource.Stop();
         currentNode = null;
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
+        if (delayNodeCoroutine != null)
+            StopCoroutine(delayNodeCoroutine);
 
         // Clear all choice buttons
         foreach (Transform child in choiceButtonContainer)
@@ -200,7 +216,7 @@ public class DialogueManager : MonoBehaviour
         switch (currentNode)
         {
             case RuntimeDialogueNode node:
-                SetupDialogueNode(node);
+                delayNodeCoroutine = StartCoroutine(DelayNextNode(node));
                 break;
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
@@ -219,6 +235,22 @@ public class DialogueManager : MonoBehaviour
             HandleNode(currentNode.nextNodeID);
         else
             EndDialogue();
+    }
+
+    private IEnumerator DelayNextNode(RuntimeDialogueNode node)
+    {
+        bool keepPrevious = node.dialogueSettings.keepPreviousText;
+        if (!keepPrevious)
+        {
+            currentFullText = "";
+            dialogueText.text = "";
+        }
+
+        float delay = node.dialogueSettings.delayText.GetValue(dialogueBlackboard);
+        yield return new WaitForSeconds(delay);
+
+        delayNodeCoroutine = null;
+        SetupDialogueNode(node);
     }
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
@@ -310,12 +342,6 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator TypeText(string newText, float speed, bool keepPrevious)
     {
         isTyping = true;
-
-        if (!keepPrevious)
-        {
-            currentFullText = "";
-            dialogueText.text = "";
-        }
 
         int startIndex = currentFullText.Length;
         currentFullText += newText;
