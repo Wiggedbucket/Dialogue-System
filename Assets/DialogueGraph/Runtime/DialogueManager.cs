@@ -320,6 +320,8 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        HandleBackground(node);
+
         HandleDialogueBox(node);
 
         dialogueTextShadow.gameObject.SetActive(speakerNames.Count > 1);
@@ -334,6 +336,13 @@ public class DialogueManager : MonoBehaviour
     }
 
     #region Dialogue
+    private void HandleBackground(RuntimeDialogueNode node)
+    {
+        bool useValue = node.dialogueSettings.backgroundImage.GetValue(dialogueBlackboard, out Sprite backgroundImage);
+        if (useValue)
+            primaryImage.sprite = backgroundImage;
+    }
+
     private void HandleDialogueBox(RuntimeDialogueNode node)
     {
         bool useValue = false;
