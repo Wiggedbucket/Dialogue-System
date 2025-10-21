@@ -20,13 +20,24 @@ public class DialogueManager : MonoBehaviour
 
     public static event Action<string> OnStringBroadcast;
 
-    [Header("UI Components")]
+    [Header("Dialogue Panel")]
     public GameObject dialoguePanel;
-    public Image primaryImage;
-    public Image secondaryImage;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI dialogueTextShadow;
+    public Image namePlateBackground;
+    public Image dialogueTextBackground;
+
+    private DialogueBoxTransition defaultDialogueBoxTransition = DialogueBoxTransition.None;
+    public DialogueBoxTransition dialogueBoxTransition;
+    private Color defaultDialogueBoxColor;
+    private Sprite defaultDialogueBoxImage;
+    private Color defaultNamePlateColor;
+    private Sprite defaultNamePlateImage;
+
+    [Header("Background")]
+    public Image primaryImage;
+    public Image secondaryImage;
 
     [Header("Choice Button UI")]
     public Button choiceButtonPrefab;
@@ -52,6 +63,7 @@ public class DialogueManager : MonoBehaviour
     public bool delayNextWithClick = false;
     private bool isTyping = false;
     private TextAlignmentOptions defaultAlignment;
+    private TextWrappingModes defaultWrapping;
 
     [Header("Sound Variables")]
     public List<AudioClip> musicQueue = new();
@@ -66,10 +78,10 @@ public class DialogueManager : MonoBehaviour
     {
         CreateRuntimeBlackboard(runtimeGraph);
 
-        defaultAlignment = dialogueText.alignment;
+        SetDefaultValues();
     }
 
-    public void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
+    private void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
     {
         GameObject go = new("DialogueBlackboard");
         DialogueBlackboard bb = go.AddComponent<DialogueBlackboard>();
@@ -93,6 +105,18 @@ public class DialogueManager : MonoBehaviour
 
         bb.SetupVariableMap();
         dialogueBlackboard = bb;
+    }
+
+    private void SetDefaultValues()
+    {
+        defaultAlignment = dialogueText.alignment;
+        defaultWrapping = dialogueText.textWrappingMode;
+
+        defaultDialogueBoxColor = dialogueTextBackground.color;
+        defaultDialogueBoxImage = dialogueTextBackground.sprite;
+
+        defaultNamePlateColor = namePlateBackground.color;
+        defaultNamePlateImage = namePlateBackground.sprite;
     }
 
     private void Update()
@@ -293,6 +317,8 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        HandleDialogueBox(node);
+
         dialogueTextShadow.gameObject.SetActive(speakerNames.Count > 1);
 
         HandleDialogueText(node);
@@ -305,6 +331,26 @@ public class DialogueManager : MonoBehaviour
     }
 
     #region Dialogue
+    private void HandleDialogueBox(RuntimeDialogueNode node)
+    {
+        bool useValue = false;
+
+        useValue = node.dialogueSettings.dialogueBoxTransition.GetValue(dialogueBlackboard, out DialogueBoxTransition transition);
+        dialogueBoxTransition = useValue ? transition : defaultDialogueBoxTransition;
+
+        useValue = node.dialogueSettings.dialogueBoxColor.GetValue(dialogueBlackboard, out Color namePlateColor);
+        namePlateBackground.color = useValue ? namePlateColor : defaultNamePlateColor;
+
+        useValue = node.dialogueSettings.dialogueBoxImage.GetValue(dialogueBlackboard, out Sprite namePlateImage);
+        namePlateBackground.sprite = useValue ? namePlateImage : defaultNamePlateImage;
+
+        useValue = node.dialogueSettings.namePlateColor.GetValue(dialogueBlackboard, out Color dialogueBoxColor);
+        dialogueTextBackground.color = useValue ? dialogueBoxColor : defaultDialogueBoxColor;
+
+        useValue = node.dialogueSettings.namePlateImage.GetValue(dialogueBlackboard, out Sprite dialogueBoxImage);
+        dialogueTextBackground.sprite = useValue ? dialogueBoxImage : defaultDialogueBoxImage;
+    }
+
     private void HandleDialogueText(RuntimeDialogueNode node)
     {
         delayNextWithClick = node.dialogueSettings.delayNextWithClick;
@@ -321,17 +367,14 @@ public class DialogueManager : MonoBehaviour
             printSpeed = speedValue;
             _printSpeed = speedValue;
         }
-        if (node.dialogueSettings.textAlign.GetValue(dialogueBlackboard, out TextAlignmentOptions options))
-        {
-            dialogueText.alignment = options;
-        } else
-        {
-            dialogueText.alignment = defaultAlignment;
-        }
-        if (node.dialogueSettings.wrapText.GetValue(dialogueBlackboard, out TextWrappingModes wrap))
-        {
-            dialogueText.textWrappingMode = wrap;
-        }
+
+        bool useValue = false;
+
+        useValue = node.dialogueSettings.textAlign.GetValue(dialogueBlackboard, out TextAlignmentOptions options);
+        dialogueText.alignment = useValue ? options : defaultAlignment;
+
+        useValue = node.dialogueSettings.wrapText.GetValue(dialogueBlackboard, out TextWrappingModes wrap);
+        dialogueText.textWrappingMode = useValue ? wrap : defaultWrapping;
 
         // Build styled text
         string styledText = BuildStyledText(node);
@@ -368,12 +411,36 @@ public class DialogueManager : MonoBehaviour
         int startIndex = currentFullText.Length;
         currentFullText += newText;
 
-        // Type only the new part
-        for (int i = startIndex; i < currentFullText.Length; i++)
+        string visibleText = currentFullText.Substring(0, startIndex);
+        string remaining = currentFullText.Substring(startIndex);
+
+        int i = 0;
+        while (i < remaining.Length)
         {
-            dialogueText.text = currentFullText.Substring(0, i + 1);
+            char c = remaining[i];
+
+            // Instantly add entire rich text tags
+            if (c == '<')
+            {
+                int closingIndex = remaining.IndexOf('>', i);
+                if (closingIndex != -1)
+                {
+                    visibleText += remaining.Substring(i, closingIndex - i + 1);
+                    i = closingIndex + 1;
+                    continue; // no delay for tags
+                }
+            }
+
+            // Otherwise, add a single visible character
+            visibleText += c;
+            dialogueText.text = visibleText;
+
             yield return new WaitForSeconds(speed);
+            i++;
         }
+
+        // Ensure full text is displayed at the end
+        dialogueText.text = visibleText;
 
         isTyping = false;
         typingCoroutine = null;
