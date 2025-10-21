@@ -119,11 +119,11 @@ public class DialogueSettings
     public PortValue<bool> shuffle = new();
     public PortValue<List<AudioClip>> audioList = new();
 
-    public PortValue<Color> dialogueBoxColor = new(); // TODO
-    public PortValue<Sprite> dialogueBoxImage = new(); // TODO
-    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new(); // TODO
-    public PortValue<Color> namePlateColor = new(); // TODO
-    public PortValue<Sprite> namePlateImage = new(); // TODO
+    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new(); // TODO Make animations
+    public PortValue<Color> dialogueBoxColor = new();
+    public PortValue<Sprite> dialogueBoxImage = new();
+    public PortValue<Color> namePlateColor = new();
+    public PortValue<Sprite> namePlateImage = new();
 
     public PortValue<Sprite> backgroundImage = new(); // TODO
     public PortValue<BackgroundTransition> backgroundTransition = new(); // TODO
