@@ -24,13 +24,27 @@ public class CharacterData
     public PortValue<Sprite> characterSprite = new();
 
     public PortValue<bool> isVisible = new();
-    public PortValue<float> characterAppearanceDelay = new();
+    public PortValue<float> characterAppearanceDelay = new(); // TODO
 
     public PortValue<bool> isTalking = new();
     public PortValue<bool> hideName = new();
 
-    public PortValue<bool> smoothMove = new();
+    public PortValue<float> transitionDuration = new();
+    public PortValue<MovementType> positionMovementType = new();
+    public PortValue<MovementType> rotationMovementType = new();
+    public PortValue<MovementType> scaleMovementType = new();
+
+    public PortValue<PredefinedPosition> predefinedPosition = new();
     public PortValue<Vector2> characterPosition = new();
+
+    public PortValue<Vector2> minAnchor = new(); // TODO
+    public PortValue<Vector2> maxAnchor = new(); // TODO
+    public PortValue<Vector2> pivot = new(); // TODO
     public PortValue<float> characterRotation = new();
-    public PortValue<Vector2> characterScale = new();
+
+    public PortValue<Vector2> widthAndHeight = new(); // TODO
+    public PortValue<Vector2> characterScale = new()
+    {
+        value = new(1f, 1f),
+    };
 }

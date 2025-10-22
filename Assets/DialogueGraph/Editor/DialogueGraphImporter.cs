@@ -324,11 +324,36 @@ public class DialogueGraphImporter : ScriptedImporter
                     value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.HideNamePortName),
                 },
 
-                smoothMove = new()
+                transitionDuration = new()
                 {
-                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.SmoothMovementPortName),
-                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeSmoothMovementPortName),
-                    value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.SmoothMovementPortName),
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.TransitionDurationDelayPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeTransitionDurationPortName),
+                    value = GetPortValueSafe<float>(blockNode, CharacterBlockNode.TransitionDurationDelayPortName),
+                },
+                positionMovementType = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PositionMovementTypePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName),
+                    value = GetPortValueSafe<MovementType>(blockNode, CharacterBlockNode.PositionMovementTypePortName),
+                },
+                rotationMovementType = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.RotationMovementTypePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeRotationPortName),
+                    value = GetPortValueSafe<MovementType>(blockNode, CharacterBlockNode.RotationMovementTypePortName),
+                },
+                scaleMovementType = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.ScaleMovementTypePortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeScalePortName),
+                    value = GetPortValueSafe<MovementType>(blockNode, CharacterBlockNode.ScaleMovementTypePortName),
+                },
+
+                predefinedPosition = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PredefinedPositionsPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName),
+                    value = GetPortValueSafe<PredefinedPosition>(blockNode, CharacterBlockNode.PredefinedPositionsPortName),
                 },
                 characterPosition = new()
                 {
@@ -336,18 +361,42 @@ public class DialogueGraphImporter : ScriptedImporter
                     usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangePositionPortName),
                     value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName),
                 },
+                minAnchor = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.MinAnchorPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeAnchorsPortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.MinAnchorPortName),
+                },
+                maxAnchor = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.MaxAnchorPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeAnchorsPortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.MaxAnchorPortName),
+                },
+                pivot = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PivotPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangePivotPortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PivotPortName),
+                },
                 characterRotation = new() 
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.RotationPortName),
                     usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeRotationPortName),
                     value = GetPortValueSafe<float>(blockNode, CharacterBlockNode.RotationPortName),
                 },
+                widthAndHeight = new()
+                {
+                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.WidthAndHeightPortName),
+                    usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeWidthAndHeightPortName),
+                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.WidthAndHeightPortName),
+                },
                 characterScale = new()
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.ScalePortName),
                     usePortValue = GetBoolOption(blockNode, CharacterBlockNode.ChangeScalePortName),
                     value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.ScalePortName),
-                }
+                },
             });
         }
         runtimeDialogueNode.characters = characters;

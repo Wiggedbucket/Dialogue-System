@@ -223,6 +223,24 @@ public class RuntimeInteruptNode : RuntimeNode
 
 #region Enums
 [Serializable]
+public enum PredefinedPosition
+{
+    None,
+    Left,
+    MiddleLeft,
+    MiddleRight,
+    Right,
+}
+
+[Serializable]
+public enum MovementType
+{
+    Instant,
+    Linear,
+    Smooth
+}
+
+[Serializable]
 public enum BackgroundTransition
 {
     None,

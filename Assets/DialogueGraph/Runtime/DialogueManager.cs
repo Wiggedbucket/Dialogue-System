@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
@@ -22,6 +23,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Dialogue Panel")]
     public GameObject dialoguePanel;
+    public Transform characterHolder;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI dialogueTextShadow;
@@ -57,7 +59,10 @@ public class DialogueManager : MonoBehaviour
     public float printSpeed = 0.02f;
 
     [Header("Character Variables")]
-    public List<GameObject> characters = new List<GameObject>();
+    public Dictionary<string, CharacterObject> characterObjects = new();
+    private Coroutine positionMovementCoroutine;
+    private Coroutine rotationMovementCoroutine;
+    private Coroutine scaleMovementCoroutine;
 
     [Header("Dialogue Variables")]
     public bool delayNextWithClick = false;
@@ -173,14 +178,7 @@ public class DialogueManager : MonoBehaviour
     #region Control
     private void StartDialogue()
     {
-        dialogueRunning = true;
-        allowEscape = runtimeGraph.allowEscape;
-        allowFastAdvance = runtimeGraph.allowFastAdvance;
-        textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
-        loop = true;
-        shuffle = false;
-        if (typingCoroutine != null)
-            StopCoroutine(typingCoroutine);
+        ResetDialogue(true);
 
         // If first node is present, show it, if not, end dialogue
         if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
@@ -214,15 +212,40 @@ public class DialogueManager : MonoBehaviour
 
     private void EndDialogue()
     {
-        dialoguePanel.SetActive(false);
-        dialogueRunning = false;
-        StopAllSounds();
-        musicSource.Stop();
-        currentNode = null;
+        ResetDialogue(false);
+    }
+
+    private void ResetDialogue(bool setActive)
+    {
+        allowEscape = runtimeGraph.allowEscape;
+        allowFastAdvance = runtimeGraph.allowFastAdvance;
+        textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
+        loop = true;
+        shuffle = false;
+
+        dialoguePanel.SetActive(setActive);
+        dialogueRunning = setActive;
+
+        primaryImage.sprite = null;
+        primaryImage.enabled = false;
+        secondaryImage.sprite = null;
+        secondaryImage.enabled = false;
+
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
         if (delayNodeCoroutine != null)
             StopCoroutine(delayNodeCoroutine);
+
+        StopAllSounds();
+        musicSource.Stop();
+        currentNode = null;
+
+        // Clear all characters
+        foreach (KeyValuePair<string, CharacterObject> character in characterObjects)
+        {
+            Destroy(character.Value.gameObject);
+        }
+        characterObjects.Clear();
 
         // Clear all choice buttons
         foreach (Transform child in choiceButtonContainer)
@@ -293,38 +316,13 @@ public class DialogueManager : MonoBehaviour
             OnStringBroadcast?.Invoke(text);
         }
 
-        // Handle character data
-        List<string> speakerNames = new();
-        foreach (CharacterData character in node.characters)
-        {
-            if (character.isTalking.GetValue(dialogueBlackboard))
-            {
-                speakerNames.Add(character.hideName.GetValue(dialogueBlackboard) ? "???" : character.name.GetValue(dialogueBlackboard));
-            }
-        }
-
-        // Setup speaker names text
-        for (int i = 0; i < speakerNames.Count; i++)
-        {
-            if (i == 0)
-            {
-                speakerNameText.text = speakerNames[i];
-            }
-            else if (i == speakerNames.Count - 1)
-            {
-                speakerNameText.text += " and " + speakerNames[i];
-            }
-            else
-            {
-                speakerNameText.text += ", " + speakerNames[i];
-            }
-        }
+        int charactersTalking = HandleCharacters(node);
 
         HandleBackground(node);
 
         HandleDialogueBox(node);
 
-        dialogueTextShadow.gameObject.SetActive(speakerNames.Count > 1);
+        dialogueTextShadow.gameObject.SetActive(charactersTalking > 1);
 
         HandleDialogueText(node);
 
@@ -335,12 +333,286 @@ public class DialogueManager : MonoBehaviour
         PlayAllSounds(node);
     }
 
+    #region Characters
+    public class CharacterObject
+    {
+        public CharacterData characterData = new();
+        public GameObject gameObject;
+        public RectTransform rectTransform;
+        public Image image;
+    }
+
+    private int HandleCharacters(RuntimeDialogueNode node)
+    {
+        List<string> speakerNames = new();
+
+        foreach (CharacterData data in node.characters)
+        {
+            string name = data.name.GetValue(dialogueBlackboard);
+            if (string.IsNullOrEmpty(name))
+                continue;
+
+            // Add a new character object to the list if it didn't yet exist in the scene
+            if (!characterObjects.TryGetValue(name, out CharacterObject character))
+            {
+                character = new CharacterObject
+                {
+                    characterData = new CharacterData(),
+                    gameObject = new GameObject(name, typeof(RectTransform), typeof(Image)),
+                };
+                character.rectTransform = character.gameObject.GetComponent<RectTransform>();
+                character.image = character.gameObject.GetComponent<Image>();
+                character.rectTransform.SetParent(characterHolder, false);
+                characterObjects.Add(name, character);
+            }
+
+            // Skip currently active transitions and instantly complete the movement
+            if (positionMovementCoroutine != null)
+                StopCoroutine(positionMovementCoroutine);
+            if (rotationMovementCoroutine != null)
+                StopCoroutine(rotationMovementCoroutine);
+            if (scaleMovementCoroutine != null)
+                StopCoroutine(scaleMovementCoroutine);
+            character.rectTransform.localPosition = character.characterData.characterPosition.GetValue(dialogueBlackboard);
+            character.rectTransform.localEulerAngles = new Vector3(0, 0, character.characterData.characterRotation.GetValue(dialogueBlackboard));
+            character.rectTransform.localScale = character.characterData.characterScale.GetValue(dialogueBlackboard);
+
+            // Merge node data into persistent character data
+            ApplyCharacterData(character, data);
+
+            CharacterData merged = character.characterData;
+
+            // Apply final values to GameObject
+            if (merged.characterSprite.GetValue(dialogueBlackboard, out Sprite sprite))
+                character.image.sprite = sprite;
+
+            if (merged.isVisible.GetValue(dialogueBlackboard, out bool visible))
+                character.gameObject.SetActive(visible);
+
+            // Set position, rotation and scale
+            HandleCharacterMovement(character, merged);
+
+            // Talking state
+            bool talking = merged.isTalking.GetValue(dialogueBlackboard);
+            bool hideName = merged.hideName.GetValue(dialogueBlackboard);
+            //character.image.color = talking ? Color.white : Color.gray;
+
+            if (talking)
+                speakerNames.Add(hideName ? "???" : name);
+        }
+
+        // Speaker nameplate
+        speakerNameText.text = string.Join(
+            speakerNames.Count > 2 ? ", " : " and ",
+            speakerNames
+        );
+
+        return speakerNames.Count;
+    }
+
+    private void ApplyCharacterData(CharacterObject target, CharacterData incoming)
+    {
+        CharacterData stored = target.characterData;
+        DialogueBlackboard bb = dialogueBlackboard;
+
+        stored.name = incoming.name;
+
+        // Apply only if the node actually sets these
+        CopyIfChanged(stored.characterSprite, incoming.characterSprite, bb);
+        CopyIfChanged(stored.isVisible, incoming.isVisible, bb);
+        CopyIfChanged(stored.characterAppearanceDelay, incoming.characterAppearanceDelay, bb);
+        CopyIfChanged(stored.isTalking, incoming.isTalking, bb);
+        CopyIfChanged(stored.hideName, incoming.hideName, bb);
+        CopyIfChanged(stored.transitionDuration, incoming.transitionDuration, bb);
+        CopyIfChanged(stored.positionMovementType, incoming.positionMovementType, bb);
+        CopyIfChanged(stored.rotationMovementType, incoming.rotationMovementType, bb);
+        CopyIfChanged(stored.scaleMovementType, incoming.scaleMovementType, bb);
+        CopyIfChanged(stored.predefinedPosition, incoming.predefinedPosition, bb);
+        CopyIfChanged(stored.characterPosition, incoming.characterPosition, bb);
+        CopyIfChanged(stored.minAnchor, incoming.minAnchor, bb);
+        CopyIfChanged(stored.maxAnchor, incoming.maxAnchor, bb);
+        CopyIfChanged(stored.pivot, incoming.pivot, bb);
+        CopyIfChanged(stored.characterRotation, incoming.characterRotation, bb);
+        CopyIfChanged(stored.widthAndHeight, incoming.widthAndHeight, bb);
+        CopyIfChanged(stored.characterScale, incoming.characterScale, bb);
+
+        target.characterData = stored;
+    }
+
+    private void CopyIfChanged<T>(PortValue<T> target, PortValue<T> source, DialogueBlackboard bb)
+    {
+        if (source.GetValue(bb, out T value))
+        {
+            target.usePortValue = source.usePortValue;
+            target.blackboardVariableName = source.blackboardVariableName;
+            target.value = source.value;
+        }
+    }
+
+    private void HandleCharacterMovement(CharacterObject character, CharacterData merged)
+    {
+        float duration = merged.transitionDuration.GetValue(dialogueBlackboard, out float d) ? d : 0.4f;
+
+        Vector2 targetPos = Vector2.zero;
+        bool predefinedPosSet = merged.predefinedPosition.GetValue(dialogueBlackboard, out PredefinedPosition predefinedPos) && predefinedPos != PredefinedPosition.None;
+        bool customPosSet = merged.characterPosition.GetValue(dialogueBlackboard, out Vector2 customPos);
+
+        if (predefinedPosSet)
+            targetPos = GetPredefinedPosition(predefinedPos);
+        else if (customPosSet)
+            targetPos = customPos;
+
+        if (predefinedPosSet || customPosSet)
+        {
+            MovementType posType = merged.positionMovementType.GetValue(dialogueBlackboard, out MovementType pType)
+                ? pType
+                : MovementType.Instant;
+
+            switch (posType)
+            {
+                case MovementType.Instant:
+                    character.rectTransform.anchoredPosition = targetPos;
+                    break;
+
+                case MovementType.Linear:
+                    positionMovementCoroutine = StartCoroutine(SmoothMoveCharacter(character.rectTransform, targetPos, duration, false));
+                    break;
+
+                case MovementType.Smooth:
+                    positionMovementCoroutine = StartCoroutine(SmoothMoveCharacter(character.rectTransform, targetPos, duration, true));
+                    break;
+            }
+        }
+
+        if (merged.characterRotation.GetValue(dialogueBlackboard, out float targetRot))
+        {
+            MovementType rotType = merged.rotationMovementType.GetValue(dialogueBlackboard, out MovementType rType)
+                ? rType
+                : MovementType.Instant;
+
+            switch (rotType)
+            {
+                case MovementType.Instant:
+                    character.rectTransform.localEulerAngles = new Vector3(0, 0, targetRot);
+                    break;
+
+                case MovementType.Linear:
+                    rotationMovementCoroutine = StartCoroutine(SmoothRotateCharacter(character.rectTransform, targetRot, duration, false));
+                    break;
+
+                case MovementType.Smooth:
+                    rotationMovementCoroutine = StartCoroutine(SmoothRotateCharacter(character.rectTransform, targetRot, duration, true));
+                    break;
+            }
+        }
+
+        if (merged.characterScale.GetValue(dialogueBlackboard, out Vector2 targetScale))
+        {
+            MovementType scaleType = merged.scaleMovementType.GetValue(dialogueBlackboard, out MovementType sType)
+                ? sType
+                : MovementType.Instant;
+
+            switch (scaleType)
+            {
+                case MovementType.Instant:
+                    character.rectTransform.localScale = targetScale;
+                    break;
+
+                case MovementType.Linear:
+                    scaleMovementCoroutine = StartCoroutine(SmoothScaleCharacter(character.rectTransform, targetScale, duration, false));
+                    break;
+
+                case MovementType.Smooth:
+                    scaleMovementCoroutine = StartCoroutine(SmoothScaleCharacter(character.rectTransform, targetScale, duration, true));
+                    break;
+            }
+        }
+    }
+
+    private Vector2 GetPredefinedPosition(PredefinedPosition pos)
+    {
+        switch (pos)
+        {
+            case PredefinedPosition.Left: return new Vector2(-250f, 0f);
+            case PredefinedPosition.MiddleLeft: return new Vector2(-125f, 0f);
+            case PredefinedPosition.MiddleRight: return new Vector2(125f, 0f);
+            case PredefinedPosition.Right: return new Vector2(250f, 0f);
+            default: return Vector2.zero;
+        }
+    }
+
+    private IEnumerator SmoothMoveCharacter(RectTransform rect, Vector2 target, float duration, bool eased)
+    {
+        Vector2 start = rect.anchoredPosition;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float progress = Mathf.Clamp01(t / duration);
+            if (eased)
+                progress = EaseInOut(progress);
+            rect.anchoredPosition = Vector2.Lerp(start, target, progress);
+            yield return null;
+        }
+
+        rect.anchoredPosition = target;
+    }
+
+    private IEnumerator SmoothRotateCharacter(RectTransform rect, float targetRot, float duration, bool linear)
+    {
+        float t = 0f;
+        float start = rect.localEulerAngles.z;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float progress = Mathf.Clamp01(t / duration);
+            if (!linear)
+                progress = EaseInOut(progress);
+
+            float rot = Mathf.LerpAngle(start, targetRot, progress);
+            rect.localEulerAngles = new Vector3(0, 0, rot);
+            yield return null;
+        }
+
+        rect.localEulerAngles = new Vector3(0, 0, targetRot);
+    }
+
+    private IEnumerator SmoothScaleCharacter(RectTransform rect, Vector2 targetScale, float duration, bool linear)
+    {
+        float t = 0f;
+        Vector2 start = rect.localScale;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float progress = Mathf.Clamp01(t / duration);
+            if (!linear)
+                progress = EaseInOut(progress);
+
+            rect.localScale = Vector2.Lerp(start, targetScale, progress);
+            yield return null;
+        }
+
+        rect.localScale = targetScale;
+    }
+
+    private float EaseInOut(float t)
+    {
+        return t * t * (3f - 2f * t); // classic smoothstep
+    }
+    #endregion
+
     #region Dialogue
     private void HandleBackground(RuntimeDialogueNode node)
     {
         bool useValue = node.dialogueSettings.backgroundImage.GetValue(dialogueBlackboard, out Sprite backgroundImage);
         if (useValue)
+        {
             primaryImage.sprite = backgroundImage;
+            primaryImage.enabled = backgroundImage != null;
+        }
     }
 
     private void HandleDialogueBox(RuntimeDialogueNode node)
