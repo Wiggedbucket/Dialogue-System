@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 790b4d75d92f4b0984310a268dbd952f, type: 3}
-  m_Name: ExampleDialogue
+  m_Name: Markiplier Brainrot
   m_EditorClassIdentifier: Unity.GraphToolkit.Editor::Unity.GraphToolkit.Editor.Implementation.GraphObjectImp
   m_GraphModel:
     rid: 5077103961774489906
@@ -28,7 +28,7 @@ MonoBehaviour:
         m_HashGuid:
           serializedVersion: 2
           Hash: 587aeb397e4b3d556bbe2efcc268e362
-        m_Name: 
+        m_Name: Markiplier Brainrot
         m_GraphNodeModels:
         - rid: 5077104256546242632
         - rid: 5077104256546242638
