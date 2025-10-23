@@ -375,18 +375,7 @@ public class DialogueManager : MonoBehaviour
                 StopCoroutine(rotationMovementCoroutine);
             if (scaleMovementCoroutine != null)
                 StopCoroutine(scaleMovementCoroutine);
-
-            Vector2 targetPos = Vector2.zero;
-            bool predefinedPosSet = character.characterData.predefinedPosition.GetValue(dialogueBlackboard, out PredefinedPosition predefinedPos) && predefinedPos != PredefinedPosition.None;
-            bool customPosSet = character.characterData.characterPosition.GetValue(dialogueBlackboard, out Vector2 customPos);
-
-            if (predefinedPosSet)
-                targetPos = GetPredefinedPosition(predefinedPos);
-            else if (customPosSet)
-                targetPos = customPos;
-
-            if (predefinedPosSet || customPosSet)
-                character.rectTransform.localPosition = targetPos;
+            character.rectTransform.localPosition = character.characterData.characterPosition.GetValue(dialogueBlackboard);
             character.rectTransform.localEulerAngles = new Vector3(0, 0, character.characterData.characterRotation.GetValue(dialogueBlackboard));
             character.rectTransform.localScale = character.characterData.characterScale.GetValue(dialogueBlackboard);
 
@@ -465,7 +454,6 @@ public class DialogueManager : MonoBehaviour
         CopyIfChanged(stored.positionMovementType, incoming.positionMovementType, bb);
         CopyIfChanged(stored.rotationMovementType, incoming.rotationMovementType, bb);
         CopyIfChanged(stored.scaleMovementType, incoming.scaleMovementType, bb);
-        CopyIfChanged(stored.predefinedPosition, incoming.predefinedPosition, bb);
         CopyIfChanged(stored.characterPosition, incoming.characterPosition, bb);
         CopyIfChanged(stored.minAnchor, incoming.minAnchor, bb);
         CopyIfChanged(stored.maxAnchor, incoming.maxAnchor, bb);
@@ -491,16 +479,7 @@ public class DialogueManager : MonoBehaviour
     {
         float duration = merged.transitionDuration.GetValue(dialogueBlackboard, out float d) ? d : 0.4f;
 
-        Vector2 targetPos = Vector2.zero;
-        bool predefinedPosSet = merged.predefinedPosition.GetValue(dialogueBlackboard, out PredefinedPosition predefinedPos) && predefinedPos != PredefinedPosition.None;
-        bool customPosSet = merged.characterPosition.GetValue(dialogueBlackboard, out Vector2 customPos);
-
-        if (predefinedPosSet)
-            targetPos = GetPredefinedPosition(predefinedPos);
-        else if (customPosSet)
-            targetPos = customPos;
-
-        if (predefinedPosSet || customPosSet)
+        if (merged.characterPosition.GetValue(dialogueBlackboard, out Vector2 targetPos))
         {
             MovementType posType = merged.positionMovementType.GetValue(dialogueBlackboard, out MovementType pType)
                 ? pType
@@ -564,18 +543,6 @@ public class DialogueManager : MonoBehaviour
                     scaleMovementCoroutine = StartCoroutine(SmoothScaleCharacter(character.rectTransform, targetScale, duration, true));
                     break;
             }
-        }
-    }
-
-    private Vector2 GetPredefinedPosition(PredefinedPosition pos)
-    {
-        switch (pos)
-        {
-            case PredefinedPosition.Left: return new Vector2(-250f, 0f);
-            case PredefinedPosition.MiddleLeft: return new Vector2(-125f, 0f);
-            case PredefinedPosition.MiddleRight: return new Vector2(125f, 0f);
-            case PredefinedPosition.Right: return new Vector2(250f, 0f);
-            default: return Vector2.zero;
         }
     }
 

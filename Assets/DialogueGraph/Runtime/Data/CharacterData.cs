@@ -35,7 +35,6 @@ public class CharacterData
     public PortValue<MovementType> rotationMovementType = new();
     public PortValue<MovementType> scaleMovementType = new();
 
-    public PortValue<PredefinedPosition> predefinedPosition = new();
     public PortValue<Vector2> characterPosition = new();
 
     public PortValue<Vector2> minAnchor = new();

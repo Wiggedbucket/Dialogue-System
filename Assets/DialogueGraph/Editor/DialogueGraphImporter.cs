@@ -351,17 +351,11 @@ public class DialogueGraphImporter : ScriptedImporter
                     value = GetPortValueSafe<MovementType>(blockNode, CharacterBlockNode.ScaleMovementTypePortName),
                 },
 
-                predefinedPosition = new()
-                {
-                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PredefinedPositionsPortName),
-                    usePortValue = GetOptionValue<bool>(blockNode, CharacterBlockNode.ChangePositionPortName),
-                    value = GetPortValueSafe<PredefinedPosition>(blockNode, CharacterBlockNode.PredefinedPositionsPortName),
-                },
                 characterPosition = new()
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.PositionPortName),
                     usePortValue = GetOptionValue<bool>(blockNode, CharacterBlockNode.ChangePositionPortName),
-                    value = GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName),
+                    value = GetPosition(blockNode),
                 },
                 minAnchor = new()
                 {
@@ -605,6 +599,22 @@ public class DialogueGraphImporter : ScriptedImporter
         }
 
         return comparer;
+    }
+
+    private Vector2 GetPosition(BlockNode blockNode)
+    {
+        PredefinedPosition prePos = GetPortValueSafe<PredefinedPosition>(blockNode, CharacterBlockNode.PredefinedPositionsPortName);
+
+        switch (prePos)
+        {
+            case PredefinedPosition.Left: return new Vector2(-250f, 0f);
+            case PredefinedPosition.MiddleLeft: return new Vector2(-125f, 0f);
+            case PredefinedPosition.MiddleRight: return new Vector2(125f, 0f);
+            case PredefinedPosition.Right: return new Vector2(250f, 0f);
+        }
+
+        // If the predefined position isn't set, try to get the set position
+        return GetPortValueSafe<Vector2>(blockNode, CharacterBlockNode.PositionPortName);
     }
 
     private VariableType GetVariableTypeOption(Node node, string name, VariableType defaultValue = VariableType.Float)
