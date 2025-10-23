@@ -12,6 +12,7 @@ public class CharacterBlockNode : BlockNode
     public const string ChangeSpritePortName = "change sprite";
     public const string ChangeVisibilityPortName = "change visibility";
     public const string ChangeAppearanceDelayPortName = "change appearance delay";
+    public const string ChangePreserveAspectPortName = "change preserve aspect";
     public const string ChangeTransitionDurationPortName = "change transition duration";
     public const string ChangePositionPortName = "change position";
     public const string ChangeAnchorsPortName = "change anchors";
@@ -26,6 +27,7 @@ public class CharacterBlockNode : BlockNode
     public const string AppearanceDelayPortName = "appearance delay";
     public const string IsTalkingPortName = "is talking";
     public const string HideNamePortName = "hide name";
+    public const string PreserveAspectPortName = "preserve aspect";
     public const string TransitionDurationDelayPortName = "transition duration";
     public const string PositionMovementTypePortName = "movement type";
     public const string RotationMovementTypePortName = "rotation type";
@@ -44,6 +46,7 @@ public class CharacterBlockNode : BlockNode
         context.AddOption<bool>(ChangeSpritePortName);
         context.AddOption<bool>(ChangeVisibilityPortName);
         context.AddOption<bool>(ChangeAppearanceDelayPortName);
+        context.AddOption<bool>(ChangePreserveAspectPortName);
         context.AddOption<bool>(ChangeTransitionDurationPortName);
         context.AddOption<bool>(ChangePositionPortName);
         context.AddOption<bool>(ChangeAnchorsPortName);
@@ -58,6 +61,7 @@ public class CharacterBlockNode : BlockNode
         var changeSprite = GetBoolOption(ChangeSpritePortName);
         var changeVisibility = GetBoolOption(ChangeVisibilityPortName);
         var changeAppearanceDelay = GetBoolOption(ChangeAppearanceDelayPortName);
+        var changePreserveAspect = GetBoolOption(ChangePreserveAspectPortName);
         var changeTransitionDuration = GetBoolOption(ChangeTransitionDurationPortName);
         var changePosition = GetBoolOption(ChangePositionPortName);
         var changeAnchors = GetBoolOption(ChangeAnchorsPortName);
@@ -79,6 +83,9 @@ public class CharacterBlockNode : BlockNode
 
         context.AddInputPort<bool>(IsTalkingPortName).Build();
         context.AddInputPort<bool>(HideNamePortName).Build();
+
+        if (changePreserveAspect)
+            context.AddInputPort<bool>(PreserveAspectPortName).Build();
 
         if (changeTransitionDuration)
             context.AddInputPort<float>(TransitionDurationDelayPortName).Build();

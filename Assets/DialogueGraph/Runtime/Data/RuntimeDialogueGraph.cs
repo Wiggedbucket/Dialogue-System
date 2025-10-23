@@ -16,6 +16,7 @@ public class RuntimeDialogueGraph : ScriptableObject
     public bool allowEscape = false; // If true, allows exiting the dialogue at any time (e.g., pressing escape)
     public bool allowFastAdvance = true; // If true, allows advancing through text printing with left click
     public bool textShadowOnMultipleCharactersTalking = false;
+    public NotTalkingType notTalkingType = NotTalkingType.None; // The effect applied to a character when not talking
 
     [SerializeReference]
     public List<RuntimeNode> nodes = new();
@@ -222,6 +223,14 @@ public class RuntimeInteruptNode : RuntimeNode
 #endregion
 
 #region Enums
+[Serializable]
+public enum NotTalkingType
+{
+    None,
+    GreyOut,
+    //ScaleDown,
+}
+
 [Serializable]
 public enum PredefinedPosition
 {

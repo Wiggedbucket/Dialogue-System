@@ -55,6 +55,7 @@ public class DialogueManager : MonoBehaviour
     public bool autoAdvance = false;
     public bool enableSkipping = false;
     public bool textShadowOnMultipleCharactersTalking = false;
+    public NotTalkingType notTalkingType = NotTalkingType.None;
 
     public float printSpeed = 0.02f;
 
@@ -220,6 +221,7 @@ public class DialogueManager : MonoBehaviour
         allowEscape = runtimeGraph.allowEscape;
         allowFastAdvance = runtimeGraph.allowFastAdvance;
         textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
+        notTalkingType = runtimeGraph.notTalkingType;
         loop = true;
         shuffle = false;
 
@@ -400,6 +402,21 @@ public class DialogueManager : MonoBehaviour
             if (merged.isVisible.GetValue(dialogueBlackboard, out bool visible))
                 character.gameObject.SetActive(visible);
 
+            if (merged.minAnchor.GetValue(dialogueBlackboard, out Vector2 minAnchor))
+                character.rectTransform.anchorMin = minAnchor;
+
+            if (merged.maxAnchor.GetValue(dialogueBlackboard, out Vector2 maxAnchor))
+                character.rectTransform.anchorMax = maxAnchor;
+
+            if (merged.pivot.GetValue(dialogueBlackboard, out Vector2 pivot))
+                character.rectTransform.pivot = pivot;
+
+            if (merged.widthAndHeight.GetValue(dialogueBlackboard, out Vector2 widthAndHeight))
+                character.rectTransform.sizeDelta = widthAndHeight;
+
+            if (merged.preserveAspect.GetValue(dialogueBlackboard, out bool preserveAspect))
+                character.image.preserveAspect = preserveAspect;
+
             // Set position, rotation and scale
             HandleCharacterMovement(character, merged);
 
@@ -409,7 +426,19 @@ public class DialogueManager : MonoBehaviour
             //character.image.color = talking ? Color.white : Color.gray;
 
             if (talking)
+            {
                 speakerNames.Add(hideName ? "???" : name);
+
+                character.image.color = Color.white;
+            } else
+            {
+                switch (notTalkingType)
+                {
+                    case NotTalkingType.GreyOut:
+                        character.image.color = Color.grey;
+                        break;
+                }
+            }
         }
 
         // Speaker nameplate

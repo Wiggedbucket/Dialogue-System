@@ -11,12 +11,14 @@ public class StartNode : Node
     public const string AllowEscapeOptionName = "allow escape";
     public const string AllowFastAdvanceOptionName = "allow fast advance";
     public const string TextShadowOnMultipleCharactersTalkingOptionName = "text shadow when multiple characters are talking";
+    public const string NotTalkingTypeOptionName = "not talking type";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
         context.AddOption<bool>(AllowEscapeOptionName).Build();
         context.AddOption<bool>(AllowFastAdvanceOptionName).WithDefaultValue(true).Build();
         context.AddOption<bool>(TextShadowOnMultipleCharactersTalkingOptionName).WithDefaultValue(true).Build();
+        context.AddOption<NotTalkingType>(NotTalkingTypeOptionName).WithDefaultValue(NotTalkingType.None).Build();
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
