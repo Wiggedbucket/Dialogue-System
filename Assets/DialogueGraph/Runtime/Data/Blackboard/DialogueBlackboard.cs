@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,20 +34,4 @@ public class DialogueBlackboard : MonoBehaviour
             bbVar.SetValue(value);
         }
     }
-}
-
-[Serializable]
-public abstract class BlackBoardVariableBase
-{
-    [HideInInspector]
-    public string name;
-}
-
-[Serializable]
-public class BlackBoardVariable<T> : BlackBoardVariableBase
-{
-    public T Value;
-
-    public void SetValue(T value) => Value = value;
-    public T GetValue() => Value;
 }

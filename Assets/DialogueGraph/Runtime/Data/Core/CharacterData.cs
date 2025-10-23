@@ -1,20 +1,5 @@
 using System;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-
-[CustomPropertyDrawer(typeof(CharacterData))]
-public class CharacterDataDrawer : PropertyDrawer
-{
-    public override VisualElement CreatePropertyGUI(SerializedProperty property)
-    {
-        return GenericDataDrawer.Draw(property);
-    }
-}
 
 [Serializable]
 public class CharacterData
@@ -43,8 +28,5 @@ public class CharacterData
     public PortValue<float> characterRotation = new();
 
     public PortValue<Vector2> widthAndHeight = new();
-    public PortValue<Vector2> characterScale = new()
-    {
-        value = new(1f, 1f),
-    };
+    public PortValue<Vector2> characterScale = new() { value = new(1f, 1f), };
 }

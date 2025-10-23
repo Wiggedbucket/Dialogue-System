@@ -293,7 +293,7 @@ public class DialogueManager : MonoBehaviour
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
                 break;
-            case RuntimeInteruptNode:
+            case RuntimeInterruptNode:
                 InteruptDialogue();
                 return;
         }

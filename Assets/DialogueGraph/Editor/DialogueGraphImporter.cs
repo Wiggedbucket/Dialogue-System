@@ -66,7 +66,7 @@ public class DialogueGraphImporter : ScriptedImporter
                     runtimeNode = ProcessSplitterContextNode(splitterContextNode, nodeIDMap);
                     break;
                 case InteruptNode interuptNode:
-                    runtimeNode = new RuntimeInteruptNode();
+                    runtimeNode = new RuntimeInterruptNode();
                     break;
                 default:
                     // Do nothing if the node type isn't recognized
