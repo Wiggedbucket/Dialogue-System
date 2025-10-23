@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Audio;
 
-[CreateAssetMenu(menuName = "Dialogue/Runtime Dialogue Graph")]
 [Serializable]
 public class RuntimeDialogueGraph : ScriptableObject
 {
@@ -120,14 +117,14 @@ public class DialogueSettings
     public PortValue<bool> shuffle = new();
     public PortValue<List<AudioClip>> audioList = new();
 
-    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new(); // TODO Make animations
+    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new();
     public PortValue<Color> dialogueBoxColor = new();
     public PortValue<Sprite> dialogueBoxImage = new();
     public PortValue<Color> namePlateColor = new();
     public PortValue<Sprite> namePlateImage = new();
 
-    public PortValue<Sprite> backgroundImage = new(); // TODO
-    public PortValue<BackgroundTransition> backgroundTransition = new(); // TODO
+    public PortValue<Sprite> backgroundImage = new();
+    public PortValue<BackgroundTransition> backgroundTransition = new();
 }
 
 [Serializable]

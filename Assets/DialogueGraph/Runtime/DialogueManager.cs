@@ -628,6 +628,7 @@ public class DialogueManager : MonoBehaviour
     #region Dialogue
     private void HandleBackground(RuntimeDialogueNode node)
     {
+        // Add background transitions
         bool useValue = node.dialogueSettings.backgroundImage.GetValue(dialogueBlackboard, out Sprite backgroundImage);
         if (useValue)
         {
@@ -638,6 +639,7 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleDialogueBox(RuntimeDialogueNode node)
     {
+        // Add dialogue box transitions
         bool useValue = false;
 
         useValue = node.dialogueSettings.dialogueBoxTransition.GetValue(dialogueBlackboard, out DialogueBoxTransition transition);
