@@ -1,17 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    #region Variables
     public RuntimeDialogueGraph runtimeGraph;
     public DialogueBlackboard dialogueBlackboard;
 
@@ -50,10 +47,10 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Settings")]
     public bool onHold = false;
-    public bool allowEscape = false;
+    public bool allowEscape = false; // TODO
     public bool allowFastAdvance = true;
-    public bool autoAdvance = false;
-    public bool enableSkipping = false;
+    public bool autoAdvance = false; // TODO
+    public bool enableSkipping = false; // TODO
     public bool textShadowOnMultipleCharactersTalking = false;
     public NotTalkingType notTalkingType = NotTalkingType.None;
 
@@ -82,7 +79,9 @@ public class DialogueManager : MonoBehaviour
 
     public List<AudioSource> activeSources = new();
     private List<Coroutine> soundCoroutines = new();
+    #endregion
 
+    #region Start
     private void Start()
     {
         CreateRuntimeBlackboard(runtimeGraph);
@@ -127,6 +126,7 @@ public class DialogueManager : MonoBehaviour
         defaultNamePlateColor = namePlateBackground.color;
         defaultNamePlateImage = namePlateBackground.sprite;
     }
+    #endregion
 
     private void Update()
     {
@@ -257,6 +257,7 @@ public class DialogueManager : MonoBehaviour
     }
     #endregion
 
+    #region Nodes
     private void HandleNode(string id)
     {
         RuntimeNode runtimeNode = runtimeGraph.GetNode(id);
@@ -334,6 +335,7 @@ public class DialogueManager : MonoBehaviour
 
         PlayAllSounds(node);
     }
+    #endregion
 
     #region Characters
     public class CharacterObject

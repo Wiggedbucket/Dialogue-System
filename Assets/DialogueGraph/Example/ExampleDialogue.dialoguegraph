@@ -88,9 +88,9 @@ MonoBehaviour:
         m_LocalSubgraphs: []
         m_LastKnownBounds:
           serializedVersion: 2
-          x: 564.8
+          x: 465.6
           y: 327.2
-          width: 6382.4004
+          width: 6412.8003
           height: 2843.2002
         m_GraphElementMetaData:
         - m_Guid:
@@ -1743,6 +1743,7 @@ MonoBehaviour:
           - __option_delay next with click
           - delay text
           - text align
+          - play audio
           m_ValueList:
           - rid: 5077104256546242765
           - rid: 5077104256546242766
@@ -1768,6 +1769,7 @@ MonoBehaviour:
           - rid: 5077104275225051319
           - rid: 5077104275225051323
           - rid: 5077104279487250504
+          - rid: 5077104320427327744
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1843,7 +1845,7 @@ MonoBehaviour:
     - rid: 5077104256546242778
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104256546242779
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -2064,7 +2066,7 @@ MonoBehaviour:
       type: {class: 'Constant`1[[System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]], mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value:
-        - {fileID: 8300000, guid: 819146e1ce8c0b041b9831a1e3abb5bb, type: 3}
+        - {fileID: 8300000, guid: dbfa7a0835b06d34997e04fda60380c7, type: 3}
     - rid: 5077104279487250507
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -4934,6 +4936,11 @@ MonoBehaviour:
         m_EnumType:
           m_Identification: NotTalkingType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
             PublicKeyToken=null
+    - rid: 5077104320427327744
+      type: {class: 'Constant`1[[System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]], mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+        - {fileID: 8300000, guid: 4fab44984f363ca4ca9e52e6765428f7, type: 3}
     - rid: 7566504000449675545
       type: {class: VariableDeclarationModel, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
