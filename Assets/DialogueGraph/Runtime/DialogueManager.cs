@@ -423,7 +423,6 @@ public class DialogueManager : MonoBehaviour
             // Talking state
             bool talking = merged.isTalking.GetValue(dialogueBlackboard);
             bool hideName = merged.hideName.GetValue(dialogueBlackboard);
-            //character.image.color = talking ? Color.white : Color.gray;
 
             if (talking)
             {
@@ -460,7 +459,6 @@ public class DialogueManager : MonoBehaviour
         // Apply only if the node actually sets these
         CopyIfChanged(stored.characterSprite, incoming.characterSprite, bb);
         CopyIfChanged(stored.isVisible, incoming.isVisible, bb);
-        CopyIfChanged(stored.characterAppearanceDelay, incoming.characterAppearanceDelay, bb);
         CopyIfChanged(stored.isTalking, incoming.isTalking, bb);
         CopyIfChanged(stored.hideName, incoming.hideName, bb);
         CopyIfChanged(stored.transitionDuration, incoming.transitionDuration, bb);

@@ -24,7 +24,6 @@ public class CharacterData
     public PortValue<Sprite> characterSprite = new();
 
     public PortValue<bool> isVisible = new();
-    public PortValue<float> characterAppearanceDelay = new(); // TODO
 
     public PortValue<bool> isTalking = new();
     public PortValue<bool> hideName = new();

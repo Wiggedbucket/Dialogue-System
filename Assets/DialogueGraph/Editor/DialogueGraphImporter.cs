@@ -306,12 +306,6 @@ public class DialogueGraphImporter : ScriptedImporter
                     usePortValue = GetOptionValue<bool>(blockNode, CharacterBlockNode.ChangeVisibilityPortName),
                     value = GetPortValueSafe<bool>(blockNode, CharacterBlockNode.VisiblePortName),
                 },
-                characterAppearanceDelay = new()
-                {
-                    blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.AppearanceDelayPortName),
-                    usePortValue = GetOptionValue<bool>(blockNode, CharacterBlockNode.ChangeAppearanceDelayPortName),
-                    value = GetPortValueSafe<float>(blockNode, CharacterBlockNode.AppearanceDelayPortName),
-                },
                 isTalking = new()
                 {
                     blackboardVariableName = TryGetVariableName(blockNode, CharacterBlockNode.IsTalkingPortName),

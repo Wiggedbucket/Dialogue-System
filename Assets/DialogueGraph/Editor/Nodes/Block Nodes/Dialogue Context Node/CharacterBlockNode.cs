@@ -11,7 +11,6 @@ public class CharacterBlockNode : BlockNode
 {
     public const string ChangeSpritePortName = "change sprite";
     public const string ChangeVisibilityPortName = "change visibility";
-    public const string ChangeAppearanceDelayPortName = "change appearance delay";
     public const string ChangePreserveAspectPortName = "change preserve aspect";
     public const string ChangeTransitionDurationPortName = "change transition duration";
     public const string ChangePositionPortName = "change position";
@@ -24,7 +23,6 @@ public class CharacterBlockNode : BlockNode
     public const string CharacterSpritePortName = "character sprite";
     public const string CharacterNamePortName = "character name";
     public const string VisiblePortName = "visible";
-    public const string AppearanceDelayPortName = "appearance delay";
     public const string IsTalkingPortName = "is talking";
     public const string HideNamePortName = "hide name";
     public const string PreserveAspectPortName = "preserve aspect";
@@ -45,7 +43,6 @@ public class CharacterBlockNode : BlockNode
     {
         context.AddOption<bool>(ChangeSpritePortName);
         context.AddOption<bool>(ChangeVisibilityPortName);
-        context.AddOption<bool>(ChangeAppearanceDelayPortName);
         context.AddOption<bool>(ChangePreserveAspectPortName);
         context.AddOption<bool>(ChangeTransitionDurationPortName);
         context.AddOption<bool>(ChangePositionPortName);
@@ -60,7 +57,6 @@ public class CharacterBlockNode : BlockNode
     {
         var changeSprite = GetBoolOption(ChangeSpritePortName);
         var changeVisibility = GetBoolOption(ChangeVisibilityPortName);
-        var changeAppearanceDelay = GetBoolOption(ChangeAppearanceDelayPortName);
         var changePreserveAspect = GetBoolOption(ChangePreserveAspectPortName);
         var changeTransitionDuration = GetBoolOption(ChangeTransitionDurationPortName);
         var changePosition = GetBoolOption(ChangePositionPortName);
@@ -77,9 +73,6 @@ public class CharacterBlockNode : BlockNode
 
         if (changeVisibility)
             context.AddInputPort<bool>(VisiblePortName).Build();
-
-        if (changeAppearanceDelay)
-            context.AddInputPort<float>(AppearanceDelayPortName).Build();
 
         context.AddInputPort<bool>(IsTalkingPortName).Build();
         context.AddInputPort<bool>(HideNamePortName).Build();
