@@ -461,8 +461,11 @@ MonoBehaviour:
   allowEscape: 0
   allowFastAdvance: 1
   autoAdvance: 0
+  autoAdvanceDelay: 1
   enableSkipping: 0
+  skipSpeed: 0.008
   textShadowOnMultipleCharactersTalking: 0
+  notTalkingType: 0
   printSpeed: 0.02
   delayNextWithClick: 0
   musicQueue: []

@@ -49,8 +49,10 @@ public class DialogueManager : MonoBehaviour
     public bool onHold = false;
     public bool allowEscape = false; // TODO
     public bool allowFastAdvance = true;
-    public bool autoAdvance = false; // TODO
-    public bool enableSkipping = false; // TODO
+    public bool autoAdvance = false;
+    public float autoAdvanceDelay = 1f;
+    public bool enableSkipping = false;
+    public float skipSpeed = 0.008f;
     public bool textShadowOnMultipleCharactersTalking = false;
     public NotTalkingType notTalkingType = NotTalkingType.None;
 
@@ -149,10 +151,10 @@ public class DialogueManager : MonoBehaviour
             {
                 GoToNextNode();
             }
-            else if (Mouse.current.leftButton.wasPressedThisFrame && node.choices.Count == 0)
+            else if ((Mouse.current.leftButton.wasPressedThisFrame || enableSkipping) && node.choices.Count == 0)
             {
                 // If still typing, skip text printing
-                if (allowFastAdvance && isTyping && typingCoroutine != null)
+                if (allowFastAdvance && isTyping && typingCoroutine != null && !enableSkipping)
                 {
                     StopCoroutine(typingCoroutine);
                     dialogueText.text = currentFullText;
@@ -238,6 +240,13 @@ public class DialogueManager : MonoBehaviour
         if (delayNodeCoroutine != null)
             StopCoroutine(delayNodeCoroutine);
 
+        if (positionMovementCoroutine != null)
+            StopCoroutine(positionMovementCoroutine);
+        if (rotationMovementCoroutine != null)
+            StopCoroutine(rotationMovementCoroutine);
+        if (scaleMovementCoroutine != null)
+            StopCoroutine(scaleMovementCoroutine);
+
         StopAllSounds();
         musicSource.Stop();
         currentNode = null;
@@ -279,7 +288,7 @@ public class DialogueManager : MonoBehaviour
             case RuntimeSplitterNode node:
                 SetupSplitterNode(node);
                 break;
-            case RuntimeInteruptNode node:
+            case RuntimeInteruptNode:
                 InteruptDialogue();
                 return;
         }
@@ -289,7 +298,7 @@ public class DialogueManager : MonoBehaviour
 
     private void GoToNextNode()
     {
-        if (!string.IsNullOrEmpty(currentNode.nextNodeID))
+        if (currentNode != null && !string.IsNullOrEmpty(currentNode.nextNodeID))
             HandleNode(currentNode.nextNodeID);
         else
             EndDialogue();
@@ -652,11 +661,11 @@ public class DialogueManager : MonoBehaviour
 
         // Gather dialogue settings
         bool keepPrevious = node.dialogueSettings.keepPreviousText;
-        float _printSpeed = printSpeed;
+        float _printSpeed = enableSkipping ? skipSpeed : printSpeed;
         if (node.dialogueSettings.printSpeed.GetValue(dialogueBlackboard, out float speedValue))
         {
             printSpeed = speedValue;
-            _printSpeed = speedValue;
+            _printSpeed = enableSkipping ? skipSpeed : speedValue;
         }
 
         bool useValue = false;
@@ -743,8 +752,72 @@ public class DialogueManager : MonoBehaviour
         if (node.choices.Count > 0)
             yield break;
 
-        if (!delayNextWithClick)
+        if (autoAdvance)
+        {
+            RuntimeDialogueNode nextDialogue = FindNextDialogueNode(currentNode.nextNodeID);
+
+            if (nextDialogue == null || (nextDialogue != null && !nextDialogue.dialogueSettings.keepPreviousText))
+            {
+                yield return new WaitForSeconds(autoAdvanceDelay);
+            }
+
             GoToNextNode();
+        }
+        else if (!delayNextWithClick)
+        {
+            GoToNextNode();
+        }
+    }
+
+    private RuntimeDialogueNode FindNextDialogueNode(string nodeId, int depth = 0)
+    {
+        // Infinite loop safety limit
+        if (depth > 50)
+            return null;
+
+        // Sees if the next node exists
+        if (string.IsNullOrEmpty(nodeId))
+            return null;
+
+        RuntimeNode node = runtimeGraph.GetNode(nodeId);
+        if (node == null)
+            return null;
+
+        switch (node)
+        {
+            case RuntimeDialogueNode dialogueNode:
+                return dialogueNode;
+
+            case RuntimeSplitterNode splitterNode:
+                // Try to find the first valid output that leads to a dialogue node
+                foreach (RuntimeSplitterOutput output in splitterNode.outputs)
+                {
+                    bool valid = true;
+                    foreach (ValueComparer comparison in output.comparisons)
+                    {
+                        if (!comparison.Evaluate(dialogueBlackboard))
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+
+                    if (valid)
+                    {
+                        RuntimeDialogueNode result = FindNextDialogueNode(output.nextNodeID, depth + 1);
+                        if (result != null)
+                            return result;
+                    }
+                }
+
+                // Try default output if nothing else matched
+                if (!string.IsNullOrEmpty(splitterNode.defaultOutputNodeID))
+                    return FindNextDialogueNode(splitterNode.defaultOutputNodeID, depth + 1);
+
+                break;
+        }
+
+        return null;
     }
 
     private void CreateChoices(RuntimeDialogueNode node)
