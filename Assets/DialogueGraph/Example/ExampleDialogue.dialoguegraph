@@ -90,8 +90,8 @@ MonoBehaviour:
           serializedVersion: 2
           x: 465.6
           y: 327.2
-          width: 6412.8003
-          height: 2843.2002
+          width: 6481.6
+          height: 2931.2002
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 1127398649581984152
@@ -2903,6 +2903,7 @@ MonoBehaviour:
           - __option_change background transition
           - dialogue
           - delay text
+          - play audio
           m_ValueList:
           - rid: 5077104279487250572
           - rid: 5077104279487250573
@@ -2927,6 +2928,7 @@ MonoBehaviour:
           - rid: 5077104279487250592
           - rid: 5077104279487250593
           - rid: 5077104279487250594
+          - rid: 5077104324423974980
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -3000,7 +3002,7 @@ MonoBehaviour:
     - rid: 5077104279487250585
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104279487250586
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -3084,7 +3086,7 @@ MonoBehaviour:
     - rid: 5077104279487250597
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: Option 1
+        m_Value: Enter the brainrot
     - rid: 5077104279487250598
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -3375,7 +3377,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 1357c0b08a56bc0bb6a67c8593be66ba
         m_Version: 2
-        m_Position: {x: 5376.539, y: 1502.592}
+        m_Position: {x: 5369.1978, y: 1590.6918}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3586,7 +3588,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 5fc5dcae04cd0b830490b596d15d769f
         m_Version: 2
-        m_Position: {x: 5372.505, y: 2359.2654}
+        m_Position: {x: 5365.1636, y: 2447.3652}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3893,7 +3895,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: d18149e226ed564879705f4eab01f7af
         m_Version: 2
-        m_Position: {x: 6011.2856, y: 2914.1265}
+        m_Position: {x: 6003.9443, y: 3002.226}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3979,7 +3981,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 58139af4004f68efbbd3c285ff89d2bc
         m_Version: 2
-        m_Position: {x: 6010.9995, y: 2064}
+        m_Position: {x: 6003.658, y: 2152.0996}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -4941,6 +4943,11 @@ MonoBehaviour:
       data:
         m_Value:
         - {fileID: 8300000, guid: 4fab44984f363ca4ca9e52e6765428f7, type: 3}
+    - rid: 5077104324423974980
+      type: {class: 'Constant`1[[System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]], mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+        - {fileID: 8300000, guid: f2a4954b87d9fc14391fd8c7dfbec22b, type: 3}
     - rid: 7566504000449675545
       type: {class: VariableDeclarationModel, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:

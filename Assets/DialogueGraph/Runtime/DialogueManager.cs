@@ -47,7 +47,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Settings")]
     public bool onHold = false;
-    public bool allowEscape = false; // TODO
+    public bool allowEscape = false;
     public bool allowFastAdvance = true;
     public bool autoAdvance = false;
     public float autoAdvanceDelay = 1f;
@@ -145,6 +145,11 @@ public class DialogueManager : MonoBehaviour
         if (onHold)
             return;
         
+        if (allowEscape && Input.GetKeyDown(KeyCode.Escape))
+        {
+            EndDialogue();
+        }
+
         if (currentNode is RuntimeDialogueNode node && node != null)
         {
             if (!isTyping && !delayNextWithClick && delayNodeCoroutine == null && node.choices.Count == 0)
