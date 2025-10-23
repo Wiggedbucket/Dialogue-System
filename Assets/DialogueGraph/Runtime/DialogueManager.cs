@@ -373,7 +373,18 @@ public class DialogueManager : MonoBehaviour
                 StopCoroutine(rotationMovementCoroutine);
             if (scaleMovementCoroutine != null)
                 StopCoroutine(scaleMovementCoroutine);
-            character.rectTransform.localPosition = character.characterData.characterPosition.GetValue(dialogueBlackboard);
+
+            Vector2 targetPos = Vector2.zero;
+            bool predefinedPosSet = character.characterData.predefinedPosition.GetValue(dialogueBlackboard, out PredefinedPosition predefinedPos) && predefinedPos != PredefinedPosition.None;
+            bool customPosSet = character.characterData.characterPosition.GetValue(dialogueBlackboard, out Vector2 customPos);
+
+            if (predefinedPosSet)
+                targetPos = GetPredefinedPosition(predefinedPos);
+            else if (customPosSet)
+                targetPos = customPos;
+
+            if (predefinedPosSet || customPosSet)
+                character.rectTransform.localPosition = targetPos;
             character.rectTransform.localEulerAngles = new Vector3(0, 0, character.characterData.characterRotation.GetValue(dialogueBlackboard));
             character.rectTransform.localScale = character.characterData.characterScale.GetValue(dialogueBlackboard);
 
