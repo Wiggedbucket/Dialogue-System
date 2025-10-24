@@ -19,6 +19,7 @@ public class DialogueManager : MonoBehaviour
     public bool dialogueRunning = false;
 
     public static event Action<string> OnStringBroadcast;
+    public static event Action OnContinueDialogue;
 
     [Header("Dialogue Panel")]
     public GameObject dialoguePanel;
@@ -56,6 +57,7 @@ public class DialogueManager : MonoBehaviour
     public AudioSource musicSource;
 
     [Header("Settings")]
+    public bool awaitContinueEvent = false;
     public bool onHold = false;
     public bool allowEscape = false;
     public bool allowFastAdvance = true;
@@ -101,6 +103,9 @@ public class DialogueManager : MonoBehaviour
         SetDefaultValues();
 
         SetButtonListeners();
+
+        // Continues dialogue when event is called
+        OnContinueDialogue += GoToNextNode;
     }
 
     private void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
@@ -177,14 +182,23 @@ public class DialogueManager : MonoBehaviour
         {
             StartDialogue();
         }
+        // Resumes dialogue
         if (Input.GetKeyDown(KeyCode.Return))
         {
             ResumeDialogue();
         }
+        // Continues the dialogue when awaitContinueEvent is true
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            OnContinueDialogue?.Invoke();
+        }
 
         if (onHold)
             return;
-        
+
+        if (awaitContinueEvent)
+            return;
+
         if (allowEscape && Input.GetKeyDown(KeyCode.Escape))
         {
             EndDialogue();
@@ -400,6 +414,8 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupDialogueNode(RuntimeDialogueNode node)
     {
+        awaitContinueEvent = node.dialogueSettings.awaitContinueEvent;
+
         // Send string via action
         if (node.dialogueSettings.broadcastString.GetValue(dialogueBlackboard, out string text))
         {
@@ -825,6 +841,11 @@ public class DialogueManager : MonoBehaviour
         isTyping = false;
         typingCoroutine = null;
 
+        // Stop here if this node is waiting for a continue event
+        if (awaitContinueEvent)
+            yield break;
+
+        // If there are choices, don't continue
         if (node.choices.Count > 0)
             yield break;
 
