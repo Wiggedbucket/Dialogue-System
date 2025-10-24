@@ -221,13 +221,14 @@ public class DialogueManager : MonoBehaviour
                     typingCoroutine = null;
                     return;
                 }
-                // Else, go to the next node
+                // Else if fast advance is on and the delay is still ongoing, go to the next node
                 else if (allowFastAdvance && !isTyping && delayNodeCoroutine != null)
                 {
                     StopCoroutine(delayNodeCoroutine);
                     delayNodeCoroutine = null;
                     SetupDialogueNode(node);
                 }
+                // Else just go to the next node
                 else if (delayNextWithClick && !isTyping)
                 {
                     GoToNextNode();
