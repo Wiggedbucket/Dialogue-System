@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -42,6 +44,14 @@ public class DialogueManager : MonoBehaviour
     public Button choiceButtonPrefab;
     public Transform choiceButtonContainer;
 
+    [Header("Dialogue Option Buttons")]
+    public GameObject dialogueOptionsContainer;
+    public Button autoAdvanceButton;
+    public Button fastForwardButton;
+
+    public Color toggleButtonActiveTextColor = Color.lightBlue;
+    public Color toggleButtonDisabledTextColor = Color.black;
+
     [Header("Audio Sources")]
     public AudioSource musicSource;
 
@@ -51,8 +61,8 @@ public class DialogueManager : MonoBehaviour
     public bool allowFastAdvance = true;
     public bool autoAdvance = false;
     public float autoAdvanceDelay = 1f;
-    public bool enableSkipping = false;
-    public float skipSpeed = 0.008f;
+    public bool fastForward = false;
+    public float fastForwardSpeed = 0.008f;
     public bool textShadowOnMultipleCharactersTalking = false;
     public NotTalkingType notTalkingType = NotTalkingType.None;
 
@@ -89,6 +99,8 @@ public class DialogueManager : MonoBehaviour
         CreateRuntimeBlackboard(runtimeGraph);
 
         SetDefaultValues();
+
+        SetButtonListeners();
     }
 
     private void CreateRuntimeBlackboard(RuntimeDialogueGraph graph)
@@ -128,6 +140,34 @@ public class DialogueManager : MonoBehaviour
         defaultNamePlateColor = namePlateBackground.color;
         defaultNamePlateImage = namePlateBackground.sprite;
     }
+
+    private void SetButtonListeners()
+    {
+        if (autoAdvanceButton == null || fastForwardButton == null)
+        {
+            Debug.LogError("One or more dialogue control buttons are not assigned!");
+            return;
+        }
+
+        autoAdvanceButton.onClick.AddListener(delegate { ToggleAutoAdvance(!autoAdvance); });
+        fastForwardButton.onClick.AddListener(delegate { ToggleSkipButton(!fastForward); });
+    }
+
+    public void ToggleAutoAdvance(bool active)
+    {
+        autoAdvanceButton.GetComponentInChildren<TextMeshProUGUI>().color = active ? toggleButtonActiveTextColor : toggleButtonDisabledTextColor;
+        autoAdvance = active;
+        if (active == true)
+            ToggleSkipButton(false);
+    }
+
+    public void ToggleSkipButton(bool active)
+    {
+        fastForwardButton.GetComponentInChildren<TextMeshProUGUI>().color = active ? toggleButtonActiveTextColor : toggleButtonDisabledTextColor;
+        fastForward = active;
+        if (active == true)
+            ToggleAutoAdvance(false);
+    }
     #endregion
 
     private void Update()
@@ -156,10 +196,10 @@ public class DialogueManager : MonoBehaviour
             {
                 GoToNextNode();
             }
-            else if ((Mouse.current.leftButton.wasPressedThisFrame || enableSkipping) && node.choices.Count == 0)
+            else if ((Mouse.current.leftButton.wasPressedThisFrame || fastForward) && node.choices.Count == 0 && IsPointerOverDialogueBox())
             {
                 // If still typing, skip text printing
-                if (allowFastAdvance && isTyping && typingCoroutine != null && !enableSkipping)
+                if (allowFastAdvance && isTyping && typingCoroutine != null && !fastForward)
                 {
                     StopCoroutine(typingCoroutine);
                     dialogueText.text = currentFullText;
@@ -167,6 +207,7 @@ public class DialogueManager : MonoBehaviour
                     typingCoroutine = null;
                     return;
                 }
+                // Else, go to the next node
                 else if (allowFastAdvance && !isTyping && delayNodeCoroutine != null)
                 {
                     StopCoroutine(delayNodeCoroutine);
@@ -181,6 +222,31 @@ public class DialogueManager : MonoBehaviour
 
             HandleMusicQueue();
         }
+    }
+
+    private bool IsPointerOverDialogueBox()
+    {
+        if (EventSystem.current == null || dialoguePanel == null)
+            return false;
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = Mouse.current.position.ReadValue()
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        // No UI hit -> definitely not over the dialogue
+        if (results.Count == 0)
+            return false;
+
+        // Check if the first object hit is the dialogue box
+        if (results[0].gameObject.transform == dialogueText.transform)
+            return true;
+
+        // If not, then it was probably a button
+        return false;
     }
 
     #region Control
@@ -201,6 +267,8 @@ public class DialogueManager : MonoBehaviour
 
     private void InteruptDialogue()
     {
+        if (onHold)
+            return;
         dialoguePanel.SetActive(false);
         musicSource.Pause();
         onHold = true;
@@ -212,6 +280,8 @@ public class DialogueManager : MonoBehaviour
 
     private void ResumeDialogue()
     {
+        if (!onHold)
+            return;
         onHold = false;
         if (currentNode != null)
             HandleNode(currentNode.nextNodeID);
@@ -231,6 +301,9 @@ public class DialogueManager : MonoBehaviour
         notTalkingType = runtimeGraph.notTalkingType;
         loop = true;
         shuffle = false;
+
+        ToggleAutoAdvance(false);
+        ToggleSkipButton(false);
 
         dialoguePanel.SetActive(setActive);
         dialogueRunning = setActive;
@@ -668,13 +741,6 @@ public class DialogueManager : MonoBehaviour
 
         // Gather dialogue settings
         bool keepPrevious = node.dialogueSettings.keepPreviousText;
-        float _printSpeed = enableSkipping ? skipSpeed : printSpeed;
-        if (node.dialogueSettings.printSpeed.GetValue(dialogueBlackboard, out float speedValue))
-        {
-            printSpeed = speedValue;
-            _printSpeed = enableSkipping ? skipSpeed : speedValue;
-        }
-
         bool useValue = false;
 
         useValue = node.dialogueSettings.textAlign.GetValue(dialogueBlackboard, out TextAlignmentOptions options);
@@ -687,7 +753,7 @@ public class DialogueManager : MonoBehaviour
         string styledText = BuildStyledText(node);
 
         // Start typing
-        typingCoroutine = StartCoroutine(TypeText(styledText, _printSpeed, keepPrevious));
+        typingCoroutine = StartCoroutine(TypeText(node, styledText, keepPrevious));
     }
 
     private string BuildStyledText(RuntimeDialogueNode node)
@@ -711,7 +777,7 @@ public class DialogueManager : MonoBehaviour
         return text;
     }
 
-    private IEnumerator TypeText(string newText, float speed, bool keepPrevious)
+    private IEnumerator TypeText(RuntimeDialogueNode node, string newText, bool keepPrevious)
     {
         isTyping = true;
 
@@ -742,6 +808,13 @@ public class DialogueManager : MonoBehaviour
             visibleText += c;
             dialogueText.text = visibleText;
 
+            float speed = fastForward ? fastForwardSpeed : printSpeed;
+            if (node.dialogueSettings.printSpeed.GetValue(dialogueBlackboard, out float speedValue))
+            {
+                printSpeed = speedValue;
+                speed = fastForward ? fastForwardSpeed : speedValue;
+            }
+
             yield return new WaitForSeconds(speed);
             i++;
         }
@@ -751,10 +824,6 @@ public class DialogueManager : MonoBehaviour
 
         isTyping = false;
         typingCoroutine = null;
-
-        RuntimeDialogueNode node = currentNode as RuntimeDialogueNode;
-        if (node == null)
-            yield break;
 
         if (node.choices.Count > 0)
             yield break;
