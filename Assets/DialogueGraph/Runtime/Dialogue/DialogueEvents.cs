@@ -6,10 +6,10 @@ public static class DialogueEvents
     public static event Action OnContinueDialogue;
 
     // Fired when a dialogue node starts
-    public static event Action<RuntimeDialogueNode> OnDialogueStarted;
+    public static event Action<string> OnDialogueStarted;
 
     // Fired by UI when text typing completed for a dialogue node.
-    public static event Action<RuntimeDialogueNode> OnDialogueTextComplete;
+    public static event Action<string> OnDialogueTextComplete;
 
     // Fired by UI when player selects a choice; The string is the option text
     public static event Action<string> OnChoiceSelected;
@@ -19,8 +19,8 @@ public static class DialogueEvents
 
     public static void Continue() => OnContinueDialogue?.Invoke();
 
-    internal static void RaiseDialogueStarted(RuntimeDialogueNode node) => OnDialogueStarted?.Invoke(node);
-    internal static void RaiseDialogueTextComplete(RuntimeDialogueNode node) => OnDialogueTextComplete?.Invoke(node);
+    internal static void RaiseDialogueStarted(string nodeID) => OnDialogueStarted?.Invoke(nodeID);
+    internal static void RaiseDialogueTextComplete(string nodeID) => OnDialogueTextComplete?.Invoke(nodeID);
     internal static void RaiseChoiceSelected(string optionText) => OnChoiceSelected?.Invoke(optionText);
     internal static void RaiseStringBroadcast(string s) => OnStringBroadcast?.Invoke(s);
 }

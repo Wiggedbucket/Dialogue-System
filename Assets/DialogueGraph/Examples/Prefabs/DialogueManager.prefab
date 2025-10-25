@@ -604,8 +604,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3359107908077724538}
   - component: {fileID: 6501104421805663098}
+  - component: {fileID: 7293256829412419836}
   - component: {fileID: 8143951676659983443}
-  - component: {fileID: 5869080043825370220}
+  - component: {fileID: 5993776356246834864}
   m_Layer: 5
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -646,35 +647,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
   audioManager: {fileID: 8143951676659983443}
-  characterManager: {fileID: 5869080043825370220}
+  characterManager: {fileID: 5993776356246834864}
+  uiManager: {fileID: 7293256829412419836}
   runtimeGraph: {fileID: 0}
-  dialogueBlackboard: {fileID: 0}
+  blackboard: {fileID: 0}
   dialogueRunning: 0
-  dialoguePanel: {fileID: 2788086059454102252}
-  dialogueText: {fileID: 1795369390334852489}
-  dialogueTextShadow: {fileID: 6591659684549241413}
-  namePlateBackground: {fileID: 1096681381550559651}
-  dialogueTextBackground: {fileID: 6395944713009853550}
-  dialogueBoxTransition: 0
-  primaryImage: {fileID: 8698066194386066142}
-  secondaryImage: {fileID: 4190206133387307169}
-  choiceButtonPrefab: {fileID: 6731602406577615479, guid: e73e99c27231c874b9fea5d16d04c762, type: 3}
-  choiceButtonContainer: {fileID: 8080794192253959014}
-  dialogueOptionsContainer: {fileID: 5911563296716398377}
-  autoAdvanceButton: {fileID: 7355942192113579665}
-  fastForwardButton: {fileID: 8737328502104816998}
-  toggleButtonActiveTextColor: {r: 0, g: 0.4176488, b: 1, a: 1}
-  toggleButtonDisabledTextColor: {r: 0, g: 0, b: 0, a: 1}
   awaitContinueEvent: 0
   onHold: 0
   allowEscape: 0
+--- !u!114 &7293256829412419836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebbeffe5c52a9e64f86d4caf1ddac1bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueUIManager
+  dialoguePanel: {fileID: 2788086059454102252}
+  primaryImage: {fileID: 8698066194386066142}
+  secondaryImage: {fileID: 4190206133387307169}
+  namePlateBackground: {fileID: 1096681381550559651}
+  dialogueTextBackground: {fileID: 6395944713009853550}
+  dialogueText: {fileID: 1795369390334852489}
+  dialogueTextShadow: {fileID: 6591659684549241413}
+  choiceButtonPrefab: {fileID: 6731602406577615479, guid: e73e99c27231c874b9fea5d16d04c762, type: 3}
+  choiceButtonContainer: {fileID: 8080794192253959014}
+  autoAdvanceButton: {fileID: 7355942192113579665}
+  fastForwardButton: {fileID: 8737328502104816998}
+  toggleButtonActiveTextColor: {r: 0.6784314, g: 0.8470589, b: 0.9019608, a: 1}
+  toggleButtonDisabledTextColor: {r: 0, g: 0, b: 0, a: 1}
+  defaultDialogueBoxColor: {r: 0, g: 0, b: 0, a: 0}
+  defaultDialogueBoxImage: {fileID: 0}
+  defaultNamePlateColor: {r: 0, g: 0, b: 0, a: 0}
+  defaultNamePlateImage: {fileID: 0}
+  defaultDialogueBoxTransition: 0
+  dialogueBoxTransition: 0
+  defaultAlignment: 0
+  defaultWrapping: 0
   allowFastAdvance: 1
+  textShadowOnMultipleCharactersTalking: 0
   autoAdvance: 0
   autoAdvanceDelay: 1
   fastForward: 0
   fastForwardSpeed: 0.008
-  textShadowOnMultipleCharactersTalking: 0
-  printSpeed: 0.02
+  basePrintSpeed: 0.02
   delayNextWithClick: 0
 --- !u!114 &8143951676659983443
 MonoBehaviour:
@@ -692,7 +712,7 @@ MonoBehaviour:
   loop: 1
   shuffle: 0
   activeSources: []
---- !u!114 &5869080043825370220
+--- !u!114 &5993776356246834864
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

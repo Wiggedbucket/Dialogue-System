@@ -5,18 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterObject
+public class DialogueCharacterManager : MonoBehaviour
 {
-    public CharacterData Data = new();
-    public string Name;
-    public GameObject GameObject;
-    public RectTransform RectTransform;
-    public Image Image;
-}
-
-public class CharacterManager : MonoBehaviour
-{
-    private DialogueBlackboard dialogueBlackboard = DialogueBlackboard.Instance;
+    private DialogueBlackboard Blackboard = DialogueBlackboard.Instance;
 
     public Transform characterHolder;
     public TextMeshProUGUI speakerNameText;
@@ -33,7 +24,7 @@ public class CharacterManager : MonoBehaviour
 
         foreach (CharacterData nodeData in node.characters)
         {
-            string name = nodeData.name.GetValue(dialogueBlackboard);
+            string name = nodeData.name.GetValue(Blackboard);
             if (string.IsNullOrEmpty(name)) continue;
 
             CharacterObject character = GetOrCreateCharacter(name);
@@ -44,8 +35,8 @@ public class CharacterManager : MonoBehaviour
             ApplyCharacterVisuals(character);
             HandleCharacterMovement(character, character.Data);
 
-            bool talking = character.Data.isTalking.GetValue(dialogueBlackboard);
-            bool hideName = character.Data.hideName.GetValue(dialogueBlackboard);
+            bool talking = character.Data.isTalking.GetValue(Blackboard);
+            bool hideName = character.Data.hideName.GetValue(Blackboard);
 
             if (talking)
             {
@@ -135,7 +126,7 @@ public class CharacterManager : MonoBehaviour
     private void ApplyCharacterBaseTransform(CharacterObject character)
     {
         var data = character.Data;
-        var bb = dialogueBlackboard;
+        var bb = Blackboard;
 
         character.RectTransform.localPosition = data.characterPosition.GetValue(bb);
         character.RectTransform.localEulerAngles = new Vector3(0, 0, data.characterRotation.GetValue(bb));
@@ -146,7 +137,7 @@ public class CharacterManager : MonoBehaviour
     #region Data Merge
     private void ApplyCharacterData(CharacterObject target, CharacterData incoming)
     {
-        DialogueBlackboard bb = dialogueBlackboard;
+        DialogueBlackboard bb = Blackboard;
         CharacterData stored = target.Data;
 
         stored.name = incoming.name;
@@ -183,7 +174,7 @@ public class CharacterManager : MonoBehaviour
     #region Visuals
     private void ApplyCharacterVisuals(CharacterObject character)
     {
-        DialogueBlackboard bb = dialogueBlackboard;
+        DialogueBlackboard bb = Blackboard;
         CharacterData data = character.Data;
 
         if (data.characterSprite.GetValue(bb, out Sprite sprite))
@@ -233,27 +224,27 @@ public class CharacterManager : MonoBehaviour
     #region Character Movement
     private void HandleCharacterMovement(CharacterObject character, CharacterData data)
     {
-        float duration = data.transitionDuration.GetValue(dialogueBlackboard, out float d) ? d : 0.4f;
+        float duration = data.transitionDuration.GetValue(Blackboard, out float d) ? d : 0.4f;
 
-        if (data.characterPosition.GetValue(dialogueBlackboard, out Vector2 targetPos))
+        if (data.characterPosition.GetValue(Blackboard, out Vector2 targetPos))
             positionCoroutines[character.Name] = StartCoroutine(AnimatePosition(character.RectTransform, targetPos, data.positionMovementType, duration));
 
-        if (data.characterRotation.GetValue(dialogueBlackboard, out float targetRot))
+        if (data.characterRotation.GetValue(Blackboard, out float targetRot))
             rotationCoroutines[character.Name] = StartCoroutine(AnimateRotation(character.RectTransform, targetRot, data.rotationMovementType, duration));
 
-        if (data.characterScale.GetValue(dialogueBlackboard, out Vector2 targetScale))
+        if (data.characterScale.GetValue(Blackboard, out Vector2 targetScale))
             scaleCoroutines[character.Name] = StartCoroutine(AnimateScale(character.RectTransform, targetScale, data.scaleMovementType, duration));
     }
 
     private IEnumerator AnimatePosition(RectTransform rect, Vector2 target, PortValue<MovementType> movementType, float duration)
     {
-        MovementType type = movementType.GetValue(dialogueBlackboard);
+        MovementType type = movementType.GetValue(Blackboard);
         yield return AnimateVector(rect.anchoredPosition, target, duration, type, v => rect.anchoredPosition = v);
     }
 
     private IEnumerator AnimateRotation(RectTransform rect, float targetRot, PortValue<MovementType> movementType, float duration)
     {
-        MovementType type = movementType.GetValue(dialogueBlackboard);
+        MovementType type = movementType.GetValue(Blackboard);
         float start = rect.localEulerAngles.z;
 
         yield return AnimateFloat(start, targetRot, duration, type, r => rect.localEulerAngles = new Vector3(0, 0, r));
@@ -261,7 +252,7 @@ public class CharacterManager : MonoBehaviour
 
     private IEnumerator AnimateScale(RectTransform rect, Vector2 targetScale, PortValue<MovementType> movementType, float duration)
     {
-        MovementType type = movementType.GetValue(dialogueBlackboard);
+        MovementType type = movementType.GetValue(Blackboard);
         yield return AnimateVector(rect.localScale, targetScale, duration, type, v => rect.localScale = v);
     }
 
@@ -313,4 +304,13 @@ public class CharacterManager : MonoBehaviour
 
     private float EaseInOut(float t) => t * t * (3f - 2f * t);
     #endregion
+}
+
+public class CharacterObject
+{
+    public CharacterData Data = new();
+    public string Name;
+    public GameObject GameObject;
+    public RectTransform RectTransform;
+    public Image Image;
 }

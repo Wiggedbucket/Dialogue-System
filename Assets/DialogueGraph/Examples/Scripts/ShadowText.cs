@@ -16,7 +16,7 @@ public class ShadowText : MonoBehaviour
             return;
 
         // Copy all key properties
-        shadowText.text = mainText.text;
+        //shadowText.text = mainText.text;
         shadowText.font = mainText.font;
         shadowText.fontSize = mainText.fontSize;
         //shadowText.color = mainText.color;

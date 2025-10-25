@@ -88,9 +88,9 @@ MonoBehaviour:
         m_LocalSubgraphs: []
         m_LastKnownBounds:
           serializedVersion: 2
-          x: 464.8
+          x: 465.6
           y: 327.2
-          width: 6413.6
+          width: 6412.8003
           height: 2931.2002
         m_GraphElementMetaData:
         - m_Guid:
@@ -4439,7 +4439,7 @@ MonoBehaviour:
     - rid: 5077104279487250943
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104279487250944
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -4554,7 +4554,7 @@ MonoBehaviour:
     - rid: 5077104279487250991
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104279487250992
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
