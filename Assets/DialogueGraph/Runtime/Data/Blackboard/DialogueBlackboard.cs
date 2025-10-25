@@ -3,6 +3,20 @@ using UnityEngine;
 
 public class DialogueBlackboard : MonoBehaviour
 {
+    public static DialogueBlackboard Instance { get; private set; }
+
+    private void Awake()
+    {
+        // Set up singleton
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     [SerializeReference]
     public List<BlackBoardVariableBase> variables = new();
 
