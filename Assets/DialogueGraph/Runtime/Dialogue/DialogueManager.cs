@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance { get; private set; }
 
     public AudioManager audioManager;
+    public CharacterManager characterManager;
 
     private void Awake()
     {
@@ -36,8 +37,6 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Dialogue Panel")]
     public GameObject dialoguePanel;
-    public Transform characterHolder;
-    public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI dialogueTextShadow;
     public Image namePlateBackground;
@@ -76,15 +75,8 @@ public class DialogueManager : MonoBehaviour
     public bool fastForward = false;
     public float fastForwardSpeed = 0.008f;
     public bool textShadowOnMultipleCharactersTalking = false;
-    public NotTalkingType notTalkingType = NotTalkingType.None;
 
     public float printSpeed = 0.02f;
-
-    [Header("Character Variables")]
-    public Dictionary<string, CharacterObject> characterObjects = new();
-    private Coroutine positionMovementCoroutine;
-    private Coroutine rotationMovementCoroutine;
-    private Coroutine scaleMovementCoroutine;
 
     [Header("Dialogue Variables")]
     public bool delayNextWithClick = false;
@@ -312,7 +304,7 @@ public class DialogueManager : MonoBehaviour
         allowEscape = runtimeGraph.allowEscape;
         allowFastAdvance = runtimeGraph.allowFastAdvance;
         textShadowOnMultipleCharactersTalking = runtimeGraph.textShadowOnMultipleCharactersTalking;
-        notTalkingType = runtimeGraph.notTalkingType;
+        characterManager.notTalkingType = runtimeGraph.notTalkingType;
         
         audioManager.ResetController();
 
@@ -332,21 +324,10 @@ public class DialogueManager : MonoBehaviour
         if (delayNodeCoroutine != null)
             StopCoroutine(delayNodeCoroutine);
 
-        if (positionMovementCoroutine != null)
-            StopCoroutine(positionMovementCoroutine);
-        if (rotationMovementCoroutine != null)
-            StopCoroutine(rotationMovementCoroutine);
-        if (scaleMovementCoroutine != null)
-            StopCoroutine(scaleMovementCoroutine);
+        characterManager.StopAllCharacterCoroutines();
+        characterManager.RemoveAllCharacters();
 
         currentNode = null;
-
-        // Clear all characters
-        foreach (KeyValuePair<string, CharacterObject> character in characterObjects)
-        {
-            Destroy(character.Value.gameObject);
-        }
-        characterObjects.Clear();
 
         // Clear all choice buttons
         foreach (Transform child in choiceButtonContainer)
@@ -424,7 +405,7 @@ public class DialogueManager : MonoBehaviour
             DialogueEvents.RaiseStringBroadcast(text);
         }
 
-        int charactersTalking = HandleCharacters(node);
+        int charactersTalking = characterManager.HandleCharacters(node);
 
         HandleBackground(node);
 
@@ -448,279 +429,27 @@ public class DialogueManager : MonoBehaviour
             audioManager.PlayAllSounds(audioList);
         }
     }
-    #endregion
 
-    #region Characters
-    public class CharacterObject
+    private void SetupSplitterNode(RuntimeSplitterNode node)
     {
-        public CharacterData characterData = new();
-        public GameObject gameObject;
-        public RectTransform rectTransform;
-        public Image image;
-    }
-
-    private int HandleCharacters(RuntimeDialogueNode node)
-    {
-        List<string> speakerNames = new();
-
-        foreach (CharacterData data in node.characters)
+        foreach (RuntimeSplitterOutput output in node.outputs)
         {
-            string name = data.name.GetValue(dialogueBlackboard);
-            if (string.IsNullOrEmpty(name))
-                continue;
-
-            // Add a new character object to the list if it didn't yet exist in the scene
-            if (!characterObjects.TryGetValue(name, out CharacterObject character))
+            bool valid = true;
+            foreach (ValueComparer comparison in output.comparisons)
             {
-                character = new CharacterObject
-                {
-                    characterData = new CharacterData(),
-                    gameObject = new GameObject(name, typeof(RectTransform), typeof(Image)),
-                };
-                character.rectTransform = character.gameObject.GetComponent<RectTransform>();
-                character.image = character.gameObject.GetComponent<Image>();
-                character.rectTransform.SetParent(characterHolder, false);
-                characterObjects.Add(name, character);
+                if (!comparison.Evaluate(dialogueBlackboard))
+                    valid = false;
             }
 
-            // Skip currently active transitions and instantly complete the movement
-            if (positionMovementCoroutine != null)
-                StopCoroutine(positionMovementCoroutine);
-            if (rotationMovementCoroutine != null)
-                StopCoroutine(rotationMovementCoroutine);
-            if (scaleMovementCoroutine != null)
-                StopCoroutine(scaleMovementCoroutine);
-            character.rectTransform.localPosition = character.characterData.characterPosition.GetValue(dialogueBlackboard);
-            character.rectTransform.localEulerAngles = new Vector3(0, 0, character.characterData.characterRotation.GetValue(dialogueBlackboard));
-            character.rectTransform.localScale = character.characterData.characterScale.GetValue(dialogueBlackboard);
-
-            // Merge node data into persistent character data
-            ApplyCharacterData(character, data);
-
-            CharacterData merged = character.characterData;
-
-            // Apply final values to GameObject
-            if (merged.characterSprite.GetValue(dialogueBlackboard, out Sprite sprite))
-                character.image.sprite = sprite;
-
-            if (merged.isVisible.GetValue(dialogueBlackboard, out bool visible))
-                character.gameObject.SetActive(visible);
-
-            if (merged.minAnchor.GetValue(dialogueBlackboard, out Vector2 minAnchor))
-                character.rectTransform.anchorMin = minAnchor;
-
-            if (merged.maxAnchor.GetValue(dialogueBlackboard, out Vector2 maxAnchor))
-                character.rectTransform.anchorMax = maxAnchor;
-
-            if (merged.pivot.GetValue(dialogueBlackboard, out Vector2 pivot))
-                character.rectTransform.pivot = pivot;
-
-            if (merged.widthAndHeight.GetValue(dialogueBlackboard, out Vector2 widthAndHeight))
-                character.rectTransform.sizeDelta = widthAndHeight;
-
-            if (merged.preserveAspect.GetValue(dialogueBlackboard, out bool preserveAspect))
-                character.image.preserveAspect = preserveAspect;
-
-            // Set position, rotation and scale
-            HandleCharacterMovement(character, merged);
-
-            // Talking state
-            bool talking = merged.isTalking.GetValue(dialogueBlackboard);
-            bool hideName = merged.hideName.GetValue(dialogueBlackboard);
-
-            if (talking)
+            if (valid)
             {
-                speakerNames.Add(hideName ? "???" : name);
-
-                character.image.color = Color.white;
-            } else
-            {
-                switch (notTalkingType)
-                {
-                    case NotTalkingType.GreyOut:
-                        character.image.color = Color.grey;
-                        break;
-                }
+                HandleNode(output.nextNodeID);
+                return;
             }
         }
 
-        // Speaker nameplate
-        speakerNameText.text = string.Join(
-            speakerNames.Count > 2 ? ", " : " and ",
-            speakerNames
-        );
-
-        return speakerNames.Count;
-    }
-
-    private void ApplyCharacterData(CharacterObject target, CharacterData incoming)
-    {
-        CharacterData stored = target.characterData;
-        DialogueBlackboard bb = dialogueBlackboard;
-
-        stored.name = incoming.name;
-
-        // Apply only if the node actually sets these
-        CopyIfChanged(stored.characterSprite, incoming.characterSprite, bb);
-        CopyIfChanged(stored.isVisible, incoming.isVisible, bb);
-        CopyIfChanged(stored.isTalking, incoming.isTalking, bb);
-        CopyIfChanged(stored.hideName, incoming.hideName, bb);
-        CopyIfChanged(stored.transitionDuration, incoming.transitionDuration, bb);
-        CopyIfChanged(stored.positionMovementType, incoming.positionMovementType, bb);
-        CopyIfChanged(stored.rotationMovementType, incoming.rotationMovementType, bb);
-        CopyIfChanged(stored.scaleMovementType, incoming.scaleMovementType, bb);
-        CopyIfChanged(stored.characterPosition, incoming.characterPosition, bb);
-        CopyIfChanged(stored.minAnchor, incoming.minAnchor, bb);
-        CopyIfChanged(stored.maxAnchor, incoming.maxAnchor, bb);
-        CopyIfChanged(stored.pivot, incoming.pivot, bb);
-        CopyIfChanged(stored.characterRotation, incoming.characterRotation, bb);
-        CopyIfChanged(stored.widthAndHeight, incoming.widthAndHeight, bb);
-        CopyIfChanged(stored.characterScale, incoming.characterScale, bb);
-
-        target.characterData = stored;
-    }
-
-    private void CopyIfChanged<T>(PortValue<T> target, PortValue<T> source, DialogueBlackboard bb)
-    {
-        if (source.GetValue(bb, out T value))
-        {
-            target.usePortValue = source.usePortValue;
-            target.blackboardVariableName = source.blackboardVariableName;
-            target.value = source.value;
-        }
-    }
-
-    private void HandleCharacterMovement(CharacterObject character, CharacterData merged)
-    {
-        float duration = merged.transitionDuration.GetValue(dialogueBlackboard, out float d) ? d : 0.4f;
-
-        if (merged.characterPosition.GetValue(dialogueBlackboard, out Vector2 targetPos))
-        {
-            MovementType posType = merged.positionMovementType.GetValue(dialogueBlackboard, out MovementType pType)
-                ? pType
-                : MovementType.Instant;
-
-            switch (posType)
-            {
-                case MovementType.Instant:
-                    character.rectTransform.anchoredPosition = targetPos;
-                    break;
-
-                case MovementType.Linear:
-                    positionMovementCoroutine = StartCoroutine(SmoothMoveCharacter(character.rectTransform, targetPos, duration, false));
-                    break;
-
-                case MovementType.Smooth:
-                    positionMovementCoroutine = StartCoroutine(SmoothMoveCharacter(character.rectTransform, targetPos, duration, true));
-                    break;
-            }
-        }
-
-        if (merged.characterRotation.GetValue(dialogueBlackboard, out float targetRot))
-        {
-            MovementType rotType = merged.rotationMovementType.GetValue(dialogueBlackboard, out MovementType rType)
-                ? rType
-                : MovementType.Instant;
-
-            switch (rotType)
-            {
-                case MovementType.Instant:
-                    character.rectTransform.localEulerAngles = new Vector3(0, 0, targetRot);
-                    break;
-
-                case MovementType.Linear:
-                    rotationMovementCoroutine = StartCoroutine(SmoothRotateCharacter(character.rectTransform, targetRot, duration, false));
-                    break;
-
-                case MovementType.Smooth:
-                    rotationMovementCoroutine = StartCoroutine(SmoothRotateCharacter(character.rectTransform, targetRot, duration, true));
-                    break;
-            }
-        }
-
-        if (merged.characterScale.GetValue(dialogueBlackboard, out Vector2 targetScale))
-        {
-            MovementType scaleType = merged.scaleMovementType.GetValue(dialogueBlackboard, out MovementType sType)
-                ? sType
-                : MovementType.Instant;
-
-            switch (scaleType)
-            {
-                case MovementType.Instant:
-                    character.rectTransform.localScale = targetScale;
-                    break;
-
-                case MovementType.Linear:
-                    scaleMovementCoroutine = StartCoroutine(SmoothScaleCharacter(character.rectTransform, targetScale, duration, false));
-                    break;
-
-                case MovementType.Smooth:
-                    scaleMovementCoroutine = StartCoroutine(SmoothScaleCharacter(character.rectTransform, targetScale, duration, true));
-                    break;
-            }
-        }
-    }
-
-    private IEnumerator SmoothMoveCharacter(RectTransform rect, Vector2 target, float duration, bool eased)
-    {
-        Vector2 start = rect.anchoredPosition;
-        float t = 0f;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float progress = Mathf.Clamp01(t / duration);
-            if (eased)
-                progress = EaseInOut(progress);
-            rect.anchoredPosition = Vector2.Lerp(start, target, progress);
-            yield return null;
-        }
-
-        rect.anchoredPosition = target;
-    }
-
-    private IEnumerator SmoothRotateCharacter(RectTransform rect, float targetRot, float duration, bool linear)
-    {
-        float t = 0f;
-        float start = rect.localEulerAngles.z;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float progress = Mathf.Clamp01(t / duration);
-            if (!linear)
-                progress = EaseInOut(progress);
-
-            float rot = Mathf.LerpAngle(start, targetRot, progress);
-            rect.localEulerAngles = new Vector3(0, 0, rot);
-            yield return null;
-        }
-
-        rect.localEulerAngles = new Vector3(0, 0, targetRot);
-    }
-
-    private IEnumerator SmoothScaleCharacter(RectTransform rect, Vector2 targetScale, float duration, bool linear)
-    {
-        float t = 0f;
-        Vector2 start = rect.localScale;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float progress = Mathf.Clamp01(t / duration);
-            if (!linear)
-                progress = EaseInOut(progress);
-
-            rect.localScale = Vector2.Lerp(start, targetScale, progress);
-            yield return null;
-        }
-
-        rect.localScale = targetScale;
-    }
-
-    private float EaseInOut(float t)
-    {
-        return t * t * (3f - 2f * t); // classic smoothstep
+        if (node.defaultOutputNodeID != null)
+            HandleNode(node.defaultOutputNodeID);
     }
     #endregion
 
@@ -972,26 +701,4 @@ public class DialogueManager : MonoBehaviour
         }
     }
     #endregion
-
-    private void SetupSplitterNode(RuntimeSplitterNode node)
-    {
-        foreach (RuntimeSplitterOutput output in node.outputs)
-        {
-            bool valid = true;
-            foreach (ValueComparer comparison in output.comparisons)
-            {
-                if (!comparison.Evaluate(dialogueBlackboard))
-                    valid = false;
-            }
-
-            if (valid)
-            {
-                HandleNode(output.nextNodeID);
-                return;
-            }
-        }
-
-        if (node.defaultOutputNodeID != null)
-            HandleNode(node.defaultOutputNodeID);
-    }
 }

@@ -605,6 +605,7 @@ GameObject:
   - component: {fileID: 3359107908077724538}
   - component: {fileID: 6501104421805663098}
   - component: {fileID: 8143951676659983443}
+  - component: {fileID: 5869080043825370220}
   m_Layer: 5
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -645,12 +646,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
   audioManager: {fileID: 8143951676659983443}
+  characterManager: {fileID: 5869080043825370220}
   runtimeGraph: {fileID: 0}
   dialogueBlackboard: {fileID: 0}
   dialogueRunning: 0
   dialoguePanel: {fileID: 2788086059454102252}
-  characterHolder: {fileID: 8824583706483487855}
-  speakerNameText: {fileID: 5724954641327291016}
   dialogueText: {fileID: 1795369390334852489}
   dialogueTextShadow: {fileID: 6591659684549241413}
   namePlateBackground: {fileID: 1096681381550559651}
@@ -660,7 +660,7 @@ MonoBehaviour:
   secondaryImage: {fileID: 4190206133387307169}
   choiceButtonPrefab: {fileID: 6731602406577615479, guid: e73e99c27231c874b9fea5d16d04c762, type: 3}
   choiceButtonContainer: {fileID: 8080794192253959014}
-  dialogueOptionsContainer: {fileID: 0}
+  dialogueOptionsContainer: {fileID: 5911563296716398377}
   autoAdvanceButton: {fileID: 7355942192113579665}
   fastForwardButton: {fileID: 8737328502104816998}
   toggleButtonActiveTextColor: {r: 0, g: 0.4176488, b: 1, a: 1}
@@ -674,7 +674,6 @@ MonoBehaviour:
   fastForward: 0
   fastForwardSpeed: 0.008
   textShadowOnMultipleCharactersTalking: 0
-  notTalkingType: 0
   printSpeed: 0.02
   delayNextWithClick: 0
 --- !u!114 &8143951676659983443
@@ -693,6 +692,21 @@ MonoBehaviour:
   loop: 1
   shuffle: 0
   activeSources: []
+--- !u!114 &5869080043825370220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b41f376ec2fe7349b79d99cff464d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
+  characterHolder: {fileID: 8824583706483487855}
+  speakerNameText: {fileID: 5724954641327291016}
+  notTalkingType: 0
 --- !u!1 &2788086059454102252
 GameObject:
   m_ObjectHideFlags: 0
