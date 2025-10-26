@@ -14,7 +14,7 @@ public class DialogueUIManager : MonoBehaviour
 
     private NodeProcessor NodeProcessor => DialogueManager.processor;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
-    private RuntimeNode CurrentNode => NodeProcessor.currentNode;
+    private RuntimeNode CurrentNode => NodeProcessor.CurrentNode;
 
     [Header("UI References")]
     [SerializeField] private GameObject dialoguePanel;

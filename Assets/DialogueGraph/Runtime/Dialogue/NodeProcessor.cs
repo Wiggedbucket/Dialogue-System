@@ -9,7 +9,7 @@ public class NodeProcessor : MonoBehaviour
     private DialogueBlackboard Blackboard => DialogueBlackboard.Instance;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
 
-    public RuntimeNode currentNode { get; private set; }
+    public RuntimeNode CurrentNode { get; private set; }
 
     private DialogueUIManager UIManager => DialogueManager.uiManager;
     private DialogueCharacterManager CharacterManager => DialogueManager.characterManager;
@@ -32,7 +32,7 @@ public class NodeProcessor : MonoBehaviour
     public void ResetController()
     {
         StopNodeDelay();
-        currentNode = null;
+        CurrentNode = null;
     }
 
     public void HandleNode(string id)
@@ -47,8 +47,8 @@ public class NodeProcessor : MonoBehaviour
         }
 
         // Handle the node
-        currentNode = runtimeNode;
-        switch (currentNode)
+        CurrentNode = runtimeNode;
+        switch (CurrentNode)
         {
             case RuntimeDialogueNode node:
                 delayNodeCoroutine = StartCoroutine(DelayNextNode(node));
@@ -68,8 +68,8 @@ public class NodeProcessor : MonoBehaviour
     {
         AudioManager.StopAllSounds();
 
-        if (currentNode != null && !string.IsNullOrEmpty(currentNode.nextNodeID))
-            HandleNode(currentNode.nextNodeID);
+        if (CurrentNode != null && !string.IsNullOrEmpty(CurrentNode.nextNodeID))
+            HandleNode(CurrentNode.nextNodeID);
         else
             DialogueManager.EndDialogue();
     }

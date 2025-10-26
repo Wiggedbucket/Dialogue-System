@@ -15,7 +15,7 @@ public class DialogueManager : MonoBehaviour
     public DialogueBlackboard blackboard;
 
     [Header("Runtime flags")]
-    public bool dialogueRunning { get; private set; } = false;
+    public bool DialogueRunning { get; private set; } = false;
     public bool awaitContinueEvent = false;
     public bool onHold = false;
     public bool allowEscape = false;
@@ -65,7 +65,7 @@ public class DialogueManager : MonoBehaviour
         ResetDialogue(true);
 
         // If first node is present, show it, if not, end dialogue
-        if (!string.IsNullOrEmpty(runtimeGraph?.entryNodeID))
+        if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
             processor.HandleNode(runtimeGraph.entryNodeID);
         else
             EndDialogue();
@@ -76,11 +76,11 @@ public class DialogueManager : MonoBehaviour
         if (onHold) return;
 
         uiManager.EnableDialoguePanel(false);
-        audioManager?.MusicState(MusicCommand.Pause);
+        audioManager.MusicState(MusicCommand.Pause);
         onHold = true;
 
-        uiManager?.StopPrinting();
-        processor?.StopNodeDelay();
+        uiManager.StopPrinting();
+        processor.StopNodeDelay();
     }
 
     public void ResumeDialogue()
@@ -89,10 +89,10 @@ public class DialogueManager : MonoBehaviour
 
         onHold = false;
 
-        if (processor?.currentNode != null)
-            processor.HandleNode(processor.currentNode.nextNodeID);
+        if (processor.CurrentNode != null)
+            processor.HandleNode(processor.CurrentNode.nextNodeID);
 
-        audioManager?.MusicState(MusicCommand.Resume);
+        audioManager.MusicState(MusicCommand.Resume);
     }
 
     public void EndDialogue()
@@ -102,7 +102,7 @@ public class DialogueManager : MonoBehaviour
 
     private void ResetDialogue(bool setActive)
     {
-        dialogueRunning = setActive;
+        DialogueRunning = setActive;
 
         // Update runtime settings from graph
         if (runtimeGraph != null)
@@ -113,15 +113,15 @@ public class DialogueManager : MonoBehaviour
         }
 
         // reset systems
-        characterManager?.StopAllCharacterCoroutines();
-        characterManager?.RemoveAllCharacters();
+        characterManager.StopAllCharacterCoroutines();
+        characterManager.RemoveAllCharacters();
 
-        audioManager?.ResetController();
-        uiManager?.ResetController();
-        uiManager?.EnableDialoguePanel(setActive);
+        audioManager.ResetController();
+        uiManager.ResetController();
+        uiManager.EnableDialoguePanel(setActive);
 
         // clear processor state
-        processor?.ResetController();
+        processor.ResetController();
     }
     #endregion
 }
