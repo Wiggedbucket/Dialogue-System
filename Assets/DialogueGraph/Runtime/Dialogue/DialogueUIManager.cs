@@ -11,8 +11,10 @@ public class DialogueUIManager : MonoBehaviour
     // References to external systems
     private DialogueManager DialogueManager => DialogueManager.Instance;
     private DialogueBlackboard Blackboard => DialogueBlackboard.Instance;
+
+    private NodeProcessor NodeProcessor => DialogueManager.processor;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
-    private RuntimeNode CurrentNode => DialogueManager.currentNode;
+    private RuntimeNode CurrentNode => NodeProcessor.currentNode;
 
     [Header("UI References")]
     [SerializeField] private GameObject dialoguePanel;
@@ -30,7 +32,6 @@ public class DialogueUIManager : MonoBehaviour
     [Header("Dialogue Option Buttons")]
     public Button autoAdvanceButton;
     public Button fastForwardButton;
-
     public Color toggleButtonActiveTextColor = Color.lightBlue;
     public Color toggleButtonDisabledTextColor = Color.black;
 
@@ -54,8 +55,8 @@ public class DialogueUIManager : MonoBehaviour
     public float basePrintSpeed = 0.02f;
 
     public bool delayNextWithClick = false;
-    private string currentFullText = "";
 
+    private string currentFullText = "";
     public bool IsTyping => typingCoroutine != null;
     private Coroutine typingCoroutine;
 
@@ -63,14 +64,19 @@ public class DialogueUIManager : MonoBehaviour
     private void Start()
     {
         SetDefaultValues();
-
         SetButtonListeners();
+    }
+
+    private void OnDestroy()
+    {
+        // remove listeners to avoid leaks
+        if (autoAdvanceButton != null) autoAdvanceButton.onClick.RemoveAllListeners();
+        if (fastForwardButton != null) fastForwardButton.onClick.RemoveAllListeners();
     }
 
     private void SetDefaultValues()
     {
-        if (dialogueText == null)
-            return;
+        if (dialogueText == null) return;
 
         defaultAlignment = dialogueText.alignment;
         defaultWrapping = dialogueText.textWrappingMode;
@@ -84,14 +90,11 @@ public class DialogueUIManager : MonoBehaviour
 
     private void SetButtonListeners()
     {
-        if (autoAdvanceButton == null || fastForwardButton == null)
-        {
-            Debug.LogError("One or more dialogue control buttons are not assigned!");
-            return;
-        }
+        if (autoAdvanceButton != null)
+            autoAdvanceButton.onClick.AddListener(() => ToggleAutoAdvance(!autoAdvance));
 
-        autoAdvanceButton.onClick.AddListener(delegate { ToggleAutoAdvance(!autoAdvance); });
-        fastForwardButton.onClick.AddListener(delegate { ToggleSkipButton(!fastForward); });
+        if (fastForwardButton != null)
+            fastForwardButton.onClick.AddListener(() => ToggleSkipButton(!fastForward));
     }
 
     public void ToggleAutoAdvance(bool active)
@@ -112,9 +115,11 @@ public class DialogueUIManager : MonoBehaviour
 
     public void ResetController()
     {
-        allowFastAdvance = RuntimeGraph.allowFastAdvance;
+        if (RuntimeGraph != null)
+            allowFastAdvance = RuntimeGraph.allowFastAdvance;
 
         StopPrinting();
+        ClearDialogueText();
 
         // Reset text box
         dialogueText.alignment = defaultAlignment;
@@ -138,9 +143,7 @@ public class DialogueUIManager : MonoBehaviour
 
         // Clear choice buttons
         foreach (Transform child in choiceButtonContainer)
-        {
             Destroy(child.gameObject);
-        }
     }
     #endregion
 
@@ -155,7 +158,7 @@ public class DialogueUIManager : MonoBehaviour
 
             if (!IsTyping && !delayNextWithClick && !DialogueManager.IsDelayingNode && node.choices.Count == 0)
             {
-                DialogueManager.GoToNextNode();
+                NodeProcessor.GoToNextNode();
             }
             else if ((Mouse.current.leftButton.wasPressedThisFrame || fastForward) && node.choices.Count == 0 && pointerOverDialogue)
             {
@@ -168,13 +171,13 @@ public class DialogueUIManager : MonoBehaviour
                 // Else if fast advance is on and the delay is still ongoing, go to the next node
                 else if (allowFastAdvance && !IsTyping && DialogueManager.IsDelayingNode)
                 {
-                    DialogueManager.StopNodeDelay();
-                    DialogueManager.SetupDialogueNode(node);
+                    NodeProcessor.StopNodeDelay();
+                    NodeProcessor.SetupDialogueNode(node);
                 }
                 // Else just go to the next node
                 else if (delayNextWithClick && !IsTyping)
                 {
-                    DialogueManager.GoToNextNode();
+                    NodeProcessor.GoToNextNode();
                 }
             }
         }
@@ -219,10 +222,8 @@ public class DialogueUIManager : MonoBehaviour
     public void HandleDialogueText(RuntimeDialogueNode node, int charactersTalking)
     {
         delayNextWithClick = node.dialogueSettings.delayNextWithClick;
-        bool keepPrevious = node.dialogueSettings.keepPreviousText;
 
-        if (typingCoroutine != null)
-            StopCoroutine(typingCoroutine);
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
 
         // Apply text layout settings
         DialogueSettings s = node.dialogueSettings;
@@ -239,38 +240,39 @@ public class DialogueUIManager : MonoBehaviour
 
         // Handle shadow text
         textShadowOnMultipleCharactersTalking = RuntimeGraph.textShadowOnMultipleCharactersTalking;
-        dialogueTextShadow.gameObject.SetActive(charactersTalking > 1 && textShadowOnMultipleCharactersTalking);
+        if (dialogueTextShadow != null)
+            dialogueTextShadow.gameObject.SetActive(charactersTalking > 1 && textShadowOnMultipleCharactersTalking);
 
         // Start printing text
-        typingCoroutine = StartCoroutine(PrintText(node, styledText, keepPrevious));
+        typingCoroutine = StartCoroutine(PrintText(node, styledText));
     }
 
     public void StopPrinting()
     {
-        if (!IsTyping)
-            return;
+        if (!IsTyping) return;
+
         StopCoroutine(typingCoroutine);
         typingCoroutine = null;
     }
 
     public void SkipPrinting()
     {
-        if (!IsTyping)
-            return;
+        if (!IsTyping) return;
 
         StopCoroutine(typingCoroutine);
         dialogueText.text = currentFullText;
         if (dialogueTextShadow != null)
             dialogueTextShadow.text = StripColorTags(currentFullText);
+
         DialogueEvents.RaiseDialogueTextComplete(CurrentNode.nodeID);
         typingCoroutine = null;
     }
 
     public void ClearDialogueText()
     {
-        dialogueText.text = "";
-        dialogueTextShadow.text = "";
         currentFullText = "";
+        if (dialogueText != null) dialogueText.text = "";
+        if (dialogueTextShadow != null) dialogueTextShadow.text = "";
     }
 
     public void CreateChoices(RuntimeDialogueNode node)
@@ -278,8 +280,7 @@ public class DialogueUIManager : MonoBehaviour
         foreach (Transform child in choiceButtonContainer)
             Destroy(child.gameObject);
 
-        if (node.choices.Count == 0)
-            return;
+        if (node.choices.Count == 0) return;
 
         foreach (RuntimeChoice choice in node.choices)
         {
@@ -289,13 +290,7 @@ public class DialogueUIManager : MonoBehaviour
 
             bool valid = true;
             foreach (ValueComparer comparison in choice.comparisons)
-            {
-                if (!comparison.Evaluate(Blackboard))
-                {
-                    valid = false;
-                    break;
-                }
-            }
+                if (!comparison.Evaluate(Blackboard)) { valid = false; break; }
 
             button.interactable = valid;
             button.gameObject.SetActive(valid || choice.showIfConditionNotMet.GetValue(Blackboard));
@@ -305,7 +300,7 @@ public class DialogueUIManager : MonoBehaviour
                 if (!string.IsNullOrEmpty(choice.nextNodeID))
                 {
                     DialogueEvents.RaiseChoiceSelected(choice.nextNodeID);
-                    DialogueManager.HandleNode(choice.nextNodeID);
+                    NodeProcessor.HandleNode(choice.nextNodeID);
                 }
                 else
                 {
@@ -320,29 +315,24 @@ public class DialogueUIManager : MonoBehaviour
     private string BuildStyledText(RuntimeDialogueNode node)
     {
         DialogueSettings s = node.dialogueSettings;
-        string text = node.dialogueText;
+        string text = node.dialogueText ?? "";
 
-        if (s.bold.GetValue(Blackboard))
-            text = $"<b>{text}</b>";
-        if (s.italic.GetValue(Blackboard))
-            text = $"<i>{text}</i>";
-        if (s.underline.GetValue(Blackboard))
-            text = $"<u>{text}</u>";
-        if (s.color.GetValue(Blackboard, out Color color))
-            text = $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{text}</color>";
-        if (s.font.GetValue(Blackboard, out TMP_FontAsset font))
-            text = $"<font=\"{font.name}\">{text}</font>";
+        if (s.bold.GetValue(Blackboard)) text = $"<b>{text}</b>";
+        if (s.italic.GetValue(Blackboard)) text = $"<i>{text}</i>";
+        if (s.underline.GetValue(Blackboard)) text = $"<u>{text}</u>";
+        if (s.color.GetValue(Blackboard, out Color color)) text = $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{text}</color>";
+        if (s.font.GetValue(Blackboard, out TMP_FontAsset font)) text = $"<font=\"{font.name}\">{text}</font>";
 
         return text;
     }
 
-    private IEnumerator PrintText(RuntimeDialogueNode node, string newText, bool keepPrevious)
+    private IEnumerator PrintText(RuntimeDialogueNode node, string newText)
     {
         int startIndex = currentFullText.Length;
         currentFullText += newText;
 
-        string visibleText = currentFullText[..startIndex];
-        string remaining = currentFullText[startIndex..];
+        string visibleText = currentFullText.Substring(0, startIndex);
+        string remaining = currentFullText.Substring(startIndex);
 
         int i = 0;
         while (i < remaining.Length)
@@ -381,81 +371,60 @@ public class DialogueUIManager : MonoBehaviour
 
         // Ensure full text is displayed at the end
         dialogueText.text = visibleText;
+        if (dialogueTextShadow != null)
+            dialogueTextShadow.text = StripColorTags(visibleText);
 
         DialogueEvents.RaiseDialogueTextComplete(node.nodeID);
         typingCoroutine = null;
 
-        // Stop here if this node is waiting for a continue event
-        if (DialogueManager.awaitContinueEvent)
-            yield break;
-
-        // If there are choices, don't continue
-        if (node.choices.Count > 0)
-            yield break;
+        // Stop here if waiting for external continue event or if there are choices
+        if (DialogueManager.awaitContinueEvent) yield break;
+        if (node.choices.Count > 0) yield break;
 
         if (autoAdvance)
         {
-            RuntimeDialogueNode nextDialogue = FindNextDialogueNode(CurrentNode.nextNodeID);
-
-            if (nextDialogue == null || (nextDialogue != null && !nextDialogue.dialogueSettings.keepPreviousText))
-            {
+            RuntimeDialogueNode next = FindNextDialogueNode(CurrentNode.nextNodeID);
+            if (next == null || !next.dialogueSettings.keepPreviousText)
                 yield return new WaitForSeconds(autoAdvanceDelay);
-            }
 
-            DialogueManager.GoToNextNode();
+            NodeProcessor.GoToNextNode();
         }
         else if (!delayNextWithClick)
         {
-            DialogueManager.GoToNextNode();
+            NodeProcessor.GoToNextNode();
         }
     }
 
     private RuntimeDialogueNode FindNextDialogueNode(string nodeId, int depth = 0)
     {
         // Infinite loop safety limit
-        if (depth > 50)
-            return null;
-
-        // Sees if the next node exists
-        if (string.IsNullOrEmpty(nodeId))
-            return null;
+        if (depth > 50 || string.IsNullOrEmpty(nodeId)) return null;
 
         RuntimeNode node = RuntimeGraph.GetNode(nodeId);
-        if (node == null)
-            return null;
+        if (node == null) return null;
 
-        switch (node)
+        // Return if it's a dialogue node
+        if (node is RuntimeDialogueNode rd) return rd;
+
+        if (node is RuntimeSplitterNode sn)
         {
-            case RuntimeDialogueNode dialogueNode:
-                return dialogueNode;
-
-            case RuntimeSplitterNode splitterNode:
-                // Try to find the first valid output that leads to a dialogue node
-                foreach (RuntimeSplitterOutput output in splitterNode.outputs)
+            foreach (RuntimeSplitterOutput output in sn.outputs)
+            {
+                bool valid = true;
+                foreach (ValueComparer comp in output.comparisons)
                 {
-                    bool valid = true;
-                    foreach (ValueComparer comparison in output.comparisons)
-                    {
-                        if (!comparison.Evaluate(Blackboard))
-                        {
-                            valid = false;
-                            break;
-                        }
-                    }
-
-                    if (valid)
-                    {
-                        RuntimeDialogueNode result = FindNextDialogueNode(output.nextNodeID, depth + 1);
-                        if (result != null)
-                            return result;
-                    }
+                    if (!comp.Evaluate(Blackboard)) { valid = false; break; }
                 }
 
-                // Try default output if nothing else matched
-                if (!string.IsNullOrEmpty(splitterNode.defaultOutputNodeID))
-                    return FindNextDialogueNode(splitterNode.defaultOutputNodeID, depth + 1);
+                if (valid)
+                {
+                    RuntimeDialogueNode found = FindNextDialogueNode(output.nextNodeID, depth + 1);
+                    if (found != null) return found;
+                }
+            }
 
-                break;
+            if (!string.IsNullOrEmpty(sn.defaultOutputNodeID))
+                return FindNextDialogueNode(sn.defaultOutputNodeID, depth + 1);
         }
 
         return null;
@@ -503,30 +472,6 @@ public class DialogueUIManager : MonoBehaviour
 
         // If not, then it was probably a button
         return false;
-    }
-
-    private static string StripRichTextTags(string input)
-    {
-        System.Text.StringBuilder sb = new(input.Length);
-        bool insideTag = false;
-
-        foreach (char c in input)
-        {
-            if (c == '<')
-            {
-                insideTag = true;
-                continue;
-            }
-            if (c == '>')
-            {
-                insideTag = false;
-                continue;
-            }
-            if (!insideTag)
-                sb.Append(c);
-        }
-
-        return sb.ToString();
     }
 
     private static string StripColorTags(string input)

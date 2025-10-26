@@ -604,6 +604,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3359107908077724538}
   - component: {fileID: 6501104421805663098}
+  - component: {fileID: 4213456390870202967}
   - component: {fileID: 7293256829412419836}
   - component: {fileID: 8143951676659983443}
   - component: {fileID: 5993776356246834864}
@@ -646,6 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39873ded95def224896ff16133542769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+  processor: {fileID: 4213456390870202967}
   audioManager: {fileID: 8143951676659983443}
   characterManager: {fileID: 5993776356246834864}
   uiManager: {fileID: 7293256829412419836}
@@ -655,6 +657,18 @@ MonoBehaviour:
   awaitContinueEvent: 0
   onHold: 0
   allowEscape: 0
+--- !u!114 &4213456390870202967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b923b2f2f6805b48ba91f71e2b1cc70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NodeProcessor
 --- !u!114 &7293256829412419836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,14 +694,6 @@ MonoBehaviour:
   fastForwardButton: {fileID: 8737328502104816998}
   toggleButtonActiveTextColor: {r: 0.6784314, g: 0.8470589, b: 0.9019608, a: 1}
   toggleButtonDisabledTextColor: {r: 0, g: 0, b: 0, a: 1}
-  defaultDialogueBoxColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultDialogueBoxImage: {fileID: 0}
-  defaultNamePlateColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultNamePlateImage: {fileID: 0}
-  defaultDialogueBoxTransition: 0
-  dialogueBoxTransition: 0
-  defaultAlignment: 0
-  defaultWrapping: 0
   allowFastAdvance: 1
   textShadowOnMultipleCharactersTalking: 0
   autoAdvance: 0
