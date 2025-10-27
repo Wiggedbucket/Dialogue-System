@@ -8,7 +8,7 @@ public class DialogueBoxTransitionController : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;   // used for fading
 
     [Header("Settings")]
-    [SerializeField] private float transitionDuration = 0.5f;
+    public float transitionDuration = 0.5f;
     [SerializeField] private AnimationCurve transitionCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private Vector2 defaultPos;

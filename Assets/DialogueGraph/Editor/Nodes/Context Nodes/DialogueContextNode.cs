@@ -29,6 +29,7 @@ public class DialogueContextNode : ContextNode
     public const string SetNamePlateImagePortName = "set name plate image";
     public const string ChangeBackgroundImagePortName = "change background image";
     public const string ChangeBackgroundTransitionPortName = "change background transition";
+    public const string CHangeBackgroundTransitionDurationPortName = "change background transition duration";
 
     public const string DialoguePortName = "dialogue";
 
@@ -56,6 +57,7 @@ public class DialogueContextNode : ContextNode
 
     public const string BackgroundImagePortName = "background image";
     public const string BackgroundTransitionPortName = "smooth background transition";
+    public const string BackgroundTransitionDurationPortName = "background transition duration";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
@@ -86,6 +88,7 @@ public class DialogueContextNode : ContextNode
 
         context.AddOption<bool>(ChangeBackgroundImagePortName);
         context.AddOption<bool>(ChangeBackgroundTransitionPortName);
+        context.AddOption<bool>(CHangeBackgroundTransitionDurationPortName);
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)
@@ -111,6 +114,7 @@ public class DialogueContextNode : ContextNode
         var setNamePlateImage = GetBoolOption(SetNamePlateImagePortName);
         var changeBackgroundImage = GetBoolOption(ChangeBackgroundImagePortName);
         var changeBackgroundTransition = GetBoolOption(ChangeBackgroundTransitionPortName);
+        var changeBackgroundTransitionDuration = GetBoolOption(CHangeBackgroundTransitionDurationPortName);
 
         context.AddOutputPort("out")
             .WithConnectorUI(PortConnectorUI.Arrowhead)
@@ -173,6 +177,8 @@ public class DialogueContextNode : ContextNode
             context.AddInputPort<Sprite>(BackgroundImagePortName).Build();
         if (changeBackgroundTransition)
             context.AddInputPort<BackgroundTransition>(BackgroundTransitionPortName).Build();
+        if (changeBackgroundTransitionDuration)
+            context.AddInputPort<float>(BackgroundTransitionDurationPortName).WithDefaultValue(0.5f).Build();
     }
 
     private bool GetBoolOption(string name, bool defaultValue = false)

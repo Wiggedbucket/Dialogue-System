@@ -34,4 +34,5 @@ public class DialogueSettings
 
     public PortValue<Sprite> backgroundImage = new();
     public PortValue<BackgroundTransition> backgroundTransition = new();
+    public PortValue<float> backgroundTransitionDuration = new();
 }

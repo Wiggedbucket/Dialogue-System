@@ -46,6 +46,7 @@ public class DialogueManager : MonoBehaviour
 
         blackboard = DialogueBlackboard.CreateRuntimeBlackboard(runtimeGraph, gameObject);
         dialogueBoxTransition = runtimeGraph.dialogueBoxTransition;
+        dialogueBoxTransitionController.transitionDuration = runtimeGraph.transitionDuration;
     }
 
     private void Update()

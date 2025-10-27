@@ -186,14 +186,21 @@ public class DialogueUIManager : MonoBehaviour
 
     public void HandleBackground(RuntimeDialogueNode node)
     {
+        if (node.dialogueSettings.backgroundTransition.GetValue(Blackboard, out BackgroundTransition transition))
+        {
+            backgroundController.backgroundTransition = transition;
+        }
+        if (node.dialogueSettings.backgroundTransitionDuration.GetValue(Blackboard, out float duration))
+        {
+            backgroundController.transitionDuration = duration;
+        }
+
         if (node.dialogueSettings.backgroundImage.GetValue(Blackboard, out Sprite newBackground))
         {
-            node.dialogueSettings.backgroundTransition.GetValue(Blackboard, out BackgroundTransition transition);
-
             if (transition == BackgroundTransition.None)
                 backgroundController.SetImmediate(newBackground);
             else
-                backgroundController.TransitionTo(newBackground, transition);
+                backgroundController.TransitionTo(newBackground);
         }
     }
 

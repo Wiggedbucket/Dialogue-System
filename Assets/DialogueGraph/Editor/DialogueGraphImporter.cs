@@ -42,6 +42,7 @@ public class DialogueGraphImporter : ScriptedImporter
             runtimeGraph.textShadowOnMultipleCharactersTalking = GetOptionValue<bool>((Node)startNode, StartNode.TextShadowOnMultipleCharactersTalkingOptionName);
             runtimeGraph.notTalkingType = GetOptionValue<NotTalkingType>((Node)startNode, StartNode.NotTalkingTypeOptionName);
             runtimeGraph.dialogueBoxTransition = GetOptionValue<DialogueBoxTransition>((Node)startNode, StartNode.DialogueBoxTransitionOptionName);
+            runtimeGraph.transitionDuration = GetOptionValue<float>((Node)startNode, StartNode.TransitionDurationOptionName);
         }
 
         // Blackboard values
@@ -273,6 +274,12 @@ public class DialogueGraphImporter : ScriptedImporter
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BackgroundTransitionPortName),
                 usePortValue = GetOptionValue<bool>(node, DialogueContextNode.ChangeBackgroundTransitionPortName),
                 value = GetPortValueSafe<BackgroundTransition>(node, DialogueContextNode.BackgroundTransitionPortName),
+            },
+            backgroundTransitionDuration = new()
+            {
+                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.BackgroundTransitionDurationPortName),
+                usePortValue = GetOptionValue<bool>(node, DialogueContextNode.CHangeBackgroundTransitionDurationPortName),
+                value = GetPortValueSafe<float>(node, DialogueContextNode.BackgroundTransitionDurationPortName),
             },
         };
 

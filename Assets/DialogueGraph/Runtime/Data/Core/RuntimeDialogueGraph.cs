@@ -15,6 +15,7 @@ public class RuntimeDialogueGraph : ScriptableObject
     public bool textShadowOnMultipleCharactersTalking = false;
     public NotTalkingType notTalkingType = NotTalkingType.None; // The effect applied to a character when not talking
     public DialogueBoxTransition dialogueBoxTransition = DialogueBoxTransition.None;
+    public float transitionDuration = 0.5f;
 
     [SerializeReference]
     public List<RuntimeNode> nodes = new();

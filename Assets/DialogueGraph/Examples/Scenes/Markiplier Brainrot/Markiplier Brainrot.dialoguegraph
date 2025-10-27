@@ -663,7 +663,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 5bb11caccfdc9a557178db8aacf0c9e7
         m_Version: 2
-        m_Position: {x: 465.05035, y: 734.5665}
+        m_Position: {x: 465.05035, y: 675.3665}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -676,12 +676,14 @@ MonoBehaviour:
           - __option_allow fast advance
           - __option_not talking type
           - __option_dialogue transition
+          - __option_transition duration
           m_ValueList:
           - rid: 5077104256546242633
           - rid: 5077104256546242634
           - rid: 5077104275225051315
           - rid: 5077104320427327743
           - rid: 7566504292039786567
+          - rid: 7566504292039786592
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -753,6 +755,7 @@ MonoBehaviour:
           - shuffle music
           - background image
           - smooth background transition
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104256546242641
           - rid: 5077104256546242642
@@ -781,6 +784,7 @@ MonoBehaviour:
           - rid: 5077104279487250508
           - rid: 7566504278553264196
           - rid: 7566504278553264197
+          - rid: 7566504292039786593
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -965,6 +969,7 @@ MonoBehaviour:
           - underline
           - __option_delay next with click
           - delay text
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104256546242668
           - rid: 5077104256546242669
@@ -992,6 +997,7 @@ MonoBehaviour:
           - rid: 5077104256546242722
           - rid: 5077104275225051317
           - rid: 5077104275225051321
+          - rid: 7566504292039786594
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1173,6 +1179,7 @@ MonoBehaviour:
           - dialogue
           - __option_delay next with click
           - delay text
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104256546242696
           - rid: 5077104256546242697
@@ -1196,6 +1203,7 @@ MonoBehaviour:
           - rid: 5077104256546242717
           - rid: 5077104275225051318
           - rid: 5077104275225051322
+          - rid: 7566504292039786595
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1731,6 +1739,7 @@ MonoBehaviour:
           - delay text
           - text align
           - play audio
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104256546242765
           - rid: 5077104256546242766
@@ -1756,6 +1765,7 @@ MonoBehaviour:
           - rid: 5077104275225051323
           - rid: 5077104279487250504
           - rid: 5077104320427327744
+          - rid: 7566504292039786596
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -2403,6 +2413,7 @@ MonoBehaviour:
           - dialogue
           - delay text
           - background image
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104279487250525
           - rid: 5077104279487250526
@@ -2427,6 +2438,7 @@ MonoBehaviour:
           - rid: 5077104279487250546
           - rid: 5077104279487250547
           - rid: 5077104279487250928
+          - rid: 7566504292039786597
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -2879,6 +2891,7 @@ MonoBehaviour:
           - dialogue
           - delay text
           - play audio
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104279487250572
           - rid: 5077104279487250573
@@ -2903,6 +2916,7 @@ MonoBehaviour:
           - rid: 5077104279487250593
           - rid: 5077104279487250594
           - rid: 5077104324423974980
+          - rid: 7566504292039786598
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -3377,6 +3391,7 @@ MonoBehaviour:
           - __option_change background transition
           - dialogue
           - delay text
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104279487250621
           - rid: 5077104279487250622
@@ -3400,6 +3415,7 @@ MonoBehaviour:
           - rid: 5077104279487250641
           - rid: 5077104279487250642
           - rid: 5077104279487250643
+          - rid: 7566504292039786599
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -3582,6 +3598,7 @@ MonoBehaviour:
           - __option_change background transition
           - dialogue
           - delay text
+          - __option_change background transition duration
           m_ValueList:
           - rid: 5077104279487250647
           - rid: 5077104279487250648
@@ -3605,6 +3622,7 @@ MonoBehaviour:
           - rid: 5077104279487250667
           - rid: 5077104279487250668
           - rid: 5077104279487250669
+          - rid: 7566504292039786600
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -4955,7 +4973,43 @@ MonoBehaviour:
           m_EnumType:
             m_Identification: DialogueBoxTransition, Assembly-CSharp, Version=0.0.0.0,
               Culture=neutral, PublicKeyToken=null
-          m_Value: 0
+          m_Value: 1
         m_EnumType:
           m_Identification: DialogueBoxTransition, Assembly-CSharp, Version=0.0.0.0,
             Culture=neutral, PublicKeyToken=null
+    - rid: 7566504292039786592
+      type: {class: 'Constant`1[[System.Single, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0.5
+    - rid: 7566504292039786593
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786594
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786595
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786596
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786597
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786598
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786599
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0
+    - rid: 7566504292039786600
+      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: 0

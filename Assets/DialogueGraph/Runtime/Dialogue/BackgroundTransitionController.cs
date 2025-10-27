@@ -9,7 +9,8 @@ public class BackgroundTransitionController : MonoBehaviour
     [SerializeField] private Image secondaryImage; // new image used for transitions
 
     [Header("Transition Settings")]
-    [SerializeField] private float transitionDuration = 1.0f;
+    public BackgroundTransition backgroundTransition = BackgroundTransition.None;
+    public float transitionDuration = 0.5f;
     [SerializeField] private AnimationCurve transitionCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private Coroutine transitionCoroutine;
@@ -50,16 +51,16 @@ public class BackgroundTransitionController : MonoBehaviour
         SetColorAlpha(secondaryImage, 0f);
     }
 
-    public void TransitionTo(Sprite newSprite, BackgroundTransition transition)
+    public void TransitionTo(Sprite newSprite)
     {
         if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
 
         SetImmediate(currentBackground); // Ensure we start from current background
         newBackground = newSprite;
-        transitionCoroutine = StartCoroutine(TransitionRoutine(transition));
+        transitionCoroutine = StartCoroutine(TransitionRoutine());
     }
 
-    private IEnumerator TransitionRoutine(BackgroundTransition transition)
+    private IEnumerator TransitionRoutine()
     {
         // Prepare secondary image
         secondaryImage.sprite = newBackground;
@@ -72,7 +73,7 @@ public class BackgroundTransitionController : MonoBehaviour
             timer += Time.deltaTime;
             float t = transitionCurve.Evaluate(timer / transitionDuration);
 
-            switch (transition)
+            switch (backgroundTransition)
             {
                 case BackgroundTransition.Fade:
                     float halfT = t * 2f;

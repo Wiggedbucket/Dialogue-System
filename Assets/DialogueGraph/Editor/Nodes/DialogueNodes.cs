@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UIElements;
 
 [Serializable]
 public class StartNode : Node
@@ -13,6 +9,7 @@ public class StartNode : Node
     public const string TextShadowOnMultipleCharactersTalkingOptionName = "text shadow when multiple characters are talking";
     public const string NotTalkingTypeOptionName = "not talking type";
     public const string DialogueBoxTransitionOptionName = "dialogue transition";
+    public const string TransitionDurationOptionName = "transition duration";
 
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
@@ -21,6 +18,7 @@ public class StartNode : Node
         context.AddOption<bool>(TextShadowOnMultipleCharactersTalkingOptionName).WithDefaultValue(true).Build();
         context.AddOption<NotTalkingType>(NotTalkingTypeOptionName).WithDefaultValue(NotTalkingType.None).Build();
         context.AddOption<DialogueBoxTransition>(DialogueBoxTransitionOptionName).WithDefaultValue(DialogueBoxTransition.None).Build();
+        context.AddOption<float>(TransitionDurationOptionName).WithDefaultValue(0.5f).Build();
     }
 
     protected override void OnDefinePorts(IPortDefinitionContext context)

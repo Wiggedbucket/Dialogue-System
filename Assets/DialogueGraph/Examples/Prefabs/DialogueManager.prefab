@@ -653,6 +653,7 @@ MonoBehaviour:
   audioManager: {fileID: 8143951676659983443}
   characterManager: {fileID: 5993776356246834864}
   uiManager: {fileID: 7293256829412419836}
+  dialogueBoxTransitionController: {fileID: 0}
   runtimeGraph: {fileID: 0}
   blackboard: {fileID: 0}
   awaitContinueEvent: 0
@@ -748,7 +749,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundTransitionController
   primaryImage: {fileID: 8698066194386066142}
   secondaryImage: {fileID: 4190206133387307169}
-  transitionDuration: 1
+  backgroundTransition: 0
+  transitionDuration: 0.5
   transitionCurve:
     serializedVersion: 2
     m_Curve:
