@@ -13,6 +13,7 @@ public class DialogueUIManager : MonoBehaviour
     private DialogueBlackboard Blackboard => DialogueBlackboard.Instance;
 
     [SerializeField] private BackgroundTransitionController backgroundController;
+    private AudioManager AudioManager => DialogueManager.audioManager;
     private NodeProcessor NodeProcessor => DialogueManager.processor;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
     private RuntimeNode CurrentNode => NodeProcessor.CurrentNode;
@@ -390,7 +391,11 @@ public class DialogueUIManager : MonoBehaviour
             if (next == null || !next.dialogueSettings.keepPreviousText)
                 yield return new WaitForSeconds(autoAdvanceDelay);
 
-            NodeProcessor.GoToNextNode();
+            while (AudioManager.activeSources.Count > 0)
+                yield return null;
+
+            if (autoAdvance)
+                NodeProcessor.GoToNextNode();
         }
         else if (!delayNextWithClick)
         {
