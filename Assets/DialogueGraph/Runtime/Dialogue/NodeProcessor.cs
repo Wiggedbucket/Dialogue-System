@@ -88,6 +88,8 @@ public class NodeProcessor : MonoBehaviour
             UIManager.ClearDialogueText();
 
         float delay = node.dialogueSettings.delayText.GetValue(Blackboard);
+        if (UIManager.fastForward)
+            delay = 0f;
         yield return new WaitForSeconds(delay);
 
         delayNodeCoroutine = null;

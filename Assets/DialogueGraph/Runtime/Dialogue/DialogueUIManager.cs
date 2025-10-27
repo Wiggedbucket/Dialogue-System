@@ -152,14 +152,17 @@ public class DialogueUIManager : MonoBehaviour
         {
             bool pointerOverDialogue = IsPointerOverObjects(new List<Transform> { dialogueTextBackground.transform, namePlateBackground.transform }, "Text");
 
-            if (!IsTyping && !delayNextWithClick && !DialogueManager.IsDelayingNode && node.choices.Count == 0)
+            if (node.choices.Count != 0)
+                return;
+
+            if (!IsTyping && (!delayNextWithClick || fastForward) && !DialogueManager.IsDelayingNode)
             {
                 NodeProcessor.GoToNextNode();
             }
-            else if ((Mouse.current.leftButton.wasPressedThisFrame || fastForward) && node.choices.Count == 0 && pointerOverDialogue)
+            else if (Mouse.current.leftButton.wasPressedThisFrame && pointerOverDialogue)
             {
                 // If still typing, skip text printing
-                if (allowFastAdvance && IsTyping && IsTyping && !fastForward)
+                if (allowFastAdvance && IsTyping)
                 {
                     SkipPrinting();
                     return;
