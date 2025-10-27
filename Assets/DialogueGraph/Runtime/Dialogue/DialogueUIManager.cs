@@ -39,8 +39,6 @@ public class DialogueUIManager : MonoBehaviour
     private Sprite defaultDialogueBoxImage;
     private Color defaultNamePlateColor;
     private Sprite defaultNamePlateImage;
-    private DialogueBoxTransition defaultDialogueBoxTransition = DialogueBoxTransition.None;
-    private DialogueBoxTransition dialogueBoxTransition;
     private TextAlignmentOptions defaultAlignment;
     private TextWrappingModes defaultWrapping;
 
@@ -115,7 +113,9 @@ public class DialogueUIManager : MonoBehaviour
     public void ResetController()
     {
         if (RuntimeGraph != null)
+        {
             allowFastAdvance = RuntimeGraph.allowFastAdvance;
+        }
 
         StopPrinting();
         ClearDialogueText();
@@ -201,9 +201,6 @@ public class DialogueUIManager : MonoBehaviour
     {
         DialogueSettings s = node.dialogueSettings;
         bool useValue;
-
-        useValue = s.dialogueBoxTransition.GetValue(Blackboard, out DialogueBoxTransition transition);
-        dialogueBoxTransition = useValue ? transition : defaultDialogueBoxTransition;
 
         useValue = s.dialogueBoxColor.GetValue(Blackboard, out Color namePlateColor);
         namePlateBackground.color = useValue ? namePlateColor : defaultNamePlateColor;

@@ -27,7 +27,6 @@ public class DialogueSettings
     public PortValue<bool> shuffle = new();
     public PortValue<List<AudioClip>> audioList = new();
 
-    public PortValue<DialogueBoxTransition> dialogueBoxTransition = new();
     public PortValue<Color> dialogueBoxColor = new();
     public PortValue<Sprite> dialogueBoxImage = new();
     public PortValue<Color> namePlateColor = new();

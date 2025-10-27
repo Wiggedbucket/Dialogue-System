@@ -41,6 +41,7 @@ public class DialogueGraphImporter : ScriptedImporter
             runtimeGraph.allowFastAdvance = GetOptionValue<bool>((Node)startNode, StartNode.AllowFastAdvanceOptionName);
             runtimeGraph.textShadowOnMultipleCharactersTalking = GetOptionValue<bool>((Node)startNode, StartNode.TextShadowOnMultipleCharactersTalkingOptionName);
             runtimeGraph.notTalkingType = GetOptionValue<NotTalkingType>((Node)startNode, StartNode.NotTalkingTypeOptionName);
+            runtimeGraph.dialogueBoxTransition = GetOptionValue<DialogueBoxTransition>((Node)startNode, StartNode.DialogueBoxTransitionOptionName);
         }
 
         // Blackboard values
@@ -247,12 +248,6 @@ public class DialogueGraphImporter : ScriptedImporter
                 blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DialogueBoxImagePortName),
                 usePortValue = GetOptionValue<bool>(node, DialogueContextNode.SetDialogueBoxImagePortName),
                 value = GetPortValueSafe<Sprite>(node, DialogueContextNode.DialogueBoxImagePortName),
-            },
-            dialogueBoxTransition = new()
-            {
-                blackboardVariableName = TryGetVariableName(node, DialogueContextNode.DialogueBoxTransitionPortName),
-                usePortValue = GetOptionValue<bool>(node, DialogueContextNode.SetDialogueBoxTransitionPortName),
-                value = GetPortValueSafe<DialogueBoxTransition>(node, DialogueContextNode.DialogueBoxTransitionPortName),
             },
             namePlateColor = new()
             {

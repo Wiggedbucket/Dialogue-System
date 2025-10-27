@@ -42,8 +42,6 @@ public enum DialogueBoxTransition
     SlideDown,
     SlideLeft,
     SlideRight,
-    ExpandHorizontal,
-    ExpandVertical,
 }
 
 [Serializable]

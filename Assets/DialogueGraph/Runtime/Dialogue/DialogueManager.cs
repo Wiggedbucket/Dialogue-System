@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class DialogueManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class DialogueManager : MonoBehaviour
     public AudioManager audioManager;
     public DialogueCharacterManager characterManager;
     public DialogueUIManager uiManager;
+    public DialogueBoxTransitionController dialogueBoxTransitionController;
 
     [Header("Dialogue Data")]
     public RuntimeDialogueGraph runtimeGraph;
@@ -19,8 +21,11 @@ public class DialogueManager : MonoBehaviour
     public bool awaitContinueEvent = false;
     public bool onHold = false;
     public bool allowEscape = false;
+    public DialogueBoxTransition dialogueBoxTransition = DialogueBoxTransition.None;
 
     public bool IsDelayingNode => processor != null && processor.IsDelayingNode;
+
+    private Coroutine inTransitionCoroutine;
 
     private void Awake()
     {
@@ -36,12 +41,17 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
-        if (runtimeGraph != null)
-            blackboard = DialogueBlackboard.CreateRuntimeBlackboard(runtimeGraph, gameObject);
+        if (runtimeGraph == null)
+            return;
+
+        blackboard = DialogueBlackboard.CreateRuntimeBlackboard(runtimeGraph, gameObject);
+        dialogueBoxTransition = runtimeGraph.dialogueBoxTransition;
     }
 
     private void Update()
     {
+        if (inTransitionCoroutine != null) return;
+
         // Debug input for testing
         if (Input.GetKeyDown(KeyCode.Space)) StartDialogue();
         if (Input.GetKeyDown(KeyCode.Return)) ResumeDialogue();
@@ -62,18 +72,36 @@ public class DialogueManager : MonoBehaviour
     #region Control
     public void StartDialogue()
     {
+        inTransitionCoroutine = StartCoroutine(StartDialogueRoutine());
+    }
+
+    private IEnumerator StartDialogueRoutine()
+    {
+        uiManager.EnableDialoguePanel(true);
+
+        if (dialogueBoxTransitionController != null)
+            yield return dialogueBoxTransitionController.PlayTransition(dialogueBoxTransition, true);
+
         ResetDialogue(true);
 
-        // If first node is present, show it, if not, end dialogue
         if (!string.IsNullOrEmpty(runtimeGraph.entryNodeID))
             processor.HandleNode(runtimeGraph.entryNodeID);
         else
             EndDialogue();
+        inTransitionCoroutine = null;
     }
 
     public void InteruptDialogue()
     {
-        if (onHold) return;
+        inTransitionCoroutine = StartCoroutine(InteruptDialogueRoutine());
+    }
+
+    public IEnumerator InteruptDialogueRoutine()
+    {
+        if (onHold) yield break;
+
+        if (dialogueBoxTransitionController != null)
+            yield return dialogueBoxTransitionController.PlayTransition(dialogueBoxTransition, false);
 
         uiManager.EnableDialoguePanel(false);
         audioManager.MusicState(MusicCommand.Pause);
@@ -81,24 +109,45 @@ public class DialogueManager : MonoBehaviour
 
         uiManager.StopPrinting();
         processor.StopNodeDelay();
+        inTransitionCoroutine = null;
     }
 
     public void ResumeDialogue()
     {
-        if (!onHold) return;
+        inTransitionCoroutine = StartCoroutine(ResumeDialogueRoutine());
+    }
 
+    private IEnumerator ResumeDialogueRoutine()
+    {
+        if (!onHold) yield break;
         onHold = false;
+
+        uiManager.EnableDialoguePanel(true);
+
+        if (dialogueBoxTransitionController != null)
+            yield return dialogueBoxTransitionController.PlayTransition(dialogueBoxTransition, true);
 
         if (processor.CurrentNode != null)
             processor.HandleNode(processor.CurrentNode.nextNodeID);
 
         audioManager.MusicState(MusicCommand.Resume);
+        inTransitionCoroutine = null;
     }
 
     public void EndDialogue()
     {
-        ResetDialogue(false);
+        inTransitionCoroutine = StartCoroutine(EndDialogueRoutine());
     }
+
+    private IEnumerator EndDialogueRoutine()
+    {
+        if (dialogueBoxTransitionController != null)
+            yield return dialogueBoxTransitionController.PlayTransition(dialogueBoxTransition, false);
+
+        ResetDialogue(false);
+        inTransitionCoroutine = null;
+    }
+
 
     private void ResetDialogue(bool setActive)
     {

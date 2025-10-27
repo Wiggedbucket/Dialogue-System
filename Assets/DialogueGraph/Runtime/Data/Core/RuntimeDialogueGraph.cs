@@ -14,6 +14,7 @@ public class RuntimeDialogueGraph : ScriptableObject
     public bool allowFastAdvance = true; // If true, allows advancing through text printing with left click
     public bool textShadowOnMultipleCharactersTalking = false;
     public NotTalkingType notTalkingType = NotTalkingType.None; // The effect applied to a character when not talking
+    public DialogueBoxTransition dialogueBoxTransition = DialogueBoxTransition.None;
 
     [SerializeReference]
     public List<RuntimeNode> nodes = new();
