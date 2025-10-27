@@ -27,6 +27,7 @@ public class DialogueUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dialogueTextShadow;
     [SerializeField] private GameObject historyPanel;
     [SerializeField] private TextMeshProUGUI historyText;
+    [SerializeField] private GameObject continueSign;
 
     [Header("Choice Button UI")]
     [SerializeField] private Button choiceButtonPrefab;
@@ -169,6 +170,8 @@ public class DialogueUIManager : MonoBehaviour
     {
         if (DialogueManager.onHold || DialogueManager.awaitContinueEvent)
             return;
+
+        continueSign.SetActive(!IsTyping && !DialogueManager.awaitContinueEvent && !historyPanelOpen && CurrentNode is RuntimeDialogueNode dn && dn.choices.Count == 0);
 
         if (CurrentNode is RuntimeDialogueNode node && node != null)
         {
