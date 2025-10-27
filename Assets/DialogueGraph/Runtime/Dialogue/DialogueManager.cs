@@ -167,6 +167,7 @@ public class DialogueManager : MonoBehaviour
         characterManager.RemoveAllCharacters();
 
         audioManager.ResetController();
+        audioManager.handleMusicQueue = setActive;
         uiManager.ResetController();
         uiManager.EnableDialoguePanel(setActive);
 

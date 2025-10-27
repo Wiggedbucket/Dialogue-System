@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public bool handleMusicQueue = false;
     private AudioSource musicSource;
     public List<AudioClip> musicQueue = new();
 
@@ -30,7 +31,8 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
-        HandleMusicQueue();
+        if (handleMusicQueue)
+            HandleMusicQueue();
     }
 
     #region Music Controls
