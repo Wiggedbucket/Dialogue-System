@@ -12,6 +12,7 @@ public class DialogueCharacterManager : MonoBehaviour
     public Transform characterHolder;
     public TextMeshProUGUI speakerNameText;
     public NotTalkingType notTalkingType = NotTalkingType.None;
+    public string names = "";
 
     private readonly Dictionary<string, CharacterObject> characterObjects = new();
     private readonly Dictionary<string, Coroutine> positionCoroutines = new();
@@ -217,7 +218,8 @@ public class DialogueCharacterManager : MonoBehaviour
     private void UpdateSpeakerNameplate(List<string> speakerNames)
     {
         string joiner = speakerNames.Count > 2 ? ", " : " and ";
-        speakerNameText.text = string.Join(joiner, speakerNames);
+        names = string.Join(joiner, speakerNames);
+        speakerNameText.text = names;
     }
     #endregion
 

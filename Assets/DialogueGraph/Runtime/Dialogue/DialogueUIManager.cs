@@ -13,6 +13,7 @@ public class DialogueUIManager : MonoBehaviour
     private DialogueBlackboard Blackboard => DialogueBlackboard.Instance;
 
     [SerializeField] private BackgroundTransitionController backgroundController;
+    private DialogueCharacterManager CharacterManager => DialogueManager.characterManager;
     private AudioManager AudioManager => DialogueManager.audioManager;
     private NodeProcessor NodeProcessor => DialogueManager.processor;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
@@ -24,12 +25,15 @@ public class DialogueUIManager : MonoBehaviour
     [SerializeField] private Image dialogueTextBackground;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private TextMeshProUGUI dialogueTextShadow;
+    [SerializeField] private GameObject historyPanel;
+    [SerializeField] private TextMeshProUGUI historyText;
 
     [Header("Choice Button UI")]
     [SerializeField] private Button choiceButtonPrefab;
     [SerializeField] private Transform choiceButtonContainer;
-    
+
     [Header("Dialogue Option Buttons")]
+    public Button historyButton;
     public Button autoAdvanceButton;
     public Button fastForwardButton;
     public Color toggleButtonActiveTextColor = Color.lightBlue;
@@ -44,6 +48,7 @@ public class DialogueUIManager : MonoBehaviour
     private TextWrappingModes defaultWrapping;
 
     [Header("Typing Settings")]
+    public bool historyPanelOpen = false;
     public bool allowFastAdvance = true;
     public bool textShadowOnMultipleCharactersTalking = false;
     public bool autoAdvance = false;
@@ -68,6 +73,7 @@ public class DialogueUIManager : MonoBehaviour
     private void OnDestroy()
     {
         // remove listeners to avoid leaks
+        if (historyButton != null) historyButton.onClick.RemoveAllListeners();
         if (autoAdvanceButton != null) autoAdvanceButton.onClick.RemoveAllListeners();
         if (fastForwardButton != null) fastForwardButton.onClick.RemoveAllListeners();
     }
@@ -88,11 +94,24 @@ public class DialogueUIManager : MonoBehaviour
 
     private void SetButtonListeners()
     {
+        if (historyButton != null)
+            historyButton.onClick.AddListener(() => ToggleHistory(!historyPanelOpen));
+
         if (autoAdvanceButton != null)
             autoAdvanceButton.onClick.AddListener(() => ToggleAutoAdvance(!autoAdvance));
 
         if (fastForwardButton != null)
             fastForwardButton.onClick.AddListener(() => ToggleSkipButton(!fastForward));
+    }
+
+    public void ToggleHistory(bool active)
+    {
+        historyButton.GetComponentInChildren<TextMeshProUGUI>().color = active ? toggleButtonActiveTextColor : toggleButtonDisabledTextColor;
+        historyPanel.SetActive(active);
+        historyPanelOpen = active;
+
+        ToggleAutoAdvance(false);
+        ToggleSkipButton(false);
     }
 
     public void ToggleAutoAdvance(bool active)
@@ -133,7 +152,10 @@ public class DialogueUIManager : MonoBehaviour
 
         backgroundController.ResetController();
 
+        historyText.text = "";
+
         // Reset toggles
+        ToggleHistory(false);
         ToggleAutoAdvance(false);
         ToggleSkipButton(false);
 
@@ -152,7 +174,7 @@ public class DialogueUIManager : MonoBehaviour
         {
             bool pointerOverDialogue = IsPointerOverObjects(new List<Transform> { dialogueTextBackground.transform, namePlateBackground.transform }, "Text");
 
-            if (node.choices.Count != 0)
+            if (node.choices.Count != 0 || historyPanelOpen)
                 return;
 
             if (!IsTyping && (!delayNextWithClick || fastForward) && !DialogueManager.IsDelayingNode)
@@ -277,6 +299,9 @@ public class DialogueUIManager : MonoBehaviour
 
     public void ClearDialogueText()
     {
+        if (currentFullText != "")
+            historyText.text += $"<b>{CharacterManager.names}:</b>\n \"{currentFullText}\"\n\n";
+
         currentFullText = "";
         if (dialogueText != null) dialogueText.text = "";
         if (dialogueTextShadow != null) dialogueTextShadow.text = "";
