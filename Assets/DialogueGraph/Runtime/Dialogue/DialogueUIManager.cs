@@ -12,14 +12,13 @@ public class DialogueUIManager : MonoBehaviour
     private DialogueManager DialogueManager => DialogueManager.Instance;
     private DialogueBlackboard Blackboard => DialogueBlackboard.Instance;
 
+    [SerializeField] private BackgroundTransitionController backgroundController;
     private NodeProcessor NodeProcessor => DialogueManager.processor;
     private RuntimeDialogueGraph RuntimeGraph => DialogueManager.runtimeGraph;
     private RuntimeNode CurrentNode => NodeProcessor.CurrentNode;
 
     [Header("UI References")]
     [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private Image primaryImage;
-    [SerializeField] private Image secondaryImage;
     [SerializeField] private Image namePlateBackground;
     [SerializeField] private Image dialogueTextBackground;
     [SerializeField] private TextMeshProUGUI dialogueText;
@@ -131,11 +130,7 @@ public class DialogueUIManager : MonoBehaviour
         namePlateBackground.color = defaultNamePlateColor;
         namePlateBackground.sprite = defaultNamePlateImage;
 
-        // Reset backgrounds
-        primaryImage.sprite = null;
-        primaryImage.enabled = false;
-        secondaryImage.sprite = null;
-        secondaryImage.enabled = false;
+        backgroundController.ResetController();
 
         // Reset toggles
         ToggleAutoAdvance(false);
@@ -191,10 +186,14 @@ public class DialogueUIManager : MonoBehaviour
 
     public void HandleBackground(RuntimeDialogueNode node)
     {
-        if (node.dialogueSettings.backgroundImage.GetValue(Blackboard, out Sprite backgroundImage))
+        if (node.dialogueSettings.backgroundImage.GetValue(Blackboard, out Sprite newBackground))
         {
-            primaryImage.sprite = backgroundImage;
-            primaryImage.enabled = backgroundImage != null;
+            node.dialogueSettings.backgroundTransition.GetValue(Blackboard, out BackgroundTransition transition);
+
+            if (transition == BackgroundTransition.None)
+                backgroundController.SetImmediate(newBackground);
+            else
+                backgroundController.TransitionTo(newBackground, transition);
         }
     }
 

@@ -30,15 +30,7 @@ public enum MovementType
 public enum BackgroundTransition
 {
     None,
-    FadeOutAndIn,
-    SlideLeft,
-    SlideRight,
-    SlideUp,
-    SlideDown,
-    FadeRight,
-    FadeLeft,
-    FadeUp,
-    FadeDown,
+    Fade,
 }
 
 [Serializable]

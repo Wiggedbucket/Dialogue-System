@@ -89,9 +89,9 @@ MonoBehaviour:
         m_LastKnownBounds:
           serializedVersion: 2
           x: 465.6
-          y: 327.2
+          y: 328.80002
           width: 6412.8003
-          height: 2931.2002
+          height: 2929.6
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 1127398649581984152
@@ -716,7 +716,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 29546c9623929ec26bdd2d6188ade85d
         m_Version: 2
-        m_Position: {x: 921.64685, y: 327.414}
+        m_Position: {x: 918.88684, y: 332.01398}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -750,6 +750,8 @@ MonoBehaviour:
           - music audio queue
           - loop music
           - shuffle music
+          - background image
+          - smooth background transition
           m_ValueList:
           - rid: 5077104256546242641
           - rid: 5077104256546242642
@@ -777,6 +779,8 @@ MonoBehaviour:
           - rid: 5077104279487250506
           - rid: 5077104279487250507
           - rid: 5077104279487250508
+          - rid: 7566504278553264196
+          - rid: 7566504278553264197
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -876,11 +880,11 @@ MonoBehaviour:
     - rid: 5077104256546242660
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104256546242661
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 5077104256546242662
       type: {class: 'Constant`1[[DialogueData, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -4975,3 +4979,18 @@ MonoBehaviour:
       type: {class: 'Constant`1[[System.Int32, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value: 0
+    - rid: 7566504278553264196
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 1562388465639634661, guid: e2481f910c342a64692af4547b6fbbab, type: 3}
+    - rid: 7566504278553264197
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: BackgroundTransition, Assembly-CSharp, Version=0.0.0.0,
+              Culture=neutral, PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: BackgroundTransition, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
