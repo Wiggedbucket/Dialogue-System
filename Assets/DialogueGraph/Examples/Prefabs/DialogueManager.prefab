@@ -471,7 +471,7 @@ GameObject:
   - component: {fileID: 5724954641327291016}
   m_Layer: 5
   m_Name: SpeakerNameText
-  m_TagString: Untagged
+  m_TagString: Text
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -927,7 +927,7 @@ GameObject:
   - component: {fileID: 2539497589780006552}
   m_Layer: 5
   m_Name: DialogueTextShadow
-  m_TagString: Untagged
+  m_TagString: Text
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1555,7 +1555,7 @@ GameObject:
   - component: {fileID: 1795369390334852489}
   m_Layer: 5
   m_Name: DialogueText
-  m_TagString: Untagged
+  m_TagString: Text
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

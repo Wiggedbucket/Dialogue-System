@@ -150,7 +150,7 @@ public class DialogueUIManager : MonoBehaviour
 
         if (CurrentNode is RuntimeDialogueNode node && node != null)
         {
-            bool pointerOverDialogue = IsPointerOverObjects(new List<Transform> { dialogueTextBackground.transform, namePlateBackground.transform });
+            bool pointerOverDialogue = IsPointerOverObjects(new List<Transform> { dialogueTextBackground.transform, namePlateBackground.transform }, "Text");
 
             if (!IsTyping && !delayNextWithClick && !DialogueManager.IsDelayingNode && node.choices.Count == 0)
             {
@@ -471,7 +471,7 @@ public class DialogueUIManager : MonoBehaviour
             // Check if the hit object (or its parent) matches one of the tracked UI elements
             foreach (Transform element in uiElements)
             {
-                if (hitObject.transform == element || hitObject.transform.IsChildOf(element))
+                if (hitObject.transform == element)
                     return true;
             }
 
