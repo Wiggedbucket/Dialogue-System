@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class BackgroundTransitionController : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private Image blackBackground; // For when a background is set, if the background doesn't cover the screen it will be black.
     [SerializeField] private Image primaryImage;   // current visible background
     [SerializeField] private Image secondaryImage; // new image used for transitions
 
@@ -20,6 +21,7 @@ public class BackgroundTransitionController : MonoBehaviour
 
     public void ResetController()
     {
+        blackBackground.enabled = false;
         primaryImage.sprite = null;
         primaryImage.enabled = false;
         secondaryImage.sprite = null;
@@ -49,6 +51,9 @@ public class BackgroundTransitionController : MonoBehaviour
 
         SetColorAlpha(primaryImage, 1f);
         SetColorAlpha(secondaryImage, 0f);
+
+        blackBackground.enabled = newSprite != null;
+        SetColorAlpha(blackBackground, 1f);
     }
 
     public void TransitionTo(Sprite newSprite)
@@ -62,10 +67,15 @@ public class BackgroundTransitionController : MonoBehaviour
 
     private IEnumerator TransitionRoutine()
     {
+        if (currentBackground == null)
+            SetColorAlpha(blackBackground, 0f);
+        if (newBackground != null)
+            blackBackground.enabled = true;
+
         // Prepare secondary image
         secondaryImage.sprite = newBackground;
         secondaryImage.enabled = true;
-        Color secondaryStartColor = SetColorAlpha(secondaryImage, 0f);
+        SetColorAlpha(secondaryImage, 0f);
 
         float timer = 0f;
         while (timer < transitionDuration)
@@ -80,12 +90,16 @@ public class BackgroundTransitionController : MonoBehaviour
                     if (halfT <= 1f)
                     {
                         // Fade out primary
-                        primaryImage.color = new Color(1f, 1f, 1f, 1f - halfT);
+                        SetColorAlpha(primaryImage, 1f - halfT);
+                        if (newBackground == null && currentBackground != null)
+                            SetColorAlpha(blackBackground, 1f - halfT);
                     }
                     else
                     {
                         // Fade in secondary
-                        secondaryImage.color = new Color(1f, 1f, 1f, halfT - 1f);
+                        SetColorAlpha(secondaryImage, halfT - 1f);
+                        if (newBackground != null && currentBackground == null)
+                            SetColorAlpha(blackBackground, halfT - 1f);
                     }
                     break;
             }
@@ -94,6 +108,8 @@ public class BackgroundTransitionController : MonoBehaviour
         }
 
         // Finalize transition
+        blackBackground.enabled = newBackground != null;
+
         primaryImage.sprite = newBackground;
         primaryImage.enabled = newBackground != null;
         SetColorAlpha(primaryImage, 1f);
@@ -110,7 +126,7 @@ public class BackgroundTransitionController : MonoBehaviour
 
     private Color SetColorAlpha(Image image, float alpha)
     {
-        Color imageColor = primaryImage.color;
+        Color imageColor = image.color;
         imageColor.a = alpha;
         image.color = imageColor;
         return imageColor;

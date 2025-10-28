@@ -54,7 +54,7 @@ public class DialogueManager : MonoBehaviour
         if (inTransitionCoroutine != null) return;
 
         // Debug input for testing
-        if (Input.GetKeyDown(KeyCode.Space)) StartDialogue();
+        if (Input.GetKeyDown(KeyCode.RightShift)) StartDialogue();
         if (Input.GetKeyDown(KeyCode.Return)) ResumeDialogue();
         if (Input.GetKeyDown(KeyCode.P)) DialogueEvents.Continue();
 

@@ -184,7 +184,7 @@ public class DialogueUIManager : MonoBehaviour
             {
                 NodeProcessor.GoToNextNode();
             }
-            else if (Mouse.current.leftButton.wasPressedThisFrame && pointerOverDialogue)
+            else if ((Mouse.current.leftButton.wasPressedThisFrame && pointerOverDialogue) || Input.GetKeyDown(KeyCode.Space))
             {
                 // If still typing, skip text printing
                 if (allowFastAdvance && IsTyping)
