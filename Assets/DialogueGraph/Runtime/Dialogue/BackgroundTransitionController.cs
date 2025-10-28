@@ -90,14 +90,16 @@ public class BackgroundTransitionController : MonoBehaviour
                     if (halfT <= 1f)
                     {
                         // Fade out primary
-                        SetColorAlpha(primaryImage, 1f - halfT);
+                        if (currentBackground != null)
+                            SetColorAlpha(primaryImage, 1f - halfT);
                         if (newBackground == null && currentBackground != null)
                             SetColorAlpha(blackBackground, 1f - halfT);
                     }
                     else
                     {
                         // Fade in secondary
-                        SetColorAlpha(secondaryImage, halfT - 1f);
+                        if (newBackground != null)
+                            SetColorAlpha(secondaryImage, halfT - 1f);
                         if (newBackground != null && currentBackground == null)
                             SetColorAlpha(blackBackground, halfT - 1f);
                     }
