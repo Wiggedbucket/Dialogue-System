@@ -98,7 +98,7 @@ public class NodeProcessor : MonoBehaviour
 
     public void SetupDialogueNode(RuntimeDialogueNode node)
     {
-        DialogueManager.awaitContinueEvent = node.dialogueSettings.awaitContinueEvent;
+        DialogueManager.awaitContinueEvent = node.dialogueSettings.delayType == DelayType.AwaitEvent;
 
         DialogueEvents.RaiseDialogueStarted(node.nodeID);
 

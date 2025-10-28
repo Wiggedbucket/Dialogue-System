@@ -256,7 +256,7 @@ public class DialogueUIManager : MonoBehaviour
 
     public void HandleDialogueText(RuntimeDialogueNode node, int charactersTalking)
     {
-        delayNextWithClick = node.dialogueSettings.delayNextWithClick;
+        delayNextWithClick = node.dialogueSettings.delayType == DelayType.Click;
 
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
 

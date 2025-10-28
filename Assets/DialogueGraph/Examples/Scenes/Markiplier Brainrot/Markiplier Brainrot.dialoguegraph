@@ -728,7 +728,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -748,7 +747,6 @@ MonoBehaviour:
           - __option_change background image
           - __option_change background transition
           - dialogue
-          - __option_delay next with click
           - delay text
           - music audio queue
           - loop music
@@ -756,8 +754,8 @@ MonoBehaviour:
           - background image
           - smooth background transition
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104256546242641
           - rid: 5077104256546242642
           - rid: 5077104256546242643
           - rid: 5077104256546242645
@@ -777,7 +775,6 @@ MonoBehaviour:
           - rid: 5077104256546242660
           - rid: 5077104256546242661
           - rid: 5077104256546242662
-          - rid: 5077104275225051316
           - rid: 5077104275225051320
           - rid: 5077104279487250506
           - rid: 5077104279487250507
@@ -785,6 +782,7 @@ MonoBehaviour:
           - rid: 7566504278553264196
           - rid: 7566504278553264197
           - rid: 7566504292039786593
+          - rid: 5077104434924225383
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -809,10 +807,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104256546242663
-    - rid: 5077104256546242641
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104256546242642
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -943,7 +937,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -967,11 +960,10 @@ MonoBehaviour:
           - bold
           - italic
           - underline
-          - __option_delay next with click
           - delay text
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104256546242668
           - rid: 5077104256546242669
           - rid: 5077104256546242670
           - rid: 5077104256546242672
@@ -995,9 +987,9 @@ MonoBehaviour:
           - rid: 5077104256546242720
           - rid: 5077104256546242721
           - rid: 5077104256546242722
-          - rid: 5077104275225051317
           - rid: 5077104275225051321
           - rid: 7566504292039786594
+          - rid: 5077104434924225384
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1019,10 +1011,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104256546242690
-    - rid: 5077104256546242668
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104256546242669
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1157,7 +1145,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -1177,11 +1164,10 @@ MonoBehaviour:
           - __option_change background image
           - __option_change background transition
           - dialogue
-          - __option_delay next with click
           - delay text
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104256546242696
           - rid: 5077104256546242697
           - rid: 5077104256546242698
           - rid: 5077104256546242700
@@ -1201,9 +1187,9 @@ MonoBehaviour:
           - rid: 5077104256546242715
           - rid: 5077104256546242716
           - rid: 5077104256546242717
-          - rid: 5077104275225051318
           - rid: 5077104275225051322
           - rid: 7566504292039786595
+          - rid: 5077104434924225385
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1228,10 +1214,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104256546242718
-    - rid: 5077104256546242696
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104256546242697
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1715,7 +1697,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -1735,13 +1716,12 @@ MonoBehaviour:
           - __option_change background image
           - __option_change background transition
           - dialogue
-          - __option_delay next with click
           - delay text
           - text align
           - play audio
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104256546242765
           - rid: 5077104256546242766
           - rid: 5077104256546242767
           - rid: 5077104256546242769
@@ -1761,11 +1741,11 @@ MonoBehaviour:
           - rid: 5077104256546242784
           - rid: 5077104256546242785
           - rid: 5077104256546242786
-          - rid: 5077104275225051319
           - rid: 5077104275225051323
           - rid: 5077104279487250504
           - rid: 5077104320427327744
           - rid: 7566504292039786596
+          - rid: 5077104434924225386
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1790,10 +1770,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104256546242787
-    - rid: 5077104256546242765
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104256546242766
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -2008,22 +1984,6 @@ MonoBehaviour:
       type: {class: CharacterBlockNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
     - rid: 5077104275225051315
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 1
-    - rid: 5077104275225051316
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
-    - rid: 5077104275225051317
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
-    - rid: 5077104275225051318
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 1
-    - rid: 5077104275225051319
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value: 1
@@ -2390,8 +2350,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_delay next with click
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -2414,9 +2372,8 @@ MonoBehaviour:
           - delay text
           - background image
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104279487250525
-          - rid: 5077104279487250526
           - rid: 5077104279487250527
           - rid: 5077104279487250528
           - rid: 5077104279487250529
@@ -2439,6 +2396,7 @@ MonoBehaviour:
           - rid: 5077104279487250547
           - rid: 5077104279487250928
           - rid: 7566504292039786597
+          - rid: 5077104434924225387
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -2472,14 +2430,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104279487250548
-    - rid: 5077104279487250525
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
-    - rid: 5077104279487250526
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104279487250527
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -2868,8 +2818,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_delay next with click
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -2892,9 +2840,8 @@ MonoBehaviour:
           - delay text
           - play audio
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104279487250572
-          - rid: 5077104279487250573
           - rid: 5077104279487250574
           - rid: 5077104279487250575
           - rid: 5077104279487250576
@@ -2917,6 +2864,7 @@ MonoBehaviour:
           - rid: 5077104279487250594
           - rid: 5077104324423974980
           - rid: 7566504292039786598
+          - rid: 5077104434924225388
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -2935,14 +2883,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104279487250595
-    - rid: 5077104279487250572
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 1
-    - rid: 5077104279487250573
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104279487250574
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -3369,8 +3309,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_delay next with click
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -3392,9 +3330,8 @@ MonoBehaviour:
           - dialogue
           - delay text
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104279487250621
-          - rid: 5077104279487250622
           - rid: 5077104279487250623
           - rid: 5077104279487250624
           - rid: 5077104279487250625
@@ -3416,6 +3353,7 @@ MonoBehaviour:
           - rid: 5077104279487250642
           - rid: 5077104279487250643
           - rid: 7566504292039786599
+          - rid: 5077104434924225389
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -3434,14 +3372,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104279487250644
-    - rid: 5077104279487250621
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 1
-    - rid: 5077104279487250622
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104279487250623
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -3576,8 +3506,6 @@ MonoBehaviour:
         m_State: 0
         m_InputConstantsById:
           m_KeyList:
-          - __option_delay next with click
-          - __option_await continue event
           - __option_keep previous text
           - __option_change print speed
           - __option_activate broadcast string
@@ -3599,9 +3527,8 @@ MonoBehaviour:
           - dialogue
           - delay text
           - __option_change background transition duration
+          - __option_delay type next node
           m_ValueList:
-          - rid: 5077104279487250647
-          - rid: 5077104279487250648
           - rid: 5077104279487250649
           - rid: 5077104279487250650
           - rid: 5077104279487250651
@@ -3623,6 +3550,7 @@ MonoBehaviour:
           - rid: 5077104279487250668
           - rid: 5077104279487250669
           - rid: 7566504292039786600
+          - rid: 5077104434924225390
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -3641,14 +3569,6 @@ MonoBehaviour:
         m_Subtitle: 
         m_Node:
           rid: 5077104279487250670
-    - rid: 5077104279487250647
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 1
-    - rid: 5077104279487250648
-      type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: 0
     - rid: 5077104279487250649
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -4924,6 +4844,94 @@ MonoBehaviour:
       data:
         m_Value:
         - {fileID: 8300000, guid: f2a4954b87d9fc14391fd8c7dfbec22b, type: 3}
+    - rid: 5077104434924225383
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225384
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225385
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225386
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225387
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225388
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225389
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - rid: 5077104434924225390
+      type: {class: EnumConstant, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value:
+          m_EnumType:
+            m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+              PublicKeyToken=null
+          m_Value: 1
+        m_EnumType:
+          m_Identification: DelayType, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
     - rid: 7566504000449675545
       type: {class: VariableDeclarationModel, ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:

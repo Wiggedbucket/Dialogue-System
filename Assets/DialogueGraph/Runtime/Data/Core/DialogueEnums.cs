@@ -1,6 +1,14 @@
 using System;
 
 [Serializable]
+public enum DelayType
+{
+    None,
+    Click,
+    AwaitEvent,
+}
+
+[Serializable]
 public enum NotTalkingType
 {
     None,

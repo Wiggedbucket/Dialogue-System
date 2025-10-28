@@ -6,8 +6,7 @@ using UnityEngine;
 [Serializable]
 public class DialogueSettings
 {
-    public bool awaitContinueEvent = false;
-    public bool delayNextWithClick = false;
+    public DelayType delayType = DelayType.None;
     public bool keepPreviousText = false;
 
     public PortValue<float> printSpeed = new();
