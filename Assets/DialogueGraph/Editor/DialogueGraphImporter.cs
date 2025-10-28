@@ -147,7 +147,8 @@ public class DialogueGraphImporter : ScriptedImporter
         // Settings
         runtimeDialogueNode.dialogueSettings = new DialogueSettings
         {
-            delayType = GetOptionValue<DelayType>(node, DialogueContextNode.DelayTypePortName, DelayType.Click),
+            awaitContinueEvent = GetOptionValue<bool>(node, DialogueContextNode.AwaitContinueEventPortName, false),
+            delayNextWithClick = GetOptionValue<bool>(node, DialogueContextNode.DelayNextWithClickPortName, false),
             keepPreviousText = GetOptionValue<bool>(node, DialogueContextNode.KeepPreviousTextPortName, false),
 
             printSpeed = new()
