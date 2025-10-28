@@ -10,6 +10,7 @@ public class DialogueCharacterManager : MonoBehaviour
     private DialogueBlackboard Blackboard = DialogueBlackboard.Instance;
 
     public Transform characterHolder;
+    public GameObject speakerNamePanel;
     public TextMeshProUGUI speakerNameText;
     public NotTalkingType notTalkingType = NotTalkingType.None;
     public string names = "";
@@ -220,6 +221,7 @@ public class DialogueCharacterManager : MonoBehaviour
         string joiner = speakerNames.Count > 2 ? ", " : " and ";
         names = string.Join(joiner, speakerNames);
         speakerNameText.text = names;
+        speakerNamePanel.SetActive(speakerNames.Count > 0);
     }
     #endregion
 

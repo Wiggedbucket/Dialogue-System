@@ -392,6 +392,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5993776356246834864, guid: 80bafe200e0da8d4da472bbcbeab6b62, type: 3}
+      propertyPath: speakerNamePanel
+      value: 
+      objectReference: {fileID: 972810402}
     - target: {fileID: 6501104421805663098, guid: 80bafe200e0da8d4da472bbcbeab6b62, type: 3}
       propertyPath: runtimeGraph
       value: 
@@ -452,6 +456,11 @@ PrefabInstance:
 --- !u!224 &972810401 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3359107908077724538, guid: 80bafe200e0da8d4da472bbcbeab6b62, type: 3}
+  m_PrefabInstance: {fileID: 972810400}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &972810402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 187539621979077109, guid: 80bafe200e0da8d4da472bbcbeab6b62, type: 3}
   m_PrefabInstance: {fileID: 972810400}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1186734996
