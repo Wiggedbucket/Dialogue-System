@@ -3,4 +3,4 @@
 This repository contains a modular dialogue system designed for Unity.
 
 **Full documentation:**  
-See [`Assets/DialogueSystem/README.md`](Assets/DialogueSystem/README.md)
+See [`Assets/DialogueGraph/README.md`](Assets/DialogueGraph/README.md)
