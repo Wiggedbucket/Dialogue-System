@@ -19,10 +19,8 @@ It supports branching dialogue, dynamic variables via a blackboard, customizable
 4. Go to **Edit -> Project Settings.. -> Player -> Other Settings -> Active Input Handling*** and set it to `Both`
 
 ### 2. Import the Package
-1. Go to **Assets -> Import Package -> Custom Package…**
-2. Select `DialogueSystem_v{Version}.unitypackage`.
-3. Check everything you want to include.
-4. The Feature Showcase example shows most of the features and also has a prebuilt UI which you can use.
+1. Put the dialogue system folder into the `Assets` folder.
+2. The Feature Showcase example shows most of the features and also has a prebuilt UI which you can use.
 
 ### 3. Scene Setup
 1. Create an empty GameObject in your scene and name it **DialogueManager**.
