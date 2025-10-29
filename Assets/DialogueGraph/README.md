@@ -12,12 +12,19 @@ It supports branching dialogue, dynamic variables via a blackboard, customizable
 - **Customizable Text Appearance** - Font, color, alignment, and style.
 
 ## Getting Started
-### 1. Import the Package
-1. In Unity, go to **Assets -> Import Package -> Custom Package…**
+### 1. Set up Project
+1. In Unity, **Window -> Package Management -> Package Manager -> Install Package by Name**
+2. Fill in: `com.unity.graphtoolkit` and hit install.
+3. Install the TextMeshPro package.
+4. Go to **Edit -> Project Settings.. -> Player -> Other Settings -> Active Input Handling*** and set it to `Both`
+
+### 2. Import the Package
+1. Go to **Assets -> Import Package -> Custom Package…**
 2. Select `DialogueSystem_v{Version}.unitypackage`.
 3. Check everything you want to include.
 4. The Feature Showcase example shows most of the features and also has a prebuilt UI which you can use.
-### 2. Scene Setup
+
+### 3. Scene Setup
 1. Create an empty GameObject in your scene and name it **DialogueManager**.
 2. Add the following components:
 	- `DialogueManager`
@@ -28,12 +35,14 @@ It supports branching dialogue, dynamic variables via a blackboard, customizable
     - `BackgroundTransitionController`
 	- `DialogueBoxTransitionController`
 3. Assign the required references (TMP Text fields, button container, background images, etc.).
-### 3. Create a Dialogue Graph
+
+### 4. Create a Dialogue Graph
 1. In the **Project window**, right-click →  
 	**Create → Dialogue → Runtime Dialogue Graph**
 2. Add nodes (Dialogue, Splitter, Choices, etc.) to define your story flow.
 3. Link nodes together via their `out` port.
-### 4. Trigger the Dialogue
+
+### 5. Trigger the Dialogue
 1. The `DialogueManager` has 4 functions which you can use:
 	 `StartDialogue`
 	 `InteruptDialogue`
