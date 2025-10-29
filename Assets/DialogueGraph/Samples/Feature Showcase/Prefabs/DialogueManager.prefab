@@ -901,13 +901,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3359107908077724538}
-  - component: {fileID: 6501104421805663098}
-  - component: {fileID: 4213456390870202967}
-  - component: {fileID: 7293256829412419836}
-  - component: {fileID: 8143951676659983443}
-  - component: {fileID: 5993776356246834864}
-  - component: {fileID: 8634075783864529462}
-  - component: {fileID: 7808996766647492759}
+  - component: {fileID: 2694730873820017395}
+  - component: {fileID: 4912137045314711786}
+  - component: {fileID: 4052643974664823952}
+  - component: {fileID: 7151374564481174587}
+  - component: {fileID: 7674583858827159915}
+  - component: {fileID: 8831898308609441331}
+  - component: {fileID: 8970313166471340565}
   m_Layer: 5
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -935,30 +935,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6501104421805663098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456117355189806574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39873ded95def224896ff16133542769, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
-  processor: {fileID: 4213456390870202967}
-  audioManager: {fileID: 8143951676659983443}
-  characterManager: {fileID: 5993776356246834864}
-  uiManager: {fileID: 7293256829412419836}
-  dialogueBoxTransitionController: {fileID: 7808996766647492759}
-  runtimeGraph: {fileID: 0}
-  blackboard: {fileID: 0}
-  awaitContinueEvent: 0
-  onHold: 0
-  allowEscape: 0
-  dialogueBoxTransition: 0
---- !u!114 &4213456390870202967
+--- !u!114 &2694730873820017395
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -969,8 +946,65 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b923b2f2f6805b48ba91f71e2b1cc70, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NodeProcessor
---- !u!114 &7293256829412419836
+  m_EditorClassIdentifier: DialogueGraph.Runtime::NodeProcessor
+--- !u!114 &4912137045314711786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39873ded95def224896ff16133542769, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DialogueGraph.Runtime::DialogueManager
+  processor: {fileID: 2694730873820017395}
+  audioManager: {fileID: 4052643974664823952}
+  characterManager: {fileID: 7151374564481174587}
+  uiManager: {fileID: 7674583858827159915}
+  dialogueBoxTransitionController: {fileID: 8970313166471340565}
+  runtimeGraph: {fileID: 0}
+  blackboard: {fileID: 0}
+  awaitContinueEvent: 0
+  onHold: 0
+  allowEscape: 0
+  dialogueBoxTransition: 0
+--- !u!114 &4052643974664823952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1bcd15641d2e04bb6ba69e8fa69230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DialogueGraph.Runtime::AudioManager
+  handleMusicQueue: 0
+  musicQueue: []
+  loop: 1
+  shuffle: 0
+  activeSources: []
+--- !u!114 &7151374564481174587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456117355189806574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b41f376ec2fe7349b79d99cff464d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DialogueGraph.Runtime::DialogueCharacterManager
+  characterHolder: {fileID: 8824583706483487855}
+  speakerNamePanel: {fileID: 187539621979077109}
+  speakerNameText: {fileID: 5724954641327291016}
+  notTalkingType: 0
+  names: 
+--- !u!114 &7674583858827159915
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -981,8 +1015,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebbeffe5c52a9e64f86d4caf1ddac1bb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueUIManager
-  backgroundController: {fileID: 8634075783864529462}
+  m_EditorClassIdentifier: DialogueGraph.Runtime::DialogueUIManager
+  backgroundController: {fileID: 8831898308609441331}
   dialoguePanel: {fileID: 2788086059454102252}
   namePlateBackground: {fileID: 1096681381550559651}
   dialogueTextBackground: {fileID: 6395944713009853550}
@@ -1007,40 +1041,7 @@ MonoBehaviour:
   fastForwardSpeed: 0.008
   basePrintSpeed: 0.02
   delayNextWithClick: 0
---- !u!114 &8143951676659983443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456117355189806574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a1bcd15641d2e04bb6ba69e8fa69230, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  handleMusicQueue: 0
-  musicQueue: []
-  loop: 1
-  shuffle: 0
-  activeSources: []
---- !u!114 &5993776356246834864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456117355189806574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b41f376ec2fe7349b79d99cff464d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
-  characterHolder: {fileID: 8824583706483487855}
-  speakerNameText: {fileID: 5724954641327291016}
-  notTalkingType: 0
-  names: 
---- !u!114 &8634075783864529462
+--- !u!114 &8831898308609441331
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1051,7 +1052,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6585d766cdf2444fa066b001aa2ad08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundTransitionController
+  m_EditorClassIdentifier: DialogueGraph.Runtime::BackgroundTransitionController
   blackBackground: {fileID: 8452585241010649516}
   primaryImage: {fileID: 8698066194386066142}
   secondaryImage: {fileID: 4190206133387307169}
@@ -1081,7 +1082,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7808996766647492759
+--- !u!114 &8970313166471340565
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1092,7 +1093,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63aa6042a0dfe6844840b4691be72826, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueBoxTransitionController
+  m_EditorClassIdentifier: DialogueGraph.Runtime::DialogueBoxTransitionController
   dialogueBox: {fileID: 3482382275441866769}
   canvasGroup: {fileID: 5677597044403746335}
   transitionDuration: 0.5
