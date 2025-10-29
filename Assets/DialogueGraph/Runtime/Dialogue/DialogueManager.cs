@@ -24,6 +24,7 @@ public class DialogueManager : MonoBehaviour
     public DialogueBoxTransition dialogueBoxTransition = DialogueBoxTransition.None;
 
     public bool IsDelayingNode => processor != null && processor.IsDelayingNode;
+    public bool InTransition => inTransitionCoroutine != null;
 
     private Coroutine inTransitionCoroutine;
 
@@ -51,14 +52,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if (inTransitionCoroutine != null) return;
-
-        // Debug input for testing
-        if (Input.GetKeyDown(KeyCode.RightShift)) StartDialogue();
-        if (Input.GetKeyDown(KeyCode.Return)) ResumeDialogue();
-        if (Input.GetKeyDown(KeyCode.P)) DialogueEvents.Continue();
-
-        if (onHold || awaitContinueEvent) return;
+        if (onHold || awaitContinueEvent || InTransition) return;
 
         if (allowEscape && Input.GetKeyDown(KeyCode.Escape))
             EndDialogue();
