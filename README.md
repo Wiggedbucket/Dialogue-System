@@ -36,7 +36,7 @@ It supports branching dialogue, dynamic variables via a blackboard, customizable
 
 ### 4. Create a Dialogue Graph
 1. In the **Project window**, right-click →  
-	**Create → Dialogue → Runtime Dialogue Graph**
+	**Create → Dialogue → Dialogue Graph**
 2. Add nodes (Dialogue, Splitter, Choices, etc.) to define your story flow.
 3. Link nodes together via their `out` port.
 
